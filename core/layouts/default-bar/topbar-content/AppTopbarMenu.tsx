@@ -1,6 +1,5 @@
 'use client';
-import React, { useRef } from 'react';
-import Link from 'next/link';
+import React, { useRef, useState, useEffect } from 'react';
 import { PanelLeft, PanelTop, PanelBottom, PanelRight } from 'lucide-react';
 import { classMixin } from '@/core/utils/class-mixin';
 import { useLanguage } from '@/core/providers/LanguageProvider';
@@ -23,6 +22,45 @@ const AppTopbarMenu: React.FC<AppTopbarMenuProps> = ({ configMenuButtonRef, side
     const menubuttonRef = useRef<HTMLButtonElement>(null);
     const containerRef = useRef<HTMLDivElement>(null);
 
+    // Detect if we're on mobile or desktop
+    const [isMobile, setIsMobile] = useState(false);
+
+    useEffect(() => {
+        const checkMobile = () => {
+            setIsMobile(window.innerWidth <= 991); // Same breakpoint as layoutStore
+        };
+
+        checkMobile();
+        window.addEventListener('resize', checkMobile);
+
+        return () => window.removeEventListener('resize', checkMobile);
+    }, []);
+
+    const isOverlay = layoutConfig.menuMode === 'overlay';
+
+    // Menu (left sidebar) active state - matches onMenuToggle logic
+    const isMenuActive = isMobile
+        ? layoutState.staticMenuMobileActive
+        : isOverlay
+            ? layoutState.overlayMenuActive
+            : !layoutState.staticMenuDesktopInactive;
+
+    // Config (right sidebar) active state - matches onConfigToggle logic
+    const isConfigActive = isMobile
+        ? layoutState.staticConfigMobileActive
+        : isOverlay
+            ? layoutState.overlayConfigActive
+            : !layoutState.staticConfigDesktopInactive;
+
+    // Bottombar active state - matches onBottombarToggle logic
+    const isBottombarActive = isOverlay
+        ? layoutState.overlayBottombarActive
+        : isMobile
+            ? !layoutState.staticBottombarMobileHide
+            : !layoutState.staticBottombarDesktopInactive;
+
+    // Topbar visibility - same for mobile and desktop
+    const isTopbarVisible = !layoutState.topbarAutoHide;
 
     return (
         <div
@@ -32,35 +70,60 @@ const AppTopbarMenu: React.FC<AppTopbarMenuProps> = ({ configMenuButtonRef, side
             })}
         >
             <div className="layout-button-container">
-                <button ref={menubuttonRef} type="button" className="p-link layout-topbar-button" onClick={onMenuToggle}>
+                <button
+                    ref={menubuttonRef}
+                    type="button"
+                    className={classMixin('p-link layout-topbar-button', {
+                        'text-primary': isMenuActive,
+                        'text-color-secondary': !isMenuActive
+                    })}
+                    onClick={onMenuToggle}
+                >
                     <PanelLeft
                         size={24}
-                        className={(layoutConfig.menuMode === 'static' && layoutState.staticMenuDesktopInactive === false) || (layoutConfig.menuMode === 'overlay' && layoutState.overlayMenuActive === true) ? 'text-primary' : 'text-color-secondary'}
-                        strokeWidth={(layoutConfig.menuMode === 'static' && layoutState.staticMenuDesktopInactive === false) || (layoutConfig.menuMode === 'overlay' && layoutState.overlayMenuActive === true) ? 2.5 : 1.5}
+                        strokeWidth={isMenuActive ? 2.5 : 1.5}
                     />
                     <span>{t('sidebar.collapse')}</span>
                 </button>
-                <button type="button" className="p-link layout-topbar-button" onClick={onTopbarToggle}>
+                <button
+                    type="button"
+                    className={classMixin('p-link layout-topbar-button', {
+                        'text-primary': isTopbarVisible,
+                        'text-color-secondary': !isTopbarVisible
+                    })}
+                    onClick={onTopbarToggle}
+                >
                     <PanelTop
                         size={24}
-                        className={layoutState.topbarAutoHide === false ? 'text-primary' : 'text-color-secondary'}
-                        strokeWidth={layoutState.topbarAutoHide === false ? 2.5 : 1.5}
+                        strokeWidth={isTopbarVisible ? 2.5 : 1.5}
                     />
                     <span>{t('layout.headerStyle')}</span>
                 </button>
-                <button type="button" className="p-link layout-topbar-button" onClick={onBottombarToggle}>
+                <button
+                    type="button"
+                    className={classMixin('p-link layout-topbar-button', {
+                        'text-primary': isBottombarActive,
+                        'text-color-secondary': !isBottombarActive
+                    })}
+                    onClick={onBottombarToggle}
+                >
                     <PanelBottom
                         size={24}
-                        className={(layoutConfig.menuMode === 'static' && layoutState.staticBottombarDesktopInactive === false) || (layoutConfig.menuMode === 'overlay' && layoutState.overlayBottombarActive === true) ? 'text-primary' : 'text-color-secondary'}
-                        strokeWidth={(layoutConfig.menuMode === 'static' && layoutState.staticBottombarDesktopInactive === false) || (layoutConfig.menuMode === 'overlay' && layoutState.overlayBottombarActive === true) ? 2.5 : 1.5}
+                        strokeWidth={isBottombarActive ? 2.5 : 1.5}
                     />
                     <span>{t('layout.footerStyle')}</span>
                 </button>
-                <button type="button" className="p-link layout-topbar-button" onClick={onConfigToggle}>
+                <button
+                    type="button"
+                    className={classMixin('p-link layout-topbar-button', {
+                        'text-primary': isConfigActive,
+                        'text-color-secondary': !isConfigActive
+                    })}
+                    onClick={onConfigToggle}
+                >
                     <PanelRight
                         size={24}
-                        className={(layoutConfig.menuMode === 'static' && layoutState.staticConfigDesktopInactive === false) || (layoutConfig.menuMode === 'overlay' && layoutState.overlayConfigActive === true) ? 'text-primary' : 'text-color-secondary'}
-                        strokeWidth={(layoutConfig.menuMode === 'static' && layoutState.staticConfigDesktopInactive === false) || (layoutConfig.menuMode === 'overlay' && layoutState.overlayConfigActive === true) ? 2.5 : 1.5}
+                        strokeWidth={isConfigActive ? 2.5 : 1.5}
                     />
                     <span>{t('nav.webconfig')}</span>
                 </button>

@@ -2,6 +2,7 @@
 
 .layout__topbar {
   z-index: $z-index-topbar-base;
+
   .layout-topbar-main {
     position: fixed;
     min-width: 300px;
@@ -93,8 +94,7 @@
   margin: 0;
   box-sizing: border-box;
   contain: layout;
-  padding: var(--container-padding-top) var(--container-padding-right)
-    var(--container-padding-bottom) var(--container-padding-left);
+  padding: var(--container-padding-top) var(--container-padding-right) var(--container-padding-bottom) var(--container-padding-left);
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
   transition: margin-left $duration-transition-base,
@@ -124,15 +124,14 @@
       right $duration-transition-base $easing-transition-base,
       left $duration-transition-base $easing-transition-base,
       width $duration-transition-base $easing-transition-base,
-      height $duration-transition-base $easing-transition-base
-        $duration-transition-base;
+      height $duration-transition-base $easing-transition-base $duration-transition-base;
+
     &:not(:hover) {
       transition: transform $duration-transition-base $easing-transition-base,
         right $duration-transition-base $easing-transition-base,
         left $duration-transition-base $easing-transition-base,
         height $duration-transition-base $easing-transition-base,
-        width $duration-transition-base $easing-transition-base
-          $duration-transition-base,
+        width $duration-transition-base $easing-transition-base $duration-transition-base,
         z-index $duration-transition-base linear $duration-transition-base;
       width: $width-bottombar-base;
       height: $height-bottombar-base;
@@ -157,6 +156,7 @@
     transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1),
       opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1);
   }
+
   .layout-bottombar-mask {
     width: 100%;
     height: $height-bottombar-base;
