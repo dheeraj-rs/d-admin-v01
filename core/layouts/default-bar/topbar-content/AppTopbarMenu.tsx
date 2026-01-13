@@ -1,11 +1,17 @@
 'use client';
 import React, { useRef } from 'react';
+import Link from 'next/link';
 import { PanelLeft, PanelTop, PanelBottom, PanelRight } from 'lucide-react';
 import { classMixin } from '@/core/utils/class-mixin';
 import { useLanguage } from '@/core/providers/LanguageProvider';
 import { useLayoutStore } from '@/core/store';
 
-const AppTopbarMenu = () => {
+interface AppTopbarMenuProps {
+    configMenuButtonRef?: React.RefObject<HTMLButtonElement | null>;
+    sidebarMenuButtonRef?: React.RefObject<HTMLButtonElement | null>;
+}
+
+const AppTopbarMenu: React.FC<AppTopbarMenuProps> = ({ configMenuButtonRef, sidebarMenuButtonRef }) => {
     const layoutConfig = useLayoutStore((state) => state.layoutConfig);
     const layoutState = useLayoutStore((state) => state.layoutState);
     const onMenuToggle = useLayoutStore((state) => state.onMenuToggle);

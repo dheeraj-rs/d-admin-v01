@@ -18,16 +18,17 @@
 
       .fixed-container {
         &.top-0 {
-          top: calc(
-            #{$height-topbar-base} + #{$padding-layout-base * 2}
-          ) !important;
+          top: calc(#{$height-topbar-base} + #{$padding-layout-base * 2}) !important;
         }
+
         &.bottom-0 {
           bottom: $padding-layout-base !important;
         }
+
         &.left-0 {
           left: $padding-layout-base !important;
         }
+
         &.right-0 {
           right: $padding-layout-base !important;
         }
@@ -38,6 +39,7 @@
           left: $padding-layout-base;
           transform: translateX(0);
         }
+
         .layout__mask {
           display: block;
         }
@@ -56,6 +58,7 @@
           right: $padding-layout-base;
           transform: translateX(0);
         }
+
         .layout__mask {
           display: block;
         }
@@ -64,6 +67,7 @@
       .layout__bottombar {
         .layout-bottombar-desktop {
           z-index: $z-index-bottombar-mask;
+
           &:hover {
             z-index: $z-index-bottombar-base;
             width: $width-bottombar-hover;
@@ -89,11 +93,13 @@
           .layout-topbar-mask {
             transform: translateY(-100%);
           }
+
           .layout-topbar-main {
             transform: translateY(-100%);
             background-color: transparent;
             box-shadow: none;
             border: 1px solid transparent;
+
             &:hover {
               transform: translateY(0);
               background-color: var(--d-admin-surface-card);
@@ -102,21 +108,27 @@
             }
           }
         }
+
         .layout__container {
           padding-top: $padding-layout-base;
         }
+
         .sidebar-tab-wrapper {
           min-height: calc($height-main-container-topbar-hide);
         }
+
         .fixed-container.top-0 {
           top: calc(#{$padding-layout-base}) !important;
         }
+
         .fixed-container.bottom-0 {
           bottom: calc(#{$padding-layout-base}) !important;
         }
+
         .fixed-container.left-0 {
           left: calc(#{$padding-layout-base}) !important;
         }
+
         .fixed-container.right-0 {
           right: calc(#{$padding-layout-base}) !important;
         }
@@ -133,16 +145,17 @@
 
       .fixed-container {
         &.top-0 {
-          top: calc(
-            #{$height-topbar-base} + #{$padding-layout-base * 2}
-          ) !important;
+          top: calc(#{$height-topbar-base} + #{$padding-layout-base * 2}) !important;
         }
+
         &.bottom-0 {
           bottom: calc(#{$padding-layout-base}) !important;
         }
+
         &.left-0 {
           left: calc(#{$padding-layout-base}) !important;
         }
+
         &.right-0 {
           right: calc(#{$padding-layout-base}) !important;
         }
@@ -154,20 +167,24 @@
             .searchbar-input {
               width: calc($width-sidebar-base - 0.2rem);
               color: transparent;
+
               &::placeholder {
                 opacity: 0;
               }
             }
           }
         }
+
         .layout__sidebar {
           width: $width-sidebar-base;
-          ~ .layout__container {
+
+          ~.layout__container {
             margin-left: $margin-left-main-container-expanded;
           }
 
           &:hover {
             width: $width-sidebar-expanded;
+
             .layout-menuitem-text,
             .layout-submenu-toggler {
               animation: slideInText 0.3s ease-out forwards;
@@ -179,6 +196,7 @@
                 .searchbar-input {
                   width: calc($width-sidebar-expanded - 0.3rem);
                   color: var(--d-admin-text-color);
+
                   &::placeholder {
                     opacity: 1;
                   }
@@ -196,13 +214,16 @@
                 }
               }
             }
+
             .separator-line {
               opacity: 0;
               background-position: left;
               transition: opacity 0.3s ease-in-out;
             }
           }
+
           &:not(:hover) {
+
             .layout-menuitem-text,
             .layout-submenu-toggler {
               display: none;
@@ -220,6 +241,7 @@
                 }
               }
             }
+
             .separator-line {
               opacity: 1;
               background-position: left;
@@ -237,6 +259,7 @@
             transform: translateX(-100%);
             left: 0;
           }
+
           .layout__container {
             margin-left: 0;
           }
@@ -248,6 +271,7 @@
           left: 0;
           transform: translateX(-100%);
         }
+
         .layout__container {
           margin-left: 0;
         }
@@ -275,11 +299,13 @@
           .layout-topbar-mask {
             transform: translateY(-100%);
           }
+
           .layout-topbar-main {
             transform: translateY(-100%);
             background-color: transparent;
             box-shadow: none;
             border: 1px solid transparent;
+
             &:hover {
               transform: translateY(0);
               background-color: var(--d-admin-surface-section);
@@ -288,38 +314,48 @@
             }
           }
         }
+
         .layout__container {
           padding-top: $padding-layout-base;
         }
+
         .layout__sidebar {
           top: $padding-layout-base;
           height: $height-sidebar-overlay;
         }
+
         .layout__config {
           top: $padding-layout-base;
           height: $height-config-inactive-topbar;
         }
+
         &.layout-bottombar-desktop-inactive {
           .layout__config {
             height: $height-config-overlay;
             z-index: $z-index-config-base;
           }
         }
+
         .dashboard-error-wrapper {
           min-height: $height-main-container-topbar-hide;
         }
+
         .sidebar-tab-wrapper {
           min-height: $height-main-container-topbar-hide;
         }
+
         .fixed-container.top-0 {
           top: calc(#{$padding-layout-base}) !important;
         }
+
         .fixed-container.bottom-0 {
           bottom: calc(#{$padding-layout-base}) !important;
         }
+
         .fixed-container.left-0 {
           left: calc(#{$padding-layout-base}) !important;
         }
+
         .fixed-container.right-0 {
           right: calc(#{$padding-layout-base}) !important;
         }
@@ -328,6 +364,7 @@
       .layout__bottombar {
         .layout-bottombar-desktop {
           width: $width-bottombar-expanded;
+
           &:hover {
             width: $width-bottombar-hover;
             height: $height-bottombar-hover;
@@ -340,10 +377,12 @@
         .layout__config {
           height: $height-config-inactive-bottombar;
         }
+
         .layout__bottombar {
           visibility: hidden;
         }
       }
+
       .layout__mask {
         display: none;
       }
@@ -354,6 +393,7 @@
 @media (max-width: $md1) {
   .layout__wrapper {
     --bottombar-height: #{$height-bottombar-mobile};
+
     .layout__container {
       height: 100dvh;
       min-height: 100dvh;
@@ -389,6 +429,7 @@
       .layout__sidebar {
         transform: translateX($padding-layout-base);
       }
+
       .layout__mask {
         display: block;
       }
@@ -419,10 +460,12 @@
     .layout__footer {
       flex-direction: column;
       gap: 0.5rem;
+
       .footer-brand {
         justify-content: center;
         gap: 0.3rem;
       }
+
       .footer-links {
         gap: 1rem;
       }
@@ -430,16 +473,17 @@
 
     .fixed-container {
       &.top-0 {
-        top: calc(
-          #{$height-topbar-base} + #{$padding-layout-base * 2}
-        ) !important;
+        top: calc(#{$height-topbar-base} + #{$padding-layout-base * 2}) !important;
       }
+
       &.bottom-0 {
         bottom: calc(#{$height-bottombar-mobile}) !important;
       }
+
       &.left-0 {
         left: calc(#{$padding-layout-base}) !important;
       }
+
       &.right-0 {
         right: calc(#{$padding-layout-base}) !important;
       }
@@ -476,6 +520,7 @@
         }
       }
     }
+
     .sidebar-tab-wrapper {
       padding-bottom: calc($height-bottombar-base + $padding-layout-base);
     }
@@ -485,11 +530,13 @@
         .layout-topbar-mask {
           transform: translateY(-100%);
         }
+
         .layout-topbar-main {
           transform: translateY(-100%);
           background-color: transparent;
           box-shadow: none;
           border: 1px solid transparent;
+
           &:hover {
             transform: translateY(0);
             background-color: var(--d-admin-surface-section);
@@ -498,9 +545,11 @@
           }
         }
       }
+
       .dashboard-error-wrapper {
         min-height: $height-main-container-topbar-hide;
       }
+
       .sidebar-tab-wrapper {
         min-height: $height-main-container-topbar-hide;
       }
@@ -509,12 +558,15 @@
         &.top-0 {
           top: $padding-layout-base !important;
         }
+
         &.bottom-0 {
           bottom: calc($height-bottombar-mobile) !important;
         }
+
         &.left-0 {
           left: $padding-layout-base !important;
         }
+
         &.right-0 {
           right: $padding-layout-base !important;
         }
@@ -523,12 +575,8 @@
 
     &.layout-overlay-bottombar-active {
       .layout__container {
-        height: calc(
-          100dvh - $height-bottombar-base - $padding-layout-base * 2
-        );
-        min-height: calc(
-          100dvh - $height-bottombar-base - $padding-layout-base * 2
-        );
+        height: calc(100dvh - $height-bottombar-base - $padding-layout-base * 2);
+        min-height: calc(100dvh - $height-bottombar-base - $padding-layout-base * 2);
         padding-bottom: 0;
       }
     }
@@ -550,9 +598,11 @@
         &.bottom-0 {
           bottom: calc(#{$padding-layout-base}) !important;
         }
+
         &.left-0 {
           left: calc(#{$padding-layout-base}) !important;
         }
+
         &.right-0 {
           right: calc(#{$padding-layout-base}) !important;
         }
@@ -563,7 +613,24 @@
   .layout__topbar {
     .layout-topbar-main {
       .layout-topbar-menu {
-        display: none !important;
+        // On mobile, show all buttons like desktop
+        display: flex !important;
+        flex-direction: row;
+        align-items: center;
+        gap: 0.5rem;
+
+        .layout-button-container {
+          display: flex !important;
+          flex-direction: row;
+          gap: 0.5rem;
+        }
+
+        .topbar-actions {
+          display: flex !important;
+          align-items: center;
+          gap: 0.5rem;
+        }
+
         &.layout-topbar-menu-mobile-active {
           background-color: var(--d-admin-surface-section);
           display: flex !important;
@@ -587,6 +654,7 @@
               opacity: 0;
               transform: translateY(-8px);
             }
+
             to {
               opacity: 1;
               transform: translateY(0);
@@ -594,8 +662,12 @@
           }
 
           .layout-button-container {
-            display: none !important;
+            display: flex !important;
+            flex-direction: column;
+            width: 100%;
+            gap: 0.25rem;
           }
+
           .topbar-actions {
             width: 100%;
             flex-direction: column;
@@ -605,6 +677,7 @@
             display: flex !important;
             gap: 0.25rem;
           }
+
           .layout-topbar-button {
             width: 100%;
             height: auto;
@@ -618,6 +691,7 @@
               margin-right: 0.75rem;
               font-size: 1.25rem;
             }
+
             span {
               display: block;
               font-size: 0.9rem;
@@ -640,14 +714,17 @@
       .topbar-start {
         order: 1;
         min-width: 200px;
+
         .logo-row {
           img {
             margin-right: 0rem;
           }
+
           .logo-text {
             font-size: 1.5rem;
           }
         }
+
         .breadcrumb {
           font-size: 0.8rem;
         }
@@ -655,64 +732,6 @@
 
       .topbar-center {
         order: 2;
-
-        .topbar-notification-wrapper {
-          position: static;
-        }
-
-        .notification-modal {
-          position: fixed;
-          top: calc($height-topbar-base + $padding-layout-base * 2);
-          left: $padding-layout-base;
-          right: $padding-layout-base;
-          width: auto;
-          max-width: none;
-
-          .notification-modal-header {
-            padding: 0.875rem 1rem;
-
-            h3 {
-              font-size: 1rem;
-            }
-
-            .notification-clear-all {
-              font-size: 0.8rem;
-              padding: 0.4rem 0.6rem;
-
-              span {
-                display: none;
-              }
-            }
-          }
-
-          .notification-list {
-            padding: 0 1rem;
-
-            .notification-item {
-              padding: 0.875rem;
-              gap: 0.75rem;
-
-              .notification-icon {
-                width: 36px;
-                height: 36px;
-
-                i {
-                  font-size: 1.1rem;
-                }
-              }
-
-              .notification-content {
-                .notification-title {
-                  font-size: 0.9rem;
-                }
-
-                .notification-desc {
-                  font-size: 0.825rem;
-                }
-              }
-            }
-          }
-        }
       }
 
       .topbar-actions {

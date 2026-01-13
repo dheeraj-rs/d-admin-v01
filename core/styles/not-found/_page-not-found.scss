@@ -2,7 +2,7 @@
 
 .nfp__container {
   position: relative;
-  height: 100%;
+  height: 100dvh;
   width: 100%;
   display: flex;
   justify-content: center;
@@ -42,20 +42,25 @@
     &.nfp-layer-1 {
       z-index: 3;
       transform: translate3d(0, 0, 0);
+
       &:hover {
         transform: translate3d(2px, 2px, 0);
       }
     }
+
     &.nfp-layer-2 {
       z-index: 2;
       transform: translate3d(0, 0, 0);
+
       &:hover {
         transform: translate3d(4px, 4px, 0);
       }
     }
+
     &.nfp-layer-3 {
       z-index: 1;
       transform: translate3d(0, 0, 0);
+
       &:hover {
         transform: translate3d(6px, 6px, 0);
       }
@@ -174,6 +179,7 @@
           left: 5px;
           width: 14px;
           height: 2px;
+
           @media (min-width: $sm2) {
             top: 8px;
             left: 7px;
@@ -186,6 +192,7 @@
           left: 5px;
           width: 8px;
           height: 2px;
+
           @media (min-width: $sm2) {
             top: 14px;
             left: 7px;
@@ -283,9 +290,11 @@
         &.nfp-red {
           background-color: #ff5f57;
         }
+
         &.nfp-yellow {
           background-color: #febc2e;
         }
+
         &.nfp-green {
           background-color: #28c840;
         }
@@ -318,15 +327,19 @@
         .nfp-code-keyword {
           color: #569cd6;
         }
+
         .nfp-code-text {
           color: #9cdcfe;
         }
+
         .nfp-code-string {
           color: #ce9178;
         }
+
         .nfp-code-function {
           color: #dcdcaa;
         }
+
         .nfp-code-keyword-return {
           color: #6d3384f4;
         }
@@ -368,37 +381,45 @@
   }
 
   @keyframes nfp-pulse {
+
     0%,
     100% {
       opacity: 0.2;
     }
+
     50% {
       opacity: 0.5;
     }
   }
 
   @keyframes nfp-float {
+
     0%,
     100% {
       transform: translateY(0) rotate(0deg);
     }
+
     25% {
       transform: translateY(-20px) rotate(2deg);
     }
+
     50% {
       transform: translateY(0) rotate(0deg);
     }
+
     75% {
       transform: translateY(20px) rotate(-2deg);
     }
   }
 
   @keyframes nfp-glow {
+
     0%,
     100% {
       opacity: 0;
       transform: scale(0.8);
     }
+
     50% {
       opacity: 1;
       transform: scale(1.2);
@@ -406,20 +427,24 @@
   }
 
   @keyframes nfp-dots {
+
     0%,
     100% {
       opacity: 0;
     }
+
     50% {
       opacity: 1;
     }
   }
 
   @keyframes nfp-blink {
+
     0%,
     100% {
       opacity: 0;
     }
+
     50% {
       opacity: 1;
     }
@@ -491,6 +516,7 @@
     z-index: 4;
   }
 }
+
 .star {
   position: absolute;
   border-radius: 50%;
@@ -523,11 +549,9 @@
 
 .moving-object {
   position: absolute;
-  background: radial-gradient(
-    circle at center,
-    var(--color) 0%,
-    transparent 70%
-  );
+  background: radial-gradient(circle at center,
+      var(--color) 0%,
+      transparent 70%);
   border-radius: 50%;
   transform: translate(-50%, -50%);
   opacity: var(--brightness);
@@ -555,16 +579,14 @@
   position: absolute;
   width: var(--tail-length, 80px);
   height: calc(var(--object-size, 3px) * 0.8);
-  background: linear-gradient(
-    90deg,
-    transparent 0%,
-    rgba(255, 255, 255, 0.1) 10%,
-    rgba(255, 255, 255, 0.3) 30%,
-    rgba(255, 255, 255, 0.5) 50%,
-    rgba(255, 255, 255, 0.7) 70%,
-    rgba(255, 255, 255, 0.9) 85%,
-    var(--object-color, white) 100%
-  );
+  background: linear-gradient(90deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.1) 10%,
+      rgba(255, 255, 255, 0.3) 30%,
+      rgba(255, 255, 255, 0.5) 50%,
+      rgba(255, 255, 255, 0.7) 70%,
+      rgba(255, 255, 255, 0.9) 85%,
+      var(--object-color, white) 100%);
   opacity: var(--brightness, 0.9);
   animation: tailFlicker 0.2s ease-in-out infinite alternate;
   top: 50%;
@@ -580,16 +602,14 @@
   height: 100%;
   top: 0%;
   left: -25%;
-  background: linear-gradient(
-    135deg,
-    transparent 0%,
-    rgba(255, 255, 255, 0.02) 20%,
-    rgba(200, 180, 160, 0.03) 35%,
-    rgba(180, 160, 140, 0.04) 50%,
-    rgba(160, 140, 120, 0.03) 65%,
-    rgba(255, 255, 255, 0.02) 80%,
-    transparent 100%
-  );
+  background: linear-gradient(135deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.02) 20%,
+      rgba(200, 180, 160, 0.03) 35%,
+      rgba(180, 160, 140, 0.04) 50%,
+      rgba(160, 140, 120, 0.03) 65%,
+      rgba(255, 255, 255, 0.02) 80%,
+      transparent 100%);
   transform: rotate(-35deg);
   animation: galacticRotation 300s linear infinite;
   opacity: 0.7;
@@ -601,12 +621,15 @@
     top: var(--start-y);
     opacity: 0;
   }
+
   10% {
     opacity: 1;
   }
+
   90% {
     opacity: 1;
   }
+
   100% {
     left: var(--end-x);
     top: var(--end-y);
@@ -619,6 +642,7 @@
     transform: translateY(-50%) scale(1);
     opacity: 0.9;
   }
+
   100% {
     transform: translateY(-50%) scale(1.05);
     opacity: 1;
@@ -629,6 +653,7 @@
   0% {
     opacity: 0.8;
   }
+
   100% {
     opacity: 1;
   }
@@ -639,14 +664,17 @@
     opacity: 0;
     transform: scale(0.5);
   }
+
   30% {
     opacity: 1;
     transform: scale(1.1);
   }
+
   60% {
     opacity: 0.4;
     transform: scale(0.9);
   }
+
   100% {
     opacity: 0;
     transform: scale(0.7);
@@ -654,11 +682,13 @@
 }
 
 @keyframes galacticGlow {
+
   0%,
   100% {
     opacity: 0.8;
     transform: scale(1) rotate(0deg);
   }
+
   50% {
     opacity: 1;
     transform: scale(1.02) rotate(0.5deg);
@@ -670,9 +700,11 @@
     transform: translateX(0) translateY(0) rotate(0deg);
     opacity: 0.6;
   }
+
   50% {
     opacity: 1;
   }
+
   100% {
     transform: translateX(-50px) translateY(-30px) rotate(360deg);
     opacity: 0.4;
@@ -680,11 +712,13 @@
 }
 
 @keyframes twinkle {
+
   0%,
   100% {
     opacity: var(--brightness);
     transform: translate(-50%, -50%) scale(1);
   }
+
   50% {
     opacity: calc(var(--brightness) * 0.5);
     transform: translate(-50%, -50%) scale(0.8);
@@ -695,6 +729,7 @@
   0% {
     transform: rotate(-25deg);
   }
+
   100% {
     transform: rotate(-25.2deg);
   }
@@ -743,9 +778,11 @@
   0% {
     opacity: 0;
   }
+
   20% {
     opacity: var(--intensity);
   }
+
   100% {
     opacity: 0;
   }
