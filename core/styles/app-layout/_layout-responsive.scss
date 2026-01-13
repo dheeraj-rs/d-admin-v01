@@ -613,24 +613,6 @@
   .layout__topbar {
     .layout-topbar-main {
       .layout-topbar-menu {
-        // On mobile, show all buttons like desktop
-        display: flex !important;
-        flex-direction: row;
-        align-items: center;
-        gap: 0.5rem;
-
-        .layout-button-container {
-          display: flex !important;
-          flex-direction: row;
-          gap: 0.5rem;
-        }
-
-        .topbar-actions {
-          display: flex !important;
-          align-items: center;
-          gap: 0.5rem;
-        }
-
         &.layout-topbar-menu-mobile-active {
           background-color: var(--d-admin-surface-section);
           display: flex !important;
@@ -659,13 +641,6 @@
               opacity: 1;
               transform: translateY(0);
             }
-          }
-
-          .layout-button-container {
-            display: flex !important;
-            flex-direction: column;
-            width: 100%;
-            gap: 0.25rem;
           }
 
           .topbar-actions {
