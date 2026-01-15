@@ -31,7 +31,7 @@
     width: calc(100% - $padding-layout-base * 2);
     margin: 0 0.5rem;
     height: $height-topbar-base;
-    background-color: var(--d-admin-surface-ground);
+    background-color: var(--d-admin-surface-section);
     transition: transform 0.3s ease-in-out;
     position: fixed;
     z-index: $z-index-topbar-mask;
@@ -160,7 +160,7 @@
   .layout-bottombar-mask {
     width: 100%;
     height: $height-bottombar-base;
-    background-color: var(--d-admin-surface-ground);
+    background-color: var(--d-admin-surface-section);
     transition: transform 0.3s ease-in-out;
     position: fixed;
     bottom: 0;

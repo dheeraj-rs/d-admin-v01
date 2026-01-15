@@ -8,7 +8,7 @@ html {
   overscroll-behavior: none;
   scroll-behavior: smooth;
   overflow: hidden;
-  height: 100vh;
+  height: 100dvh;
   // user-select: none;
   // touch-action: none;
   // background-color: var(--d-admin-surface-ground);
@@ -23,24 +23,23 @@ html {
 body {
   margin: 0;
   padding: 0;
-  height: 100vh;
+  height: 100dvh;
   font-family: var(--d-admin-font-family);
+
   a {
     text-decoration: none;
   }
 }
 
 .layout__wrapper {
-  min-height: 100vh;
+  min-height: 100dvh;
   --topbar-height: 5rem;
   --padding-total: 1.5rem;
   --sidebar-width: 0px;
   --config-width: 0px;
   --padding-horizontal: 1.5rem;
   --bottombar-height: 0px;
-  --container-padding-top: calc(
-    #{$height-topbar-base} + #{$padding-layout-base * 2}
-  );
+  --container-padding-top: calc(#{$height-topbar-base} + #{$padding-layout-base * 2});
   --container-padding-bottom: #{$padding-layout-base};
   --container-padding-left: #{$padding-layout-base};
   --container-padding-right: #{$padding-layout-base};
@@ -79,7 +78,7 @@ body {
     --container-padding-top: #{$padding-layout-base};
   }
 
-  &.layout-bottombar-mobile-hide {
-    --bottombar-height: 0px;
-  }
+  // &.layout-bottombar-mobile-hide {
+  //   --bottombar-height: 0px;
+  // }
 }

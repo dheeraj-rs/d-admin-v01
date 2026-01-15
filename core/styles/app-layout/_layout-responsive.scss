@@ -395,8 +395,8 @@
     --bottombar-height: #{$height-bottombar-mobile};
 
     .layout__container {
-      height: 100dvh;
-      min-height: 100dvh;
+      height: calc(100dvh - #{$height-topbar-base - $padding-layout-base});
+      min-height: calc(100dvh - #{$height-topbar-base - $padding-layout-base});
     }
 
     &.layout-topbar-auto-hide {
@@ -404,9 +404,6 @@
     }
 
     &.layout-bottombar-mobile-hide {
-      --bottombar-height: 0px;
-      --container-padding-bottom: 0px;
-
       .layout__container {
         height: 100dvh;
         min-height: 100dvh;
