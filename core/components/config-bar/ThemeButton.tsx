@@ -1,5 +1,3 @@
-'use client';
-
 import { classMixin } from '@/core/utils/class-mixin';
 import { useTheme } from '@/core/providers/ThemeProvider';
 import { ThemeButtonProps } from '@/core/types/admin-layout';

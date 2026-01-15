@@ -1,5 +1,3 @@
-'use client';
-
 import { ThemeManager } from '@/core/utils/theme/ThemeManager';
 import { useEffect, useState } from 'react';
 import { LayoutConfig } from '../../../store';

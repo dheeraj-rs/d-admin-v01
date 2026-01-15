@@ -1,9 +1,6 @@
-'use client';
-
 import { createContext, useContext, useEffect } from 'react';
 import { useLayoutStore } from '../store';
 import { translations } from '../utils/i18n';
-
 import type { Language, LanguageData, LanguageContextType, LanguageProviderProps } from '@/core/types/i18n';
 
 export const AVAILABLE_LANGUAGES: LanguageData[] = [

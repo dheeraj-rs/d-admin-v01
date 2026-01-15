@@ -12,7 +12,6 @@ const translateMenuItem = (
       .toLowerCase()
       .replace(/\s+/g, '.')}`;
     const translated = t(translationKey);
-    // If translation returns the key itself, use the original label
     translatedItem.label =
       translated && translated !== translationKey ? translated : item.label;
   }

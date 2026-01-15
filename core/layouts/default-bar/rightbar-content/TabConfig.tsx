@@ -24,7 +24,6 @@ const TabConfig = ({
     toggleFullscreen,
     t,
 }: TabConfigProps) => {
-    // Helper to determine active state
     const isMenuActive = (layoutConfig.menuMode === 'static' && layoutState.staticMenuDesktopInactive === false) ||
         (layoutConfig.menuMode === 'overlay' && layoutState.overlayMenuActive === true) ||
         layoutState.staticMenuMobileActive === true;

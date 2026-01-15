@@ -2,7 +2,7 @@ import React from 'react'
 
 function ContentArea({ children }: { children?: React.ReactNode }) {
     return (
-        <div className="emails-page-container">
+        <div className="owner-page-container">
             {children}
         </div>
     )

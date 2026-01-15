@@ -12,8 +12,8 @@
       }
 
       .layout__container {
-        height: 100vh;
-        min-height: 100vh;
+        height: 100dvh;
+        min-height: 100dvh;
       }
 
       .fixed-container {
@@ -139,8 +139,8 @@
       .layout__container {
         margin-left: $margin-left-main-container-shrink;
         margin-right: $margin-right-main-container-shrink;
-        height: 100vh;
-        min-height: 100vh;
+        height: 100dvh;
+        min-height: 100dvh;
       }
 
       .fixed-container {
@@ -623,7 +623,7 @@
           border: 1px solid var(--d-admin-surface-border);
           padding: 0.5rem;
           min-width: 13rem;
-          max-width: calc(100vw - 2rem);
+          max-width: calc(100dvw - 2rem);
           -webkit-animation: slideDown 0.2s ease-out;
           animation: slideDown 0.2s ease-out;
           z-index: 9999;
@@ -758,7 +758,7 @@
     .layout__topbar {
       .layout-topbar-main {
         min-width: auto !important;
-        width: calc(100vw - #{$padding-layout-base * 2}) !important;
+        width: calc(100dvw - #{$padding-layout-base * 2}) !important;
         margin: $padding-layout-base !important;
         padding: 0.75rem 0.85rem !important;
         gap: 0.6rem;

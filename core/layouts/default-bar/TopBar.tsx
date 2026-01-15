@@ -1,5 +1,3 @@
-
-
 import { LayoutSectionProps } from '@/core/types/admin-layout';
 
 const TopBar = ({ children }: LayoutSectionProps) => {

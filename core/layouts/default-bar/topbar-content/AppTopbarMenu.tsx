@@ -21,13 +21,11 @@ const AppTopbarMenu: React.FC<AppTopbarMenuProps> = ({ configMenuButtonRef, side
     const { t } = useLanguage();
     const menubuttonRef = useRef<HTMLButtonElement>(null);
     const containerRef = useRef<HTMLDivElement>(null);
-
-    // Detect if we're on mobile or desktop
     const [isMobile, setIsMobile] = useState(false);
 
     useEffect(() => {
         const checkMobile = () => {
-            setIsMobile(window.innerWidth <= 991); // Same breakpoint as layoutStore
+            setIsMobile(window.innerWidth <= 991);
         };
 
         checkMobile();
@@ -38,28 +36,24 @@ const AppTopbarMenu: React.FC<AppTopbarMenuProps> = ({ configMenuButtonRef, side
 
     const isOverlay = layoutConfig.menuMode === 'overlay';
 
-    // Menu (left sidebar) active state - matches onMenuToggle logic
     const isMenuActive = isMobile
         ? layoutState.staticMenuMobileActive
         : isOverlay
             ? layoutState.overlayMenuActive
             : !layoutState.staticMenuDesktopInactive;
 
-    // Config (right sidebar) active state - matches onConfigToggle logic
     const isConfigActive = isMobile
         ? layoutState.staticConfigMobileActive
         : isOverlay
             ? layoutState.overlayConfigActive
             : !layoutState.staticConfigDesktopInactive;
 
-    // Bottombar active state - matches onBottombarToggle logic
     const isBottombarActive = isOverlay
         ? layoutState.overlayBottombarActive
         : isMobile
             ? !layoutState.staticBottombarMobileHide
             : !layoutState.staticBottombarDesktopInactive;
 
-    // Topbar visibility - same for mobile and desktop
     const isTopbarVisible = !layoutState.topbarAutoHide;
 
     return (

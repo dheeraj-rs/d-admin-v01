@@ -1,5 +1,3 @@
-'use client';
-
 import { ThemeButton } from './ThemeButton';
 import { Theme } from '@/core/types/admin-layout';
 import { memo } from 'react';

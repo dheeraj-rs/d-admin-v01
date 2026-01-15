@@ -8,7 +8,6 @@ const BottombarContent = () => {
     const [activeIndex, setActiveIndex] = useState(2);
     const scrollContainerRef = useRef(null);
 
-    // Flatten MENU_ITEMS to get all actionable links
     const flatMenuItems = useMemo(() => {
         const flatten = (items: AppMenuItem[]): AppMenuItem[] => {
             let flat: AppMenuItem[] = [];

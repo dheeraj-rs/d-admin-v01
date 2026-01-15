@@ -11,6 +11,7 @@
   .layout-config-container {
     .scale-control {
       padding: 0.5rem 0;
+
       .scale-header {
         display: flex;
         justify-content: space-between;
@@ -33,6 +34,7 @@
 
       .slider-container {
         padding: 0 0.5rem;
+
         .p-slider {
           margin-bottom: 1.5rem;
         }
@@ -96,6 +98,7 @@
       font-weight: 400;
       color: var(--d-admin-text-color);
       margin: 1.5rem 0 0.5rem;
+
       span {
         padding-left: 3rem;
       }
@@ -182,6 +185,7 @@
     .ripple-toggle {
       display: flex;
       gap: 0.5rem;
+
       .toggle-button {
         display: flex;
         align-items: center;
@@ -238,6 +242,7 @@
       display: flex;
       flex-wrap: wrap;
       gap: 0.5rem;
+
       .toggle-button {
         flex: 1;
         display: inline-flex;
@@ -333,8 +338,7 @@
 
         &:focus {
           border-color: var(--d-admin-primary-color);
-          box-shadow: 0 0 0 2px
-            rgba(var(--d-admin-primary-color-rgb, 99, 102, 241), 0.2);
+          box-shadow: 0 0 0 2px rgba(var(--d-admin-primary-color-rgb, 99, 102, 241), 0.2);
         }
 
         option {
@@ -349,6 +353,7 @@
       h5 {
         text-align: center;
       }
+
       .theme-category {
         h6 {
           font-size: 0.875rem;
@@ -361,6 +366,7 @@
         display: grid;
         grid-template-columns: repeat(4, 1fr);
         gap: 0.5rem;
+
         .theme-selector__grid-item {
           position: relative;
           cursor: pointer;

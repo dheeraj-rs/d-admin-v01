@@ -39,6 +39,6 @@ export const SKELETON_STYLES = {
   SIDEBAR_WIDTH: '5rem',
   CONFIG_WIDTH: 0,
   BOTTOMBAR_HEIGHT: 0,
-  MIN_HEIGHT: '100vh',
-  CONTAINER_MIN_HEIGHT: 'calc(100vh - 5rem)',
+  MIN_HEIGHT: '100dvh',
+  CONTAINER_MIN_HEIGHT: 'calc(100dvh - 5rem)',
 } as const;

@@ -1,4 +1,3 @@
-'use client';
 import React, { useCallback, useEffect, useState, Suspense } from 'react';
 import { usePathname, useSearchParams } from 'next/navigation';
 import Link from 'next/link';

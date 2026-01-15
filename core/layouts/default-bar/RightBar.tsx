@@ -1,5 +1,4 @@
 import { forwardRef } from 'react';
-
 import { LayoutSectionProps } from '@/core/types/admin-layout';
 
 const RightBar = forwardRef<HTMLDivElement, LayoutSectionProps>(({ children }, ref) => {

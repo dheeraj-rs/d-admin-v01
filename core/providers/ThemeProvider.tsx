@@ -1,5 +1,3 @@
-'use client';
-
 import { createContext, useContext, ReactNode, useCallback } from 'react';
 import { LayoutConfig, ThemeContextType } from '@/core/types/admin-layout';
 import { ThemeManager } from '@/core/utils/theme/ThemeManager';

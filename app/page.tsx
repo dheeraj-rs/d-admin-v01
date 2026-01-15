@@ -1,13 +1,12 @@
-import IsolatedContainer from '@/core/layouts/IsolatedContainer'
 import Layout from '@/core/layouts/Layout'
+import LayoutIsolated from '@/core/layouts/LayoutIsolated'
 
 function Home() {
   return (
     <Layout>
-      <IsolatedContainer>
+      <LayoutIsolated>
         <h1>Home</h1>
-        <div className="fixed bottom-0 right-0 bg-red-500 w-20 h-20">hai</div>
-      </IsolatedContainer>
+      </LayoutIsolated>
     </Layout>
   )
 }

@@ -1,5 +1,4 @@
 'use client';
-
 import { ReactNode } from 'react';
 import { LanguageProvider } from './LanguageProvider';
 import { useLayoutStore } from '../store';
@@ -14,8 +13,8 @@ function HydrationGuard({ children }: { children: ReactNode }) {
     if (!isHydrated) {
         return (
             <div style={{
-                width: '100vw',
-                height: '100vh',
+                width: '100dvw',
+                height: '100dvh',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',

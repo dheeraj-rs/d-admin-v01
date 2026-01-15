@@ -29,9 +29,11 @@
 
 .glow-button {
   background: linear-gradient(135deg, #4285f4, #0d47a1);
+
   .glow-button-text {
     color: #fff;
   }
+
   .glow-effect {
     position: absolute;
     width: 20px;
@@ -44,11 +46,9 @@
 }
 
 .glow-button-transparent {
-  background: linear-gradient(
-    135deg,
-    rgba(10, 20, 40, 0.8),
-    rgba(10, 20, 40, 0.4)
-  );
+  background: linear-gradient(135deg,
+      rgba(10, 20, 40, 0.8),
+      rgba(10, 20, 40, 0.4));
   border: 1px solid rgba(64, 180, 255, 0.5);
   backdrop-filter: blur(8px);
   position: relative;
@@ -61,18 +61,17 @@
     left: -100%;
     width: 100%;
     height: 100%;
-    background: linear-gradient(
-      90deg,
-      transparent,
-      rgba(255, 255, 255, 0.1),
-      transparent
-    );
+    background: linear-gradient(90deg,
+        transparent,
+        rgba(255, 255, 255, 0.1),
+        transparent);
     transition: 0.5s;
   }
 
   &:hover::before {
     left: 100%;
   }
+
   .glow-button-text {
     color: #fff;
   }
@@ -100,10 +99,12 @@
     opacity: 0;
     transform: scale(0.5);
   }
+
   50% {
     opacity: 1;
     transform: scale(1);
   }
+
   100% {
     opacity: 0;
     transform: scale(0.5);

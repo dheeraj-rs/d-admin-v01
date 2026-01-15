@@ -1,5 +1,5 @@
 
-import React, { forwardRef, useRef } from 'react';
+import { forwardRef, useRef } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useLayoutStore } from '@/core/store';

@@ -12,7 +12,6 @@ export function useScrollLock(
   } | null>(null);
   const [isClient, setIsClient] = useState(false);
 
-  // Detect client-side rendering to prevent hydration mismatch
   useEffect(() => {
     setIsClient(true);
   }, []);

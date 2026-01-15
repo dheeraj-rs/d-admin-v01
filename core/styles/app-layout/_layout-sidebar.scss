@@ -14,8 +14,9 @@
     overflow: hidden;
     overflow-y: auto;
     scrollbar-width: none;
+
     .layout-root-menuitem {
-      > .layout-menuitem-root-text {
+      >.layout-menuitem-root-text {
         font-size: 0.857rem;
         text-transform: uppercase;
         font-weight: 700;
@@ -24,7 +25,7 @@
         white-space: nowrap;
       }
 
-      > a {
+      >a {
         display: none;
       }
 
@@ -39,14 +40,14 @@
     }
 
     li.active-menuitem {
-      > a {
+      >a {
         .layout-submenu-toggler {
           transform: rotate(-180deg);
           transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
       }
 
-      > ul {
+      >ul {
         max-height: auto;
       }
     }
@@ -103,6 +104,7 @@
         &:focus {
           @include focused-inset();
         }
+
         &:active {
           transform: scale(0.98);
           transition-duration: 0.1s;
@@ -151,6 +153,7 @@
       }
     }
   }
+
   .layout-menu .layout-submenu {
     overflow: hidden;
     transition: max-height 0.45s cubic-bezier(0.4, 0, 0.2, 1),
@@ -167,7 +170,8 @@
     opacity: 1;
     transform: translateY(0) scale(1);
     transition-delay: 0s, 0.08s, 0s;
-    > li {
+
+    >li {
       animation: slideInDown 0.35s cubic-bezier(0.4, 0, 0.2, 1) backwards;
 
       @for $i from 1 through 10 {
@@ -192,10 +196,11 @@
       animation-duration: 0.01ms !important;
     }
 
-    .layout-menu .submenu-open > li {
+    .layout-menu .submenu-open>li {
       animation: none !important;
     }
   }
+
   .separator-line {
     height: 1px;
     border: none;
