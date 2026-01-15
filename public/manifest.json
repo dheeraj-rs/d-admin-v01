@@ -1,0 +1,63 @@
+{
+    "name": "D-Admin - Website Builder & Management Platform",
+    "short_name": "D-Admin",
+    "description": "Professional website builder and management platform. Create, deploy, and manage websites with advanced features, templates, and analytics.",
+    "start_url": "/",
+    "scope": "/",
+    "display": "standalone",
+    "background_color": "#ffffff",
+    "theme_color": "#667EEA",
+    "orientation": "any",
+    "icons": [
+        {
+            "src": "/icons/icon-192x192.png",
+            "sizes": "192x192",
+            "type": "image/png",
+            "purpose": "any maskable"
+        },
+        {
+            "src": "/icons/icon-512x512.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "any maskable"
+        }
+    ],
+    "categories": [
+        "productivity",
+        "developer tools",
+        "business"
+    ],
+    "shortcuts": [
+        {
+            "name": "Website Builder",
+            "short_name": "Builder",
+            "description": "Open AI-powered website builder",
+            "url": "/website-builder",
+            "icons": [
+                {
+                    "src": "/icons/icon-192x192.png",
+                    "sizes": "192x192",
+                    "type": "image/png"
+                }
+            ]
+        },
+        {
+            "name": "Owner Dashboard",
+            "short_name": "Dashboard",
+            "description": "Access owner dashboard",
+            "url": "/owner-dashboard",
+            "icons": [
+                {
+                    "src": "/icons/icon-192x192.png",
+                    "sizes": "192x192",
+                    "type": "image/png"
+                }
+            ]
+        }
+    ],
+    "screenshots": [],
+    "prefer_related_applications": false,
+    "id": "com.dadmin.webapp",
+    "lang": "en-US",
+    "dir": "ltr"
+}
