@@ -1,5 +1,9 @@
 import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
+import type { WebContainer, WebContainerProcess } from '@webcontainer/api';
+import type { ITerminal } from '@/app/(builder)/website-builder/types/terminal';
+import { newShellProcess } from '@/app/(builder)/website-builder/utils/shell';
+import { coloredText } from '@/app/(builder)/website-builder/utils/terminal';
 
 // ============================================================================
 // TYPES
@@ -241,7 +245,7 @@ interface SettingsState {
     setShortcuts: (shortcuts: Shortcuts) => void;
 }
 
-// We'll initialize this with a placeholder and update it after workbench store is created
+// We'll initialize this with a placeholder and update it after terminal store is created
 export const useSettingsStore = create<SettingsState>()(
     devtools(
         (set) => ({
@@ -250,7 +254,7 @@ export const useSettingsStore = create<SettingsState>()(
                     key: 'j',
                     ctrlOrMetaKey: true,
                     action: () => {
-                        // This will be updated after workbench store is created
+                        // This will be updated to call useTerminalStore.getState().toggleTerminal()
                         console.log('Toggle terminal');
                     },
                 },
@@ -260,3 +264,74 @@ export const useSettingsStore = create<SettingsState>()(
         { name: 'SettingsStore' }
     )
 );
+
+// ============================================================================
+// TERMINAL STORE
+// ============================================================================
+
+interface TerminalState {
+    showTerminal: boolean;
+    webcontainer: Promise<WebContainer> | null;
+    terminals: Array<{ terminal: ITerminal; process: WebContainerProcess }>;
+
+    // Actions
+    setWebContainer: (webcontainer: Promise<WebContainer>) => void;
+    toggleTerminal: (value?: boolean) => void;
+    attachTerminal: (terminal: ITerminal) => Promise<void>;
+    onTerminalResize: (cols: number, rows: number) => void;
+}
+
+export const useTerminalStore = create<TerminalState>()(
+    devtools(
+        (set, get) => ({
+            showTerminal: false,
+            webcontainer: null,
+            terminals: [],
+
+            setWebContainer: (webcontainer) => set({ webcontainer }),
+
+            toggleTerminal: (value) => {
+                const current = get().showTerminal;
+                set({ showTerminal: value !== undefined ? value : !current });
+            },
+
+            attachTerminal: async (terminal) => {
+                const { webcontainer, terminals } = get();
+                if (!webcontainer) {
+                    console.error('[TerminalStore] WebContainer not initialized');
+                    return;
+                }
+
+                try {
+                    const shellProcess = await newShellProcess(await webcontainer, terminal);
+                    set({ terminals: [...terminals, { terminal, process: shellProcess }] });
+                } catch (error: any) {
+                    terminal.write(
+                        coloredText.red('Failed to spawn shell\n\n') + error.message
+                    );
+                }
+            },
+
+            onTerminalResize: (cols, rows) => {
+                const { terminals } = get();
+                for (const { process } of terminals) {
+                    process.resize({ cols, rows });
+                }
+            },
+        }),
+        { name: 'TerminalStore' }
+    )
+);
+
+// Update settings store to use terminal store
+if (typeof window !== 'undefined') {
+    useSettingsStore.setState({
+        shortcuts: {
+            toggleTerminal: {
+                key: 'j',
+                ctrlOrMetaKey: true,
+                action: () => useTerminalStore.getState().toggleTerminal(),
+            },
+        },
+    });
+}
