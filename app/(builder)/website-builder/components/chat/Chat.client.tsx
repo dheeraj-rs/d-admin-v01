@@ -7,7 +7,7 @@ import { memo, useEffect, useRef, useState } from 'react';
 import { cssTransition, toast, ToastContainer } from 'react-toastify';
 import { useMessageParser, usePromptEnhancer, useShortcuts, useSnapScroll } from '@/app/(builder)/website-builder/lib/hooks';
 import { useChatHistory } from '@/app/(builder)/website-builder/lib/persistence';
-import { chatStore } from '@/app/(builder)/website-builder/lib/stores/chat';
+import { useChatStore } from '@/app/(builder)/website-builder/lib/stores/zustand';
 import { workbenchStore } from '@/app/(builder)/website-builder/lib/stores/workbench';
 import { fileModificationsToHTML } from '@/app/(builder)/website-builder/utils/diff';
 import { cubicEasingFn } from '@/app/(builder)/website-builder/utils/easings';
@@ -73,13 +73,18 @@ export const ChatImpl = memo(({ initialMessages, storeMessageHistory }: ChatProp
 
   const [chatStarted, setChatStarted] = useState(initialMessages.length > 0);
 
-  const { showChat, selectedProvider } = useStore(chatStore);
+  const showChat = useChatStore(state => state.showChat);
+  const selectedProvider = useChatStore(state => state.selectedProvider);
+  const setStarted = useChatStore(state => state.setStarted);
+  const setAborted = useChatStore(state => state.setAborted);
+  const setSelectedProvider = useChatStore(state => state.setSelectedProvider);
+  const setShowHistory = useChatStore(state => state.setShowHistory);
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const saved = localStorage.getItem('selected_ai_provider_v2');
       if (saved) {
-        chatStore.setKey('selectedProvider', saved as ModelProvider);
+        setSelectedProvider(saved as ModelProvider);
       }
     }
   }, []);
@@ -113,7 +118,7 @@ export const ChatImpl = memo(({ initialMessages, storeMessageHistory }: ChatProp
   const TEXTAREA_MAX_HEIGHT = chatStarted ? 400 : 200;
 
   useEffect(() => {
-    chatStore.setKey('started', initialMessages.length > 0);
+    setStarted(initialMessages.length > 0);
   }, []);
 
   useEffect(() => {
@@ -134,7 +139,7 @@ export const ChatImpl = memo(({ initialMessages, storeMessageHistory }: ChatProp
 
   const abort = () => {
     stop();
-    chatStore.setKey('aborted', true);
+    setAborted(true);
     workbenchStore.abortAllActions();
   };
 
@@ -158,7 +163,7 @@ export const ChatImpl = memo(({ initialMessages, storeMessageHistory }: ChatProp
 
     await animate('#intro', { opacity: 0, flex: 1 }, { duration: 0.2, ease: cubicEasingFn });
 
-    chatStore.setKey('started', true);
+    setStarted(true);
 
     setChatStarted(true);
   };
@@ -181,7 +186,7 @@ export const ChatImpl = memo(({ initialMessages, storeMessageHistory }: ChatProp
 
     const fileModifications = workbenchStore.getFileModifcations();
 
-    chatStore.setKey('aborted', false);
+    setAborted(false);
 
     runAnimation();
 
@@ -247,7 +252,8 @@ export const ChatImpl = memo(({ initialMessages, storeMessageHistory }: ChatProp
         }, selectedProvider);
       }}
       selectedProvider={selectedProvider}
-      onProviderChange={(provider) => chatStore.setKey('selectedProvider', provider)}
+      onProviderChange={(provider) => setSelectedProvider(provider)}
+      onHistoryClick={() => setShowHistory(true)}
     />
   );
 });

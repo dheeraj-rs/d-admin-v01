@@ -1,17 +1,17 @@
 'use client';
 
-import { useStore } from '@nanostores/react';
 import { Chat } from '@/app/(builder)/website-builder/components/chat/Chat';
 import { Workbench } from '@/app/(builder)/website-builder/components/workbench/Workbench.client';
 import { PanelContainer } from '@/app/(builder)/website-builder/components/panels/PanelContainer';
-import { chatStore } from '@/app/(builder)/website-builder/lib/stores/chat';
+import { useStore } from '@nanostores/react';
+import { useChatStore } from '@/app/(builder)/website-builder/lib/stores/zustand';
 import { workbenchStore } from '@/app/(builder)/website-builder/lib/stores/workbench';
 
 import { HistoryPanel } from '@/app/(builder)/website-builder/components/panels/HistoryPanel';
 import LayoutIsolated from '@/core/layouts/LayoutIsolated';
 
 export default function WebsiteBuilderPage() {
-    const { showChat } = useStore(chatStore);
+    const showChat = useChatStore(state => state.showChat);
     const showWorkbench = useStore(workbenchStore.showWorkbench);
 
     return (

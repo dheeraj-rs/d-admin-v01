@@ -1,6 +1,6 @@
 import { useStore } from '@nanostores/react';
 import { Icon } from '@iconify/react';
-import { chatStore } from '@/app/(builder)/website-builder/lib/stores/chat';
+import { useChatStore } from '@/app/(builder)/website-builder/lib/stores/zustand';
 import { workbenchStore } from '@/app/(builder)/website-builder/lib/stores/workbench';
 import { classNames } from '@/app/(builder)/website-builder/utils/classNames';
 
@@ -8,7 +8,8 @@ interface HeaderActionButtonsProps { }
 
 export function HeaderActionButtons({ }: HeaderActionButtonsProps) {
   const showWorkbench = useStore(workbenchStore.showWorkbench);
-  const { showChat } = useStore(chatStore);
+  const showChat = useChatStore(state => state.showChat);
+  const setShowChat = useChatStore(state => state.setShowChat);
 
   const canHideChat = showWorkbench || !showChat;
 
@@ -23,7 +24,7 @@ export function HeaderActionButtons({ }: HeaderActionButtonsProps) {
             const newShowChat = !showChat;
 
             if (canHideChat) {
-              chatStore.setKey('showChat', newShowChat);
+              setShowChat(newShowChat);
 
               // On mobile, hide workbench when showing chat
               if (isMobile && newShowChat && showWorkbench) {
@@ -43,12 +44,12 @@ export function HeaderActionButtons({ }: HeaderActionButtonsProps) {
             const newShowState = !showWorkbench;
 
             if (showWorkbench && !showChat) {
-              chatStore.setKey('showChat', true);
+              setShowChat(true);
             }
 
             // On mobile, hide chat when showing workbench
             if (isMobile && newShowState && showChat) {
-              chatStore.setKey('showChat', false);
+              setShowChat(false);
             }
 
             workbenchStore.userHidWorkbench.set(!newShowState);

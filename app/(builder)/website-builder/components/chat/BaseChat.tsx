@@ -25,6 +25,7 @@ interface BaseChatProps {
   enhancePrompt?: () => void;
   selectedProvider?: ModelProvider;
   onProviderChange?: (provider: ModelProvider) => void;
+  onHistoryClick?: () => void;
 }
 
 const EXAMPLE_PROMPTS = [
@@ -56,6 +57,7 @@ export const BaseChat = React.forwardRef<HTMLDivElement, BaseChatProps>(
       handleStop,
       selectedProvider = 'google',
       onProviderChange,
+      onHistoryClick,
     },
     ref,
   ) => {
@@ -192,6 +194,15 @@ export const BaseChat = React.forwardRef<HTMLDivElement, BaseChatProps>(
                       )}
                     </IconButton>
                   </div>
+                  {chatStarted && onHistoryClick && (
+                    <IconButton
+                      title="View chat history"
+                      onClick={onHistoryClick}
+                      className="ml-2"
+                    >
+                      <Icon icon="ph:clock-counter-clockwise" className="text-xl" />
+                    </IconButton>
+                  )}
                 </div>
 
                 {/* Right side - Model selector */}

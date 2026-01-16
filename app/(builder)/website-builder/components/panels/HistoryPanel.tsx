@@ -1,12 +1,13 @@
 import { useStore } from '@nanostores/react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { chatStore } from '@/app/(builder)/website-builder/lib/stores/chat';
+import { useChatStore } from '@/app/(builder)/website-builder/lib/stores/zustand';
 import { Menu } from '@/app/(builder)/website-builder/components/sidebar/Menu.client';
 import { Icon } from '@iconify/react';
 import { classNames } from '@/app/(builder)/website-builder/utils/classNames';
 
 export const HistoryPanel = () => {
-    const { showHistory } = useStore(chatStore);
+    const showHistory = useChatStore(state => state.showHistory);
+    const setShowHistory = useChatStore(state => state.setShowHistory);
     return (
         <AnimatePresence>
             {showHistory && (
@@ -17,7 +18,7 @@ export const HistoryPanel = () => {
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
-                        onClick={() => chatStore.setKey('showHistory', false)}
+                        onClick={() => setShowHistory(false)}
                     />
                     <motion.div
                         key="history-panel"
@@ -34,14 +35,14 @@ export const HistoryPanel = () => {
                         <div className="flex items-center justify-between p-4 border-b border-surface">
                             <span className="font-medium text-lg text-color">History</span>
                             <button
-                                onClick={() => chatStore.setKey('showHistory', false)}
+                                onClick={() => setShowHistory(false)}
                                 className="p-1 hover:bg-surface-d rounded-md text-gray-500 hover:text-color transition-colors"
                             >
                                 <Icon icon="ph:x" className="text-xl" />
                             </button>
                         </div>
                         <div className="flex-1 overflow-hidden">
-                            <Menu onSelect={() => chatStore.setKey('showHistory', false)} />
+                            <Menu onSelect={() => setShowHistory(false)} />
                         </div>
                     </motion.div>
                 </>
