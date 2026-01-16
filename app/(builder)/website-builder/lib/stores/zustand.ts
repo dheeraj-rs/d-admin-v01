@@ -40,7 +40,6 @@ interface ChatState {
 export const useChatStore = create<ChatState>()(
     devtools(
         (set) => ({
-            // Initial state - matches nanostores exactly
             started: false,
             aborted: false,
             showChat: true,
