@@ -189,14 +189,19 @@ export class ActionRunner {
             logger.error('Syntax error detected in generated code');
           }
 
-          if (str.match(/Failed to compile|Build failed|compilation error/i)) {
+          if (str.match(/Failed to compile|Build failed|compilation error|Failed to resolve import/i)) {
             buildErrorDetected = true;
+            useWorkbenchStore.getState().setBuildError(true);
             logger.error('Build error detected');
           }
 
           if (str.match(/EADDRINUSE|port.*already in use/i)) {
             portConflictDetected = true;
             logger.warn('Port conflict detected');
+          }
+
+          if (str.includes(action.content) && str.match(/not found/i)) {
+            // command not found
           }
 
           // accumulate output for dev server detection
@@ -331,7 +336,13 @@ export class ActionRunner {
       /listening on/,
     ];
 
-    return successPatterns.some((pattern) => pattern.test(output));
+    const isSuccess = successPatterns.some((pattern) => pattern.test(output));
+
+    if (isSuccess) {
+      useWorkbenchStore.getState().setBuildError(false);
+    }
+
+    return isSuccess;
   }
 
   async #runFileAction(action: ActionState) {

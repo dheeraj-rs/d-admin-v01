@@ -514,11 +514,13 @@ interface WorkbenchState {
     unsavedFiles: Set<string>;
     artifacts: Record<string, ArtifactState>;
     artifactIdList: string[];
+    buildError: boolean;
 
     setShowWorkbench: (show: boolean) => void;
     setUserHidWorkbench: (hid: boolean) => void;
     setCurrentView: (view: WorkbenchViewType) => void;
     setUnsavedFiles: (files: Set<string>) => void;
+    setBuildError: (error: boolean) => void;
     addUnsavedFile: (file: string) => void;
     removeUnsavedFile: (file: string) => void;
     setArtifact: (id: string, artifact: ArtifactState) => void;
@@ -534,11 +536,13 @@ export const useWorkbenchStore = create<WorkbenchState>()(
             unsavedFiles: new Set(),
             artifacts: {},
             artifactIdList: [],
+            buildError: false,
 
             setShowWorkbench: (show) => set({ showWorkbench: show }),
             setUserHidWorkbench: (hid) => set({ userHidWorkbench: hid }),
             setCurrentView: (view) => set({ currentView: view }),
             setUnsavedFiles: (files) => set({ unsavedFiles: files }),
+            setBuildError: (error) => set({ buildError: error }),
 
             addUnsavedFile: (file) => {
                 const unsavedFiles = new Set(get().unsavedFiles);

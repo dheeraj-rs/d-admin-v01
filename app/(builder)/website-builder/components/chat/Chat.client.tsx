@@ -6,7 +6,7 @@ import { memo, useEffect, useRef, useState } from 'react';
 import { cssTransition, toast, ToastContainer } from 'react-toastify';
 import { useMessageParser, usePromptEnhancer, useShortcuts, useSnapScroll } from '@/app/(builder)/website-builder/lib/hooks';
 import { useChatHistory } from '@/app/(builder)/website-builder/lib/persistence';
-import { useChatStore } from '@/app/(builder)/website-builder/lib/stores/zustand';
+import { useChatStore, useWorkbenchStore } from '@/app/(builder)/website-builder/lib/stores/zustand';
 import { workbenchStore } from '@/app/(builder)/website-builder/lib/stores/workbench';
 import { fileModificationsToHTML } from '@/app/(builder)/website-builder/utils/diff';
 import { cubicEasingFn } from '@/app/(builder)/website-builder/utils/easings';
@@ -253,6 +253,14 @@ export const ChatImpl = memo(({ initialMessages, storeMessageHistory }: ChatProp
       selectedProvider={selectedProvider}
       onProviderChange={(provider) => setSelectedProvider(provider)}
       onHistoryClick={() => setShowHistory(true)}
+      buildError={useWorkbenchStore(state => state.buildError)}
+      onFixError={() => {
+        append({
+          role: 'user',
+          content: 'I noticed a build error in the terminal. Please analyze the error and fix the code.'
+        });
+        useWorkbenchStore.getState().setBuildError(false);
+      }}
     />
   );
 });

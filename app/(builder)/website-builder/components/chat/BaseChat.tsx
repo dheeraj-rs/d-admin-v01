@@ -26,6 +26,8 @@ interface BaseChatProps {
   selectedProvider?: ModelProvider;
   onProviderChange?: (provider: ModelProvider) => void;
   onHistoryClick?: () => void;
+  buildError?: boolean;
+  onFixError?: () => void;
 }
 
 const EXAMPLE_PROMPTS = [
@@ -58,6 +60,8 @@ export const BaseChat = React.forwardRef<HTMLDivElement, BaseChatProps>(
       selectedProvider = 'google',
       onProviderChange,
       onHistoryClick,
+      buildError,
+      onFixError,
     },
     ref,
   ) => {
@@ -193,6 +197,18 @@ export const BaseChat = React.forwardRef<HTMLDivElement, BaseChatProps>(
                         </>
                       )}
                     </IconButton>
+
+                    {/* Fix Error Button */}
+                    {buildError && (
+                      <IconButton
+                        title="Fix Build Error"
+                        className="text-red-500! hover:bg-red-500/10!"
+                        onClick={() => onFixError?.()}
+                      >
+                        <Icon icon="ph:wrench-duotone" className="text-xl" />
+                        <div className="ml-1.5">Fix Build Error</div>
+                      </IconButton>
+                    )}
                   </div>
                   {onHistoryClick && (
                     <IconButton
