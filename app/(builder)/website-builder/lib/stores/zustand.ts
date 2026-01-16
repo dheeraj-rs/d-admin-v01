@@ -335,3 +335,214 @@ if (typeof window !== 'undefined') {
         },
     });
 }
+// ============================================================================
+// FILES STORE  
+// ============================================================================
+
+export interface File {
+  type: 'file';
+  content: string;
+  isBinary: boolean;
+}
+
+export interface Folder {
+  type: 'folder';
+}
+
+type Dirent = File | Folder;
+export type FileMap = Record<string, Dirent | undefined>;
+
+interface FilesState {
+  files: FileMap;
+  filesCount: number;
+  modifiedFiles: Map<string, string>;
+  
+  setFiles: (files: FileMap) => void;
+  setFile: (path: string, dirent: Dirent | undefined) => void;
+  incrementFilesCount: () => void;
+  decrementFilesCount: () => void;
+  setModifiedFile: (path: string, content: string) => void;
+  clearModifiedFiles: () => void;
+  getFile: (path: string) => File | undefined;
+}
+
+export const useFilesStore = create<FilesState>()(
+  devtools(
+    (set, get) => ({
+      files: {},
+      filesCount: 0,
+      modifiedFiles: new Map(),
+      
+      setFiles: (files) => set({ files }),
+      
+      setFile: (path, dirent) => set((state) => ({
+        files: { ...state.files, [path]: dirent }
+      })),
+      
+      incrementFilesCount: () => set((state) => ({ filesCount: state.filesCount + 1 })),
+      decrementFilesCount: () => set((state) => ({ filesCount: state.filesCount - 1 })),
+      
+      setModifiedFile: (path, content) => {
+        const modifiedFiles = new Map(get().modifiedFiles);
+        modifiedFiles.set(path, content);
+        set({ modifiedFiles });
+      },
+      
+      clearModifiedFiles: () => set({ modifiedFiles: new Map() }),
+      
+      getFile: (path) => {
+        const dirent = get().files[path];
+        if (dirent?.type !== 'file') return undefined;
+        return dirent;
+      },
+    }),
+    { name: 'FilesStore' }
+  )
+);
+
+// ============================================================================
+// EDITOR STORE
+// ============================================================================
+
+export interface EditorDocument {
+  value: string;
+  filePath: string;
+  scroll?: ScrollPosition;
+}
+
+export interface ScrollPosition {
+  top: number;
+  left: number;
+}
+
+export type EditorDocuments = Record<string, EditorDocument>;
+
+interface EditorState {
+  selectedFile: string | undefined;
+  documents: EditorDocuments;
+  
+  setSelectedFile: (file: string | undefined) => void;
+  setDocuments: (docs: EditorDocuments) => void;
+  updateDocument: (path: string, doc: EditorDocument) => void;
+  updateScrollPosition: (path: string, position: ScrollPosition) => void;
+  updateFile: (path: string, content: string) => void;
+  getCurrentDocument: () => EditorDocument | undefined;
+}
+
+export const useEditorStore = create<EditorState>()(
+  devtools(
+    (set, get) => ({
+      selectedFile: undefined,
+      documents: {},
+      
+      setSelectedFile: (file) => set({ selectedFile: file }),
+      
+      setDocuments: (docs) => set({ documents: docs }),
+      
+      updateDocument: (path, doc) => set((state) => ({
+        documents: { ...state.documents, [path]: doc }
+      })),
+      
+      updateScrollPosition: (path, position) => {
+        const doc = get().documents[path];
+        if (!doc) return;
+        
+        set((state) => ({
+          documents: {
+            ...state.documents,
+            [path]: { ...doc, scroll: position }
+          }
+        }));
+      },
+      
+      updateFile: (path, content) => {
+        const doc = get().documents[path];
+        if (!doc) return;
+        
+        const contentChanged = doc.value !== content;
+        if (contentChanged) {
+          set((state) => ({
+            documents: {
+              ...state.documents,
+              [path]: { ...doc, value: content }
+            }
+          }));
+        }
+      },
+      
+      getCurrentDocument: () => {
+        const selectedFile = get().selectedFile;
+        if (!selectedFile) return undefined;
+        return get().documents[selectedFile];
+      },
+    }),
+    { name: 'EditorStore' }
+  )
+);
+
+// ============================================================================
+// WORKBENCH STORE
+// ============================================================================
+
+export type WorkbenchViewType = 'code' | 'preview';
+
+export interface ArtifactState {
+  title: string;
+  closed: boolean;
+  runner: any; // ActionRunner type
+}
+
+interface WorkbenchState {
+  showWorkbench: boolean;
+  userHidWorkbench: boolean;
+  currentView: WorkbenchViewType;
+  unsavedFiles: Set<string>;
+  artifacts: Record<string, ArtifactState>;
+  artifactIdList: string[];
+  
+  setShowWorkbench: (show: boolean) => void;
+  setUserHidWorkbench: (hid: boolean) => void;
+  setCurrentView: (view: WorkbenchViewType) => void;
+  setUnsavedFiles: (files: Set<string>) => void;
+  addUnsavedFile: (file: string) => void;
+  removeUnsavedFile: (file: string) => void;
+  setArtifact: (id: string, artifact: ArtifactState) => void;
+  setArtifactIdList: (list: string[]) => void;
+}
+
+export const useWorkbenchStore = create<WorkbenchState>()(
+  devtools(
+    (set, get) => ({
+      showWorkbench: true,
+      userHidWorkbench: false,
+      currentView: 'code',
+      unsavedFiles: new Set(),
+      artifacts: {},
+      artifactIdList: [],
+      
+      setShowWorkbench: (show) => set({ showWorkbench: show }),
+      setUserHidWorkbench: (hid) => set({ userHidWorkbench: hid }),
+      setCurrentView: (view) => set({ currentView: view }),
+      setUnsavedFiles: (files) => set({ unsavedFiles: files }),
+      
+      addUnsavedFile: (file) => {
+        const unsavedFiles = new Set(get().unsavedFiles);
+        unsavedFiles.add(file);
+        set({ unsavedFiles });
+      },
+      
+      removeUnsavedFile: (file) => {
+        const unsavedFiles = new Set(get().unsavedFiles);
+        unsavedFiles.delete(file);
+        set({ unsavedFiles });
+      },
+      
+      setArtifact: (id, artifact) => set((state) => ({
+        artifacts: { ...state.artifacts, [id]: artifact }
+      })),
+      
+      setArtifactIdList: (list) => set({ artifactIdList: list }),
+    }),
+    { name: 'WorkbenchStore' }
+  )
+);
