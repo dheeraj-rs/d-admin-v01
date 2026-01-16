@@ -6,14 +6,14 @@ import { Workbench } from '@/app/(builder)/website-builder/components/workbench/
 import { PanelContainer } from '@/app/(builder)/website-builder/components/panels/PanelContainer';
 import { chatStore } from '@/app/(builder)/website-builder/lib/stores/chat';
 import { workbenchStore } from '@/app/(builder)/website-builder/lib/stores/workbench';
-import IsolatedContainer from '@/core/layouts/default-bar/IsolatedContainer';
+import LayoutIsolated from '@/core/layouts/LayoutIsolated';
 
 export default function WebsiteBuilderChatPage() {
     const { showChat } = useStore(chatStore);
     const showWorkbench = useStore(workbenchStore.showWorkbench);
 
     return (
-        <IsolatedContainer>
+        <LayoutIsolated>
             <div className="flex flex-row h-screen w-full overflow-hidden">
                 <PanelContainer
                     leftPanel={<Chat />}
@@ -22,6 +22,6 @@ export default function WebsiteBuilderChatPage() {
                     showRightPanel={showWorkbench}
                 />
             </div>
-        </IsolatedContainer>
+        </LayoutIsolated>
     );
 }
