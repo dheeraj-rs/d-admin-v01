@@ -1,6 +1,5 @@
 import { Icon } from '@iconify/react';
 import { useChatStore, useWorkbenchStore } from '@/app/(builder)/website-builder/lib/stores/zustand';
-import { workbenchStore } from '@/app/(builder)/website-builder/lib/stores/workbench';
 import { classNames } from '@/app/(builder)/website-builder/utils/classNames';
 
 interface HeaderActionButtonsProps { }

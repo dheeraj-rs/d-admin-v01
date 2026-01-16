@@ -3,7 +3,6 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { memo, useEffect, useRef, useState } from 'react';
 import { createHighlighter, type BundledLanguage, type BundledTheme, type HighlighterGeneric } from 'shiki';
 import type { ActionState } from '@/app/(builder)/website-builder/lib/runtime/action-runner';
-import { workbenchStore } from '@/app/(builder)/website-builder/lib/stores/workbench';
 import { useWorkbenchStore } from '@/app/(builder)/website-builder/lib/stores/zustand';
 import { classNames } from '@/app/(builder)/website-builder/utils/classNames';
 import { cubicEasingFn } from '@/app/(builder)/website-builder/utils/easings';
