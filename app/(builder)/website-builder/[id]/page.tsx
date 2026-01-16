@@ -4,7 +4,6 @@ import { Chat } from '@/app/(builder)/website-builder/components/chat/Chat';
 import { Workbench } from '@/app/(builder)/website-builder/components/workbench/Workbench.client';
 import { PanelContainer } from '@/app/(builder)/website-builder/components/panels/PanelContainer';
 import { useChatStore, useWorkbenchStore } from '@/app/(builder)/website-builder/lib/stores/zustand';
-import { workbenchStore } from '@/app/(builder)/website-builder/lib/stores/workbench';
 import LayoutIsolated from '@/core/layouts/LayoutIsolated';
 
 export default function WebsiteBuilderChatPage() {
