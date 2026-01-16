@@ -1,6 +1,5 @@
 import type { PathWatcherEvent, WebContainer } from '@webcontainer/api';
 import { getEncoding } from 'istextorbinary';
-import { map, type MapStore } from 'nanostores';
 import { Buffer } from 'buffer';
 import * as nodePath from 'path-browserify';
 import { bufferWatchEvents } from '@/app/(builder)/website-builder/utils/buffer';
@@ -8,24 +7,14 @@ import { WORK_DIR } from '@/app/(builder)/website-builder/utils/constants';
 import { computeFileModifications } from '@/app/(builder)/website-builder/utils/diff';
 import { createScopedLogger } from '@/app/(builder)/website-builder/utils/logger';
 import { unreachable } from '@/app/(builder)/website-builder/utils/unreachable';
+import { useFilesStore, type FileMap, type File, type Dirent, type Folder } from './zustand';
+
+// Re-export types for compatibility
+export type { File, Folder, Dirent, FileMap } from './zustand';
 
 const logger = createScopedLogger('FilesStore');
 
 const utf8TextDecoder = new TextDecoder('utf8', { fatal: true });
-
-export interface File {
-  type: 'file';
-  content: string;
-  isBinary: boolean;
-}
-
-export interface Folder {
-  type: 'folder';
-}
-
-type Dirent = File | Folder;
-
-export type FileMap = Record<string, Dirent | undefined>;
 
 export class FilesStore {
   #webcontainer: Promise<WebContainer>;
@@ -41,13 +30,13 @@ export class FilesStore {
    * for the model to be aware of the changes.
    */
   #modifiedFiles: Map<string, string> = new Map();
-  /**
-   * Map of files that matches the state of WebContainer.
-   */
-  files: MapStore<FileMap> = map({});
+
+  get files() {
+    return useFilesStore.getState().files;
+  }
 
   get filesCount() {
-    return this.#size;
+    return useFilesStore.getState().filesCount;
   }
 
   constructor(webcontainerPromise: Promise<WebContainer>) {
@@ -57,21 +46,16 @@ export class FilesStore {
   }
 
   getFile(filePath: string) {
-    const dirent = this.files.get()[filePath];
-
-    if (dirent?.type !== 'file') {
-      return undefined;
-    }
-
-    return dirent;
+    return useFilesStore.getState().getFile(filePath);
   }
 
   getFileModifications() {
-    return computeFileModifications(this.files.get(), this.#modifiedFiles);
+    return computeFileModifications(useFilesStore.getState().files, this.#modifiedFiles);
   }
 
   resetFileModifications() {
     this.#modifiedFiles.clear();
+    useFilesStore.getState().clearModifiedFiles();
   }
 
   async saveFile(filePath: string, content: string) {
@@ -97,7 +81,7 @@ export class FilesStore {
       }
 
       // we immediately update the file and don't rely on the `change` event coming from the watcher
-      this.files.setKey(filePath, { type: 'file', content, isBinary: false });
+      useFilesStore.getState().setFile(filePath, { type: 'file', content, isBinary: false });
 
       logger.info('File updated');
     } catch (error) {
@@ -146,15 +130,16 @@ export class FilesStore {
       switch (type) {
         case 'add_dir': {
           // we intentionally add a trailing slash so we can distinguish files from folders in the file tree
-          this.files.setKey(sanitizedPath, { type: 'folder' });
+          useFilesStore.getState().setFile(sanitizedPath, { type: 'folder' });
           break;
         }
         case 'remove_dir': {
-          this.files.setKey(sanitizedPath, undefined);
+          useFilesStore.getState().setFile(sanitizedPath, undefined);
 
-          for (const [direntPath] of Object.entries(this.files)) {
+          const files = useFilesStore.getState().files;
+          for (const [direntPath] of Object.entries(files)) {
             if (direntPath.startsWith(sanitizedPath)) {
-              this.files.setKey(direntPath, undefined);
+              useFilesStore.getState().setFile(direntPath, undefined);
             }
           }
 
@@ -164,6 +149,7 @@ export class FilesStore {
         case 'change': {
           if (type === 'add_file') {
             this.#size++;
+            useFilesStore.getState().incrementFilesCount();
           }
 
           let content = '';
@@ -180,13 +166,14 @@ export class FilesStore {
             content = this.#decodeFileContent(buffer);
           }
 
-          this.files.setKey(sanitizedPath, { type: 'file', content, isBinary });
+          useFilesStore.getState().setFile(sanitizedPath, { type: 'file', content, isBinary });
 
           break;
         }
         case 'remove_file': {
           this.#size--;
-          this.files.setKey(sanitizedPath, undefined);
+          useFilesStore.getState().decrementFilesCount();
+          useFilesStore.getState().setFile(sanitizedPath, undefined);
           break;
         }
         case 'update_directory': {

@@ -1,4 +1,4 @@
-import { useStore } from '@nanostores/react';
+
 import { Icon } from '@iconify/react';
 import { memo, useEffect, useMemo, useRef, useState } from 'react';
 import { Panel, PanelGroup, PanelResizeHandle, type ImperativePanelHandle } from 'react-resizable-panels';
@@ -15,8 +15,8 @@ import { PanelHeader } from '@/app/(builder)/website-builder/components/ui/Panel
 import { PanelHeaderButton } from '@/app/(builder)/website-builder/components/ui/PanelHeaderButton';
 import { shortcutEventEmitter } from '@/app/(builder)/website-builder/lib/hooks';
 import type { FileMap } from '@/app/(builder)/website-builder/lib/stores/files';
-import { themeStore } from '@/app/(builder)/website-builder/lib/stores/theme';
 import { workbenchStore } from '@/app/(builder)/website-builder/lib/stores/workbench';
+import { useTerminalStore, useThemeStore } from '@/app/(builder)/website-builder/lib/stores/zustand';
 import { classNames } from '@/app/(builder)/website-builder/utils/classNames';
 import { WORK_DIR } from '@/app/(builder)/website-builder/utils/constants';
 import { renderLogger } from '@/app/(builder)/website-builder/utils/logger';
@@ -59,8 +59,8 @@ export const EditorPanel = memo(
   }: EditorPanelProps) => {
     renderLogger.trace('EditorPanel');
 
-    const theme = useStore(themeStore);
-    const showTerminal = useStore(workbenchStore.showTerminal);
+    const theme = useThemeStore(state => state.theme);
+    const showTerminal = useTerminalStore(state => state.showTerminal);
 
     const terminalRefs = useRef<Array<TerminalRef | null>>([]);
     const terminalPanelRef = useRef<ImperativePanelHandle>(null);
@@ -86,9 +86,11 @@ export const EditorPanel = memo(
         terminalToggledByShortcut.current = true;
       });
 
-      const unsubscribeFromThemeStore = themeStore.subscribe(() => {
-        for (const ref of Object.values(terminalRefs.current)) {
-          ref?.reloadStyles();
+      const unsubscribeFromThemeStore = useThemeStore.subscribe((state, prevState) => {
+        if (state.theme !== prevState.theme) {
+          for (const ref of Object.values(terminalRefs.current)) {
+            ref?.reloadStyles();
+          }
         }
       });
 

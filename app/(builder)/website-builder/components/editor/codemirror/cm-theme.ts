@@ -1,7 +1,7 @@
 import { Compartment, type Extension } from '@codemirror/state';
 import { EditorView } from '@codemirror/view';
 import { vscodeDark, vscodeLight } from '@uiw/codemirror-theme-vscode';
-import type { Theme } from '@/app/(builder)/website-builder/lib/stores/theme';
+import type { Theme } from '@/app/(builder)/website-builder/lib/stores/zustand';
 import type { EditorSettings } from './CodeMirrorEditor.js';
 
 export const darkTheme = EditorView.theme({}, { dark: true });
@@ -49,16 +49,16 @@ function getEditorTheme(settings: EditorSettings) {
       padding: '0 0 0 4px',
     },
     '&.cm-focused > .cm-scroller > .cm-selectionLayer .cm-selectionBackground':
-      {
-        backgroundColor:
-          'var(--cm-selection-backgroundColorFocused) !important',
-        opacity: 'var(--cm-selection-backgroundOpacityFocused, 0.3)',
-      },
+    {
+      backgroundColor:
+        'var(--cm-selection-backgroundColorFocused) !important',
+      opacity: 'var(--cm-selection-backgroundOpacityFocused, 0.3)',
+    },
     '&:not(.cm-focused) > .cm-scroller > .cm-selectionLayer .cm-selectionBackground':
-      {
-        backgroundColor: 'var(--cm-selection-backgroundColorBlured)',
-        opacity: 'var(--cm-selection-backgroundOpacityBlured, 0.3)',
-      },
+    {
+      backgroundColor: 'var(--cm-selection-backgroundColorBlured)',
+      opacity: 'var(--cm-selection-backgroundOpacityBlured, 0.3)',
+    },
     '&.cm-focused > .cm-scroller .cm-matchingBracket': {
       backgroundColor: 'var(--cm-matching-bracket)',
     },

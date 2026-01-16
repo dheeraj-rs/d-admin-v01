@@ -1,16 +1,15 @@
 'use client';
 
-import { useStore } from '@nanostores/react';
 import { Icon } from '@iconify/react';
 import { useChatStore } from '@/app/(builder)/website-builder/lib/stores/zustand';
-import { description } from '@/app/(builder)/website-builder/lib/persistence/useChatHistory';
+
 import { classNames } from '@/app/(builder)/website-builder/utils/classNames';
 import { HeaderActionButtons } from './HeaderActionButtons.client';
 
 export function Header() {
   const showChat = useChatStore(state => state.showChat);
   const started = useChatStore(state => state.started);
-  const chatDescription = useStore(description);
+  const chatDescription = useChatStore(state => state.description);
 
   return (
     <header

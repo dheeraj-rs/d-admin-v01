@@ -1,10 +1,4 @@
-import {
-  atom,
-  map,
-  type MapStore,
-  type ReadableAtom,
-  type WritableAtom,
-} from 'nanostores';
+
 import type {
   EditorDocument,
   ScrollPosition,
@@ -21,6 +15,7 @@ import { EditorStore } from './editor';
 import { FilesStore, type FileMap } from './files';
 import { PreviewsStore } from './previews';
 import { TerminalStore } from './terminal';
+import { useWorkbenchStore } from './zustand';
 
 export interface ArtifactState {
   id: string;
@@ -31,7 +26,7 @@ export interface ArtifactState {
 
 export type ArtifactUpdateState = Pick<ArtifactState, 'title' | 'closed'>;
 
-type Artifacts = MapStore<Record<string, ArtifactState>>;
+
 
 export type WorkbenchViewType = 'code' | 'preview';
 
@@ -41,16 +36,31 @@ export class WorkbenchStore {
   #editorStore = new EditorStore(this.#filesStore);
   #terminalStore = new TerminalStore(webcontainer);
 
-  artifacts: Artifacts = map({});
+  get showWorkbench() {
+    return useWorkbenchStore.getState().showWorkbench;
+  }
 
-  showWorkbench: WritableAtom<boolean> = atom(true);
-  userHidWorkbench: WritableAtom<boolean> = atom(false); // Tracks if user manually hid the workbench
-  currentView: WritableAtom<WorkbenchViewType> = atom('code');
-  unsavedFiles: WritableAtom<Set<string>> = atom(new Set<string>());
-  modifiedFiles = new Set<string>();
-  artifactIdList: string[] = [];
+  get userHidWorkbench() {
+    return useWorkbenchStore.getState().userHidWorkbench;
+  }
 
-  constructor() {}
+  get currentView() {
+    return useWorkbenchStore.getState().currentView;
+  }
+
+  get unsavedFiles() {
+    return useWorkbenchStore.getState().unsavedFiles;
+  }
+
+  get artifacts() {
+    return useWorkbenchStore.getState().artifacts;
+  }
+
+  get artifactIdList() {
+    return useWorkbenchStore.getState().artifactIdList;
+  }
+
+  constructor() { }
 
   get previewsStore() {
     return this.#previewsStore;
@@ -76,11 +86,11 @@ export class WorkbenchStore {
     return this.#filesStore.files;
   }
 
-  get currentDocument(): ReadableAtom<EditorDocument | undefined> {
+  get currentDocument(): EditorDocument | undefined {
     return this.#editorStore.currentDocument;
   }
 
-  get selectedFile(): ReadableAtom<string | undefined> {
+  get selectedFile(): string | undefined {
     return this.#editorStore.selectedFile;
   }
 
@@ -113,7 +123,7 @@ export class WorkbenchStore {
 
     if (
       this.#filesStore.filesCount > 0 &&
-      this.currentDocument.get() === undefined
+      this.currentDocument === undefined
     ) {
       // we find the first file and select it
       for (const [filePath, dirent] of Object.entries(files)) {
@@ -126,11 +136,11 @@ export class WorkbenchStore {
   }
 
   setShowWorkbench(show: boolean) {
-    this.showWorkbench.set(show);
+    useWorkbenchStore.getState().setShowWorkbench(show);
   }
 
   setCurrentDocumentContent(newContent: string) {
-    const filePath = this.currentDocument.get()?.filePath;
+    const filePath = this.currentDocument?.filePath;
 
     if (!filePath) {
       return;
@@ -142,10 +152,10 @@ export class WorkbenchStore {
 
     this.#editorStore.updateFile(filePath, newContent);
 
-    const currentDocument = this.currentDocument.get();
+    const currentDocument = this.currentDocument;
 
     if (currentDocument) {
-      const previousUnsavedFiles = this.unsavedFiles.get();
+      const previousUnsavedFiles = this.unsavedFiles;
 
       if (
         unsavedChanges &&
@@ -162,12 +172,12 @@ export class WorkbenchStore {
         newUnsavedFiles.delete(currentDocument.filePath);
       }
 
-      this.unsavedFiles.set(newUnsavedFiles);
+      useWorkbenchStore.getState().setUnsavedFiles(newUnsavedFiles);
     }
   }
 
   setCurrentDocumentScrollPosition(position: ScrollPosition) {
-    const editorDocument = this.currentDocument.get();
+    const editorDocument = this.currentDocument;
 
     if (!editorDocument) {
       return;
@@ -183,7 +193,7 @@ export class WorkbenchStore {
   }
 
   async saveFile(filePath: string) {
-    const documents = this.#editorStore.documents.get();
+    const documents = this.#editorStore.documents;
     const document = documents[filePath];
 
     if (document === undefined) {
@@ -192,14 +202,14 @@ export class WorkbenchStore {
 
     await this.#filesStore.saveFile(filePath, document.value);
 
-    const newUnsavedFiles = new Set(this.unsavedFiles.get());
+    const newUnsavedFiles = new Set(this.unsavedFiles);
     newUnsavedFiles.delete(filePath);
 
-    this.unsavedFiles.set(newUnsavedFiles);
+    useWorkbenchStore.getState().setUnsavedFiles(newUnsavedFiles);
   }
 
   async saveCurrentDocument() {
-    const currentDocument = this.currentDocument.get();
+    const currentDocument = this.currentDocument;
 
     if (currentDocument === undefined) {
       return;
@@ -209,7 +219,7 @@ export class WorkbenchStore {
   }
 
   resetCurrentDocument() {
-    const currentDocument = this.currentDocument.get();
+    const currentDocument = this.currentDocument;
 
     if (currentDocument === undefined) {
       return;
@@ -226,7 +236,7 @@ export class WorkbenchStore {
   }
 
   async saveAllFiles() {
-    for (const filePath of this.unsavedFiles.get()) {
+    for (const filePath of this.unsavedFiles) {
       await this.saveFile(filePath);
     }
   }
@@ -251,14 +261,14 @@ export class WorkbenchStore {
     }
 
     if (!this.artifactIdList.includes(messageId)) {
-      this.artifactIdList.push(messageId);
+      useWorkbenchStore.getState().setArtifactIdList([...this.artifactIdList, messageId]);
     }
 
-    this.artifacts.setKey(messageId, {
+    useWorkbenchStore.getState().setArtifact(messageId, {
       id,
       title,
       closed: false,
-      runner: new ActionRunner(webcontainer),
+      runner: new ActionRunner(webcontainer, messageId),
     });
   }
 
@@ -272,7 +282,7 @@ export class WorkbenchStore {
       return;
     }
 
-    this.artifacts.setKey(messageId, { ...artifact, ...state });
+    useWorkbenchStore.getState().setArtifact(messageId, { ...artifact, ...state });
   }
 
   async addAction(data: ActionCallbackData) {
@@ -300,7 +310,7 @@ export class WorkbenchStore {
   }
 
   #getArtifact(id: string) {
-    const artifacts = this.artifacts.get();
+    const artifacts = this.artifacts;
     return artifacts[id];
   }
 }

@@ -1,10 +1,13 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useStore } from '@nanostores/react';
-import { workbenchStore } from '@/app/(builder)/website-builder/lib/stores/workbench';
+
+import { toast } from 'react-toastify';
+import { useFilesStore } from '@/app/(builder)/website-builder/lib/stores/zustand';
 import { extractFilesForDeployment, validateDeploymentFiles } from '@/app/(builder)/website-builder/lib/utils/extractFiles';
 import { Rocket, Loader2, CheckCircle2, XCircle, ExternalLink, GitBranch, Terminal, ChevronDown, Plus, Trash2 } from 'lucide-react';
+import { classNames } from '@/app/(builder)/website-builder/utils/classNames';
+import { IconButton } from '@/app/(builder)/website-builder/components/ui/IconButton';
 
 const DEPLOYMENT_STEPS = [
     { id: 1, label: 'Initiating deployment...', duration: 1000 },
@@ -15,7 +18,7 @@ const DEPLOYMENT_STEPS = [
 ];
 
 export default function PublishView() {
-    const files = useStore(workbenchStore.files);
+    const files = useFilesStore(state => state.files);
 
     const [projectName, setProjectName] = useState('');
     const [isDeploying, setIsDeploying] = useState(false);

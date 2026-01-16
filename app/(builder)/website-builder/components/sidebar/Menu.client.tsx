@@ -5,7 +5,8 @@ import { useCallback, useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import { Dialog, DialogButton, DialogDescription, DialogRoot, DialogTitle } from '@/app/(builder)/website-builder/components/ui/Dialog';
 import { ThemeSwitch } from '@/app/(builder)/website-builder/components/ui/ThemeSwitch';
-import { getDb, deleteById, getAll, chatId, type ChatHistoryItem } from '@/app/(builder)/website-builder/lib/persistence';
+import { useChatStore } from '@/app/(builder)/website-builder/lib/stores/zustand';
+import { getDb, deleteById, getAll, type ChatHistoryItem } from '@/app/(builder)/website-builder/lib/persistence';
 import { logger } from '@/app/(builder)/website-builder/utils/logger';
 import { HistoryItem } from './HistoryItem';
 import { binDates } from './date-binning';
@@ -40,7 +41,7 @@ export function Menu({ onSelect }: MenuProps) {
           .then(() => {
             loadEntries();
 
-            if (chatId.get() === item.id) {
+            if (useChatStore.getState().chatId === item.id) {
               // hard page navigation to clear the stores
               window.location.pathname = '/website-builder';
             }

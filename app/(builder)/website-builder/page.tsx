@@ -3,8 +3,7 @@
 import { Chat } from '@/app/(builder)/website-builder/components/chat/Chat';
 import { Workbench } from '@/app/(builder)/website-builder/components/workbench/Workbench.client';
 import { PanelContainer } from '@/app/(builder)/website-builder/components/panels/PanelContainer';
-import { useStore } from '@nanostores/react';
-import { useChatStore } from '@/app/(builder)/website-builder/lib/stores/zustand';
+import { useChatStore, useWorkbenchStore } from '@/app/(builder)/website-builder/lib/stores/zustand';
 import { workbenchStore } from '@/app/(builder)/website-builder/lib/stores/workbench';
 
 import { HistoryPanel } from '@/app/(builder)/website-builder/components/panels/HistoryPanel';
@@ -12,7 +11,7 @@ import LayoutIsolated from '@/core/layouts/LayoutIsolated';
 
 export default function WebsiteBuilderPage() {
     const showChat = useChatStore(state => state.showChat);
-    const showWorkbench = useStore(workbenchStore.showWorkbench);
+    const showWorkbench = useWorkbenchStore(state => state.showWorkbench);
 
     return (
         <>

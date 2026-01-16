@@ -17,7 +17,7 @@ import {
   type Tooltip,
 } from '@codemirror/view';
 import { memo, useEffect, useRef, useState, type MutableRefObject } from 'react';
-import type { Theme } from '@/app/(builder)/website-builder/lib/stores/theme';
+import type { Theme } from '@/app/(builder)/website-builder/lib/stores/zustand';
 import { classNames } from '@/app/(builder)/website-builder/utils/classNames';
 import { debounce } from '@/app/(builder)/website-builder/utils/debounce';
 import { createScopedLogger, renderLogger } from '@/app/(builder)/website-builder/utils/logger';

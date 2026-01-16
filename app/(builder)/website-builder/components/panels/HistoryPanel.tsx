@@ -1,4 +1,3 @@
-import { useStore } from '@nanostores/react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useChatStore } from '@/app/(builder)/website-builder/lib/stores/zustand';
 import { Menu } from '@/app/(builder)/website-builder/components/sidebar/Menu.client';

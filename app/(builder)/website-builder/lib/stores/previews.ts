@@ -1,5 +1,4 @@
 import type { WebContainer } from '@webcontainer/api';
-import { atom } from 'nanostores';
 import { usePreviewStore } from './zustand';
 
 export interface PreviewInfo {
@@ -12,12 +11,14 @@ export class PreviewsStore {
   #availablePreviews = new Map<number, PreviewInfo>();
   #webcontainer: Promise<WebContainer>;
 
-  previews = atom<PreviewInfo[]>([]);
-
   constructor(webcontainerPromise: Promise<WebContainer>) {
     this.#webcontainer = webcontainerPromise;
 
     this.#init();
+  }
+
+  get previews() {
+    return usePreviewStore.getState().previews;
   }
 
   async #init() {
@@ -35,27 +36,28 @@ export class PreviewsStore {
       if (type === 'close' && previewInfo) {
         console.log('[PreviewsStore] Closing preview on port:', port);
         this.#availablePreviews.delete(port);
-        this.previews.set(
-          this.previews.get().filter((preview) => preview.port !== port)
+        const currentPreviews = usePreviewStore.getState().previews;
+        usePreviewStore.getState().setPreviews(
+          currentPreviews.filter((preview) => preview.port !== port)
         );
 
         return;
       }
 
-      const previews = this.previews.get();
+      const currentPreviews = [...usePreviewStore.getState().previews];
 
       if (!previewInfo) {
         console.log('[PreviewsStore] Creating new preview for port:', port);
         previewInfo = { port, ready: type === 'open', baseUrl: url };
         this.#availablePreviews.set(port, previewInfo);
-        previews.push(previewInfo);
+        currentPreviews.push(previewInfo);
       }
 
       previewInfo.ready = type === 'open';
       previewInfo.baseUrl = url;
 
-      console.log('[PreviewsStore] Updated previews:', previews);
-      this.previews.set([...previews]);
+      console.log('[PreviewsStore] Updated previews:', currentPreviews);
+      usePreviewStore.getState().setPreviews(currentPreviews);
 
       // Set the iframe URL in Zustand store when preview is ready
       if (type === 'open' && url) {

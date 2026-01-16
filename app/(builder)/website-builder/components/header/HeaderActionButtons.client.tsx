@@ -1,13 +1,12 @@
-import { useStore } from '@nanostores/react';
 import { Icon } from '@iconify/react';
-import { useChatStore } from '@/app/(builder)/website-builder/lib/stores/zustand';
+import { useChatStore, useWorkbenchStore } from '@/app/(builder)/website-builder/lib/stores/zustand';
 import { workbenchStore } from '@/app/(builder)/website-builder/lib/stores/workbench';
 import { classNames } from '@/app/(builder)/website-builder/utils/classNames';
 
 interface HeaderActionButtonsProps { }
 
 export function HeaderActionButtons({ }: HeaderActionButtonsProps) {
-  const showWorkbench = useStore(workbenchStore.showWorkbench);
+  const showWorkbench = useWorkbenchStore(state => state.showWorkbench);
   const showChat = useChatStore(state => state.showChat);
   const setShowChat = useChatStore(state => state.setShowChat);
 
@@ -28,7 +27,7 @@ export function HeaderActionButtons({ }: HeaderActionButtonsProps) {
 
               // On mobile, hide workbench when showing chat
               if (isMobile && newShowChat && showWorkbench) {
-                workbenchStore.showWorkbench.set(false);
+                useWorkbenchStore.getState().setShowWorkbench(false);
               }
             }
           }}
@@ -52,8 +51,8 @@ export function HeaderActionButtons({ }: HeaderActionButtonsProps) {
               setShowChat(false);
             }
 
-            workbenchStore.userHidWorkbench.set(!newShowState);
-            workbenchStore.showWorkbench.set(newShowState);
+            useWorkbenchStore.getState().setUserHidWorkbench(!newShowState);
+            useWorkbenchStore.getState().setShowWorkbench(newShowState);
           }}
         >
           <Icon icon="ph:code-bold" />

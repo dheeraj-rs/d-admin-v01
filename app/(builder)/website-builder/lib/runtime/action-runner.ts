@@ -1,9 +1,9 @@
 import { WebContainer } from '@webcontainer/api';
-import { map, type MapStore } from 'nanostores';
 import * as nodePath from 'path-browserify';
 import type { BuilderAction } from '@/app/(builder)/website-builder/types/actions';
 import { createScopedLogger } from '@/app/(builder)/website-builder/utils/logger';
 import { unreachable } from '@/app/(builder)/website-builder/utils/unreachable';
+import { useWorkbenchStore } from '@/app/(builder)/website-builder/lib/stores/zustand';
 import type { ActionCallbackData } from './message-parser';
 
 const logger = createScopedLogger('ActionRunner');
@@ -38,22 +38,21 @@ export type ActionStateUpdate =
   | BaseActionUpdate
   | (Omit<BaseActionUpdate, 'status'> & { status: 'failed'; error: string });
 
-type ActionsMap = MapStore<Record<string, ActionState>>;
-
 export class ActionRunner {
   #webcontainer: Promise<WebContainer>;
   #currentExecutionPromise: Promise<void> = Promise.resolve();
+  #artifactId: string;
 
-  actions: ActionsMap = map({});
-
-  constructor(webcontainerPromise: Promise<WebContainer>) {
+  constructor(webcontainerPromise: Promise<WebContainer>, artifactId: string) {
     this.#webcontainer = webcontainerPromise;
+    this.#artifactId = artifactId;
   }
 
   addAction(data: ActionCallbackData) {
     const { actionId } = data;
 
-    const actions = this.actions.get();
+    const artifact = useWorkbenchStore.getState().artifacts[this.#artifactId];
+    const actions = artifact?.actions || {};
     const action = actions[actionId];
 
     if (action) {
@@ -63,7 +62,7 @@ export class ActionRunner {
 
     const abortController = new AbortController();
 
-    this.actions.setKey(actionId, {
+    const newAction: ActionState = {
       ...data.action,
       status: 'pending',
       executed: false,
@@ -72,7 +71,9 @@ export class ActionRunner {
         this.#updateAction(actionId, { status: 'aborted' });
       },
       abortSignal: abortController.signal,
-    });
+    };
+
+    this.#updateArtifactActions({ ...actions, [actionId]: newAction });
 
     this.#currentExecutionPromise.then(() => {
       this.#updateAction(actionId, { status: 'running' });
@@ -81,7 +82,8 @@ export class ActionRunner {
 
   async runAction(data: ActionCallbackData) {
     const { actionId } = data;
-    const action = this.actions.get()[actionId];
+    const actions = useWorkbenchStore.getState().artifacts[this.#artifactId]?.actions || {};
+    const action = actions[actionId];
 
     if (!action) {
       unreachable(`Action ${actionId} not found`);
@@ -103,7 +105,8 @@ export class ActionRunner {
   }
 
   async #executeAction(actionId: string) {
-    const action = this.actions.get()[actionId];
+    const actions = useWorkbenchStore.getState().artifacts[this.#artifactId]?.actions || {};
+    const action = actions[actionId];
 
     console.log(
       `[ActionRunner] Executing action ${actionId}, type: ${action.type}`
@@ -364,8 +367,15 @@ export class ActionRunner {
   }
 
   #updateAction(id: string, newState: ActionStateUpdate) {
-    const actions = this.actions.get();
+    const artifact = useWorkbenchStore.getState().artifacts[this.#artifactId];
+    const actions = artifact?.actions || {};
+    this.#updateArtifactActions({ ...actions, [id]: { ...actions[id]!, ...newState } as ActionState });
+  }
 
-    this.actions.setKey(id, { ...actions[id], ...newState });
+  #updateArtifactActions(actions: Record<string, ActionState>) {
+    const artifact = useWorkbenchStore.getState().artifacts[this.#artifactId];
+    if (artifact) {
+      useWorkbenchStore.getState().setArtifact(this.#artifactId, { ...artifact, actions });
+    }
   }
 }

@@ -2,8 +2,10 @@ import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
 import type { WebContainer, WebContainerProcess } from '@webcontainer/api';
 import type { ITerminal } from '@/app/(builder)/website-builder/types/terminal';
+import type { PreviewInfo } from '@/app/(builder)/website-builder/lib/stores/previews';
 import { newShellProcess } from '@/app/(builder)/website-builder/utils/shell';
 import { coloredText } from '@/app/(builder)/website-builder/utils/terminal';
+import { webcontainer } from '@/app/(builder)/website-builder/lib/webcontainer';
 
 // ============================================================================
 // TYPES
@@ -22,6 +24,8 @@ interface ChatState {
     showChat: boolean;
     showHistory: boolean;
     selectedProvider: ModelProvider;
+    chatId: string | undefined;
+    description: string | undefined;
 
     // Actions
     setStarted: (started: boolean) => void;
@@ -29,6 +33,8 @@ interface ChatState {
     setShowChat: (show: boolean) => void;
     setShowHistory: (show: boolean) => void;
     setSelectedProvider: (provider: ModelProvider) => void;
+    setChatId: (id: string | undefined) => void;
+    setDescription: (desc: string | undefined) => void;
 }
 
 export const useChatStore = create<ChatState>()(
@@ -40,6 +46,8 @@ export const useChatStore = create<ChatState>()(
             showChat: true,
             showHistory: false,
             selectedProvider: 'google',
+            chatId: undefined,
+            description: undefined,
 
             // Actions - simple setters
             setStarted: (started) => set({ started }),
@@ -47,6 +55,8 @@ export const useChatStore = create<ChatState>()(
             setShowChat: (show) => set({ showChat: show }),
             setShowHistory: (show) => set({ showHistory: show }),
             setSelectedProvider: (provider) => set({ selectedProvider: provider }),
+            setChatId: (id) => set({ chatId: id }),
+            setDescription: (desc) => set({ description: desc }),
         }),
         { name: 'ChatStore' }
     )
@@ -197,11 +207,13 @@ interface PreviewState {
     activePreviewIndex: number;
     url: string;
     iframeUrl: string | undefined;
+    previews: PreviewInfo[];
     refreshTrigger: number;
 
     setActivePreviewIndex: (index: number) => void;
     setUrl: (url: string) => void;
     setIframeUrl: (url: string | undefined) => void;
+    setPreviews: (previews: PreviewInfo[]) => void;
     refreshPreview: () => void;
 }
 
@@ -211,11 +223,13 @@ export const usePreviewStore = create<PreviewState>()(
             activePreviewIndex: 0,
             url: '',
             iframeUrl: undefined,
+            previews: [],
             refreshTrigger: 0,
 
             setActivePreviewIndex: (index) => set({ activePreviewIndex: index }),
             setUrl: (url) => set({ url }),
             setIframeUrl: (url) => set({ iframeUrl: url }),
+            setPreviews: (previews) => set({ previews }),
             refreshPreview: () => set((state) => ({ refreshTrigger: state.refreshTrigger + 1 })),
         }),
         { name: 'PreviewStore' }
@@ -285,7 +299,7 @@ export const useTerminalStore = create<TerminalState>()(
     devtools(
         (set, get) => ({
             showTerminal: false,
-            webcontainer: null,
+            webcontainer,
             terminals: [],
 
             setWebContainer: (webcontainer) => set({ webcontainer }),
@@ -340,64 +354,64 @@ if (typeof window !== 'undefined') {
 // ============================================================================
 
 export interface File {
-  type: 'file';
-  content: string;
-  isBinary: boolean;
+    type: 'file';
+    content: string;
+    isBinary: boolean;
 }
 
 export interface Folder {
-  type: 'folder';
+    type: 'folder';
 }
 
-type Dirent = File | Folder;
+export type Dirent = File | Folder;
 export type FileMap = Record<string, Dirent | undefined>;
 
 interface FilesState {
-  files: FileMap;
-  filesCount: number;
-  modifiedFiles: Map<string, string>;
-  
-  setFiles: (files: FileMap) => void;
-  setFile: (path: string, dirent: Dirent | undefined) => void;
-  incrementFilesCount: () => void;
-  decrementFilesCount: () => void;
-  setModifiedFile: (path: string, content: string) => void;
-  clearModifiedFiles: () => void;
-  getFile: (path: string) => File | undefined;
+    files: FileMap;
+    filesCount: number;
+    modifiedFiles: Map<string, string>;
+
+    setFiles: (files: FileMap) => void;
+    setFile: (path: string, dirent: Dirent | undefined) => void;
+    incrementFilesCount: () => void;
+    decrementFilesCount: () => void;
+    setModifiedFile: (path: string, content: string) => void;
+    clearModifiedFiles: () => void;
+    getFile: (path: string) => File | undefined;
 }
 
 export const useFilesStore = create<FilesState>()(
-  devtools(
-    (set, get) => ({
-      files: {},
-      filesCount: 0,
-      modifiedFiles: new Map(),
-      
-      setFiles: (files) => set({ files }),
-      
-      setFile: (path, dirent) => set((state) => ({
-        files: { ...state.files, [path]: dirent }
-      })),
-      
-      incrementFilesCount: () => set((state) => ({ filesCount: state.filesCount + 1 })),
-      decrementFilesCount: () => set((state) => ({ filesCount: state.filesCount - 1 })),
-      
-      setModifiedFile: (path, content) => {
-        const modifiedFiles = new Map(get().modifiedFiles);
-        modifiedFiles.set(path, content);
-        set({ modifiedFiles });
-      },
-      
-      clearModifiedFiles: () => set({ modifiedFiles: new Map() }),
-      
-      getFile: (path) => {
-        const dirent = get().files[path];
-        if (dirent?.type !== 'file') return undefined;
-        return dirent;
-      },
-    }),
-    { name: 'FilesStore' }
-  )
+    devtools(
+        (set, get) => ({
+            files: {},
+            filesCount: 0,
+            modifiedFiles: new Map(),
+
+            setFiles: (files) => set({ files }),
+
+            setFile: (path, dirent) => set((state) => ({
+                files: { ...state.files, [path]: dirent }
+            })),
+
+            incrementFilesCount: () => set((state) => ({ filesCount: state.filesCount + 1 })),
+            decrementFilesCount: () => set((state) => ({ filesCount: state.filesCount - 1 })),
+
+            setModifiedFile: (path, content) => {
+                const modifiedFiles = new Map(get().modifiedFiles);
+                modifiedFiles.set(path, content);
+                set({ modifiedFiles });
+            },
+
+            clearModifiedFiles: () => set({ modifiedFiles: new Map() }),
+
+            getFile: (path) => {
+                const dirent = get().files[path];
+                if (dirent?.type !== 'file') return undefined;
+                return dirent;
+            },
+        }),
+        { name: 'FilesStore' }
+    )
 );
 
 // ============================================================================
@@ -405,79 +419,79 @@ export const useFilesStore = create<FilesState>()(
 // ============================================================================
 
 export interface EditorDocument {
-  value: string;
-  filePath: string;
-  scroll?: ScrollPosition;
+    value: string;
+    filePath: string;
+    scroll?: ScrollPosition;
+    isBinary: boolean;
 }
-
 export interface ScrollPosition {
-  top: number;
-  left: number;
+    top: number;
+    left: number;
 }
 
 export type EditorDocuments = Record<string, EditorDocument>;
 
 interface EditorState {
-  selectedFile: string | undefined;
-  documents: EditorDocuments;
-  
-  setSelectedFile: (file: string | undefined) => void;
-  setDocuments: (docs: EditorDocuments) => void;
-  updateDocument: (path: string, doc: EditorDocument) => void;
-  updateScrollPosition: (path: string, position: ScrollPosition) => void;
-  updateFile: (path: string, content: string) => void;
-  getCurrentDocument: () => EditorDocument | undefined;
+    selectedFile: string | undefined;
+    documents: EditorDocuments;
+
+    setSelectedFile: (file: string | undefined) => void;
+    setDocuments: (docs: EditorDocuments) => void;
+    updateDocument: (path: string, doc: EditorDocument) => void;
+    updateScrollPosition: (path: string, position: ScrollPosition) => void;
+    updateFile: (path: string, content: string) => void;
+    getCurrentDocument: () => EditorDocument | undefined;
 }
 
 export const useEditorStore = create<EditorState>()(
-  devtools(
-    (set, get) => ({
-      selectedFile: undefined,
-      documents: {},
-      
-      setSelectedFile: (file) => set({ selectedFile: file }),
-      
-      setDocuments: (docs) => set({ documents: docs }),
-      
-      updateDocument: (path, doc) => set((state) => ({
-        documents: { ...state.documents, [path]: doc }
-      })),
-      
-      updateScrollPosition: (path, position) => {
-        const doc = get().documents[path];
-        if (!doc) return;
-        
-        set((state) => ({
-          documents: {
-            ...state.documents,
-            [path]: { ...doc, scroll: position }
-          }
-        }));
-      },
-      
-      updateFile: (path, content) => {
-        const doc = get().documents[path];
-        if (!doc) return;
-        
-        const contentChanged = doc.value !== content;
-        if (contentChanged) {
-          set((state) => ({
-            documents: {
-              ...state.documents,
-              [path]: { ...doc, value: content }
-            }
-          }));
-        }
-      },
-      
-      getCurrentDocument: () => {
-        const selectedFile = get().selectedFile;
-        if (!selectedFile) return undefined;
-        return get().documents[selectedFile];
-      },
-    }),
-    { name: 'EditorStore' }
-  )
+    devtools(
+        (set, get) => ({
+            selectedFile: undefined,
+            documents: {},
+
+            setSelectedFile: (file) => set({ selectedFile: file }),
+
+            setDocuments: (docs) => set({ documents: docs }),
+
+            updateDocument: (path, doc) => set((state) => ({
+                documents: { ...state.documents, [path]: doc }
+            })),
+
+            updateScrollPosition: (path, position) => {
+                const doc = get().documents[path];
+                if (!doc) return;
+
+                set((state) => ({
+                    documents: {
+                        ...state.documents,
+                        [path]: { ...doc, scroll: position }
+                    }
+                }));
+            },
+
+            updateFile: (path, content) => {
+                const doc = get().documents[path];
+                if (!doc) return;
+
+                const contentChanged = doc.value !== content;
+                if (contentChanged) {
+                    set((state) => ({
+                        documents: {
+                            ...state.documents,
+                            [path]: { ...doc, value: content }
+                        }
+                    }));
+                }
+            },
+
+            getCurrentDocument: () => {
+                const selectedFile = get().selectedFile;
+                if (!selectedFile) return undefined;
+                return get().documents[selectedFile];
+            },
+        }),
+        { name: 'EditorStore' }
+    )
 );
 
 // ============================================================================
@@ -487,62 +501,64 @@ export const useEditorStore = create<EditorState>()(
 export type WorkbenchViewType = 'code' | 'preview';
 
 export interface ArtifactState {
-  title: string;
-  closed: boolean;
-  runner: any; // ActionRunner type
+    id: string;
+    title: string;
+    closed: boolean;
+    runner: any; // ActionRunner type
+    actions?: Record<string, any>; // ActionState
 }
 
 interface WorkbenchState {
-  showWorkbench: boolean;
-  userHidWorkbench: boolean;
-  currentView: WorkbenchViewType;
-  unsavedFiles: Set<string>;
-  artifacts: Record<string, ArtifactState>;
-  artifactIdList: string[];
-  
-  setShowWorkbench: (show: boolean) => void;
-  setUserHidWorkbench: (hid: boolean) => void;
-  setCurrentView: (view: WorkbenchViewType) => void;
-  setUnsavedFiles: (files: Set<string>) => void;
-  addUnsavedFile: (file: string) => void;
-  removeUnsavedFile: (file: string) => void;
-  setArtifact: (id: string, artifact: ArtifactState) => void;
-  setArtifactIdList: (list: string[]) => void;
+    showWorkbench: boolean;
+    userHidWorkbench: boolean;
+    currentView: WorkbenchViewType;
+    unsavedFiles: Set<string>;
+    artifacts: Record<string, ArtifactState>;
+    artifactIdList: string[];
+
+    setShowWorkbench: (show: boolean) => void;
+    setUserHidWorkbench: (hid: boolean) => void;
+    setCurrentView: (view: WorkbenchViewType) => void;
+    setUnsavedFiles: (files: Set<string>) => void;
+    addUnsavedFile: (file: string) => void;
+    removeUnsavedFile: (file: string) => void;
+    setArtifact: (id: string, artifact: ArtifactState) => void;
+    setArtifactIdList: (list: string[]) => void;
 }
 
 export const useWorkbenchStore = create<WorkbenchState>()(
-  devtools(
-    (set, get) => ({
-      showWorkbench: true,
-      userHidWorkbench: false,
-      currentView: 'code',
-      unsavedFiles: new Set(),
-      artifacts: {},
-      artifactIdList: [],
-      
-      setShowWorkbench: (show) => set({ showWorkbench: show }),
-      setUserHidWorkbench: (hid) => set({ userHidWorkbench: hid }),
-      setCurrentView: (view) => set({ currentView: view }),
-      setUnsavedFiles: (files) => set({ unsavedFiles: files }),
-      
-      addUnsavedFile: (file) => {
-        const unsavedFiles = new Set(get().unsavedFiles);
-        unsavedFiles.add(file);
-        set({ unsavedFiles });
-      },
-      
-      removeUnsavedFile: (file) => {
-        const unsavedFiles = new Set(get().unsavedFiles);
-        unsavedFiles.delete(file);
-        set({ unsavedFiles });
-      },
-      
-      setArtifact: (id, artifact) => set((state) => ({
-        artifacts: { ...state.artifacts, [id]: artifact }
-      })),
-      
-      setArtifactIdList: (list) => set({ artifactIdList: list }),
-    }),
-    { name: 'WorkbenchStore' }
-  )
+    devtools(
+        (set, get) => ({
+            showWorkbench: true,
+            userHidWorkbench: false,
+            currentView: 'code',
+            unsavedFiles: new Set(),
+            artifacts: {},
+            artifactIdList: [],
+
+            setShowWorkbench: (show) => set({ showWorkbench: show }),
+            setUserHidWorkbench: (hid) => set({ userHidWorkbench: hid }),
+            setCurrentView: (view) => set({ currentView: view }),
+            setUnsavedFiles: (files) => set({ unsavedFiles: files }),
+
+            addUnsavedFile: (file) => {
+                const unsavedFiles = new Set(get().unsavedFiles);
+                unsavedFiles.add(file);
+                set({ unsavedFiles });
+            },
+
+            removeUnsavedFile: (file) => {
+                const unsavedFiles = new Set(get().unsavedFiles);
+                unsavedFiles.delete(file);
+                set({ unsavedFiles });
+            },
+
+            setArtifact: (id, artifact) => set((state) => ({
+                artifacts: { ...state.artifacts, [id]: artifact }
+            })),
+
+            setArtifactIdList: (list) => set({ artifactIdList: list }),
+        }),
+        { name: 'WorkbenchStore' }
+    )
 );

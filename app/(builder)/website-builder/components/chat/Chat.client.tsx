@@ -1,4 +1,3 @@
-import { useStore } from '@nanostores/react';
 import { Icon } from '@iconify/react';
 import type { Message } from 'ai';
 import { useChat } from 'ai/react';

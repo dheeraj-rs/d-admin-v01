@@ -1,49 +1,37 @@
-import {
-  atom,
-  computed,
-  map,
-  type MapStore,
-  type WritableAtom,
-} from 'nanostores';
 import type {
   EditorDocument,
   ScrollPosition,
 } from '@/app/(builder)/website-builder/components/editor/codemirror/CodeMirrorEditor';
-import type { FileMap, FilesStore } from './files';
-
-export type EditorDocuments = Record<string, EditorDocument>;
-
-type SelectedFile = WritableAtom<string | undefined>;
+import { useEditorStore, type EditorDocuments } from './zustand';
+import type { FilesStore, FileMap } from './files';
 
 export class EditorStore {
   #filesStore: FilesStore;
 
-  selectedFile: SelectedFile = atom<string | undefined>();
-  documents: MapStore<EditorDocuments> = map({});
+  get selectedFile() {
+    return useEditorStore.getState().selectedFile;
+  }
 
-  currentDocument = computed(
-    [this.documents, this.selectedFile],
-    (documents, selectedFile) => {
-      if (!selectedFile) {
-        return undefined;
-      }
+  get documents() {
+    return useEditorStore.getState().documents;
+  }
 
-      return documents[selectedFile];
-    }
-  );
+  get currentDocument() {
+    return useEditorStore.getState().getCurrentDocument();
+  }
 
   constructor(filesStore: FilesStore) {
     this.#filesStore = filesStore;
   }
 
   setDocuments(files: FileMap) {
-    const previousDocuments = this.documents.value;
+    const previousDocuments = useEditorStore.getState().documents;
 
-    this.documents.set(
-      Object.fromEntries<EditorDocument>(
+    useEditorStore.getState().setDocuments(
+      Object.fromEntries(
         Object.entries(files)
           .map(([filePath, dirent]) => {
-            if (dirent === undefined || dirent.type === 'folder') {
+            if (dirent?.type !== 'file') {
               return undefined;
             }
 
@@ -55,6 +43,7 @@ export class EditorStore {
                 value: dirent.content,
                 filePath,
                 scroll: previousDocument?.scroll,
+                isBinary: dirent.isBinary,
               },
             ] as [string, EditorDocument];
           })
@@ -64,39 +53,14 @@ export class EditorStore {
   }
 
   setSelectedFile(filePath: string | undefined) {
-    this.selectedFile.set(filePath);
+    useEditorStore.getState().setSelectedFile(filePath);
   }
 
   updateScrollPosition(filePath: string, position: ScrollPosition) {
-    const documents = this.documents.get();
-    const documentState = documents[filePath];
-
-    if (!documentState) {
-      return;
-    }
-
-    this.documents.setKey(filePath, {
-      ...documentState,
-      scroll: position,
-    });
+    useEditorStore.getState().updateScrollPosition(filePath, position);
   }
 
   updateFile(filePath: string, newContent: string) {
-    const documents = this.documents.get();
-    const documentState = documents[filePath];
-
-    if (!documentState) {
-      return;
-    }
-
-    const currentContent = documentState.value;
-    const contentChanged = currentContent !== newContent;
-
-    if (contentChanged) {
-      this.documents.setKey(filePath, {
-        ...documentState,
-        value: newContent,
-      });
-    }
+    useEditorStore.getState().updateFile(filePath, newContent);
   }
 }

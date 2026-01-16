@@ -1,11 +1,10 @@
-import { useStore } from '@nanostores/react';
 import { Icon } from '@iconify/react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { computed } from 'nanostores';
 import { memo, useEffect, useRef, useState } from 'react';
 import { createHighlighter, type BundledLanguage, type BundledTheme, type HighlighterGeneric } from 'shiki';
 import type { ActionState } from '@/app/(builder)/website-builder/lib/runtime/action-runner';
 import { workbenchStore } from '@/app/(builder)/website-builder/lib/stores/workbench';
+import { useWorkbenchStore } from '@/app/(builder)/website-builder/lib/stores/zustand';
 import { classNames } from '@/app/(builder)/website-builder/utils/classNames';
 import { cubicEasingFn } from '@/app/(builder)/website-builder/utils/easings';
 
@@ -31,14 +30,10 @@ export const Artifact = memo(({ messageId }: ArtifactProps) => {
     const userToggledActions = useRef(false);
     const [showActions, setShowActions] = useState(false);
 
-    const artifacts = useStore(workbenchStore.artifacts);
+    const artifacts = useWorkbenchStore(state => state.artifacts);
     const artifact = artifacts[messageId];
 
-    const actions = useStore(
-        computed(artifact.runner.actions, (actions) => {
-            return Object.values(actions);
-        }),
-    );
+    const actions = Object.values(artifact?.actions || {});
 
     const toggleActions = () => {
         userToggledActions.current = true;
@@ -60,10 +55,10 @@ export const Artifact = memo(({ messageId }: ArtifactProps) => {
                     onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--d-admin-surface-c)'}
                     onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'var(--surface-b)'}
                     onClick={() => {
-                        const showWorkbench = workbenchStore.showWorkbench.get();
+                        const showWorkbench = useWorkbenchStore.getState().showWorkbench;
                         const newShowState = !showWorkbench;
-                        workbenchStore.userHidWorkbench.set(!newShowState); // true if hiding, false if showing
-                        workbenchStore.showWorkbench.set(newShowState);
+                        useWorkbenchStore.getState().setUserHidWorkbench(!newShowState);
+                        useWorkbenchStore.getState().setShowWorkbench(newShowState);
                     }}
                 >
                     <div className="px-5 p-3.5 w-full text-left">

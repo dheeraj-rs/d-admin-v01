@@ -194,7 +194,7 @@ export const BaseChat = React.forwardRef<HTMLDivElement, BaseChatProps>(
                       )}
                     </IconButton>
                   </div>
-                  {chatStarted && onHistoryClick && (
+                  {onHistoryClick && (
                     <IconButton
                       title="View chat history"
                       onClick={onHistoryClick}

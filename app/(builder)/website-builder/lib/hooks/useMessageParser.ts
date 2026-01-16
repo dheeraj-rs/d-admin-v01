@@ -2,6 +2,7 @@ import type { Message } from 'ai';
 import { useCallback, useState } from 'react';
 import { StreamingMessageParser } from '@/app/(builder)/website-builder/lib/runtime/message-parser';
 import { workbenchStore } from '@/app/(builder)/website-builder/lib/stores/workbench';
+import { useWorkbenchStore } from '@/app/(builder)/website-builder/lib/stores/zustand';
 import { createScopedLogger } from '@/app/(builder)/website-builder/utils/logger';
 
 const logger = createScopedLogger('useMessageParser');
@@ -11,7 +12,7 @@ const messageParser = new StreamingMessageParser({
     onArtifactOpen: (data) => {
       logger.trace('onArtifactOpen', data);
 
-      workbenchStore.showWorkbench.set(true);
+      useWorkbenchStore.getState().setShowWorkbench(true);
       workbenchStore.addArtifact(data);
     },
     onArtifactClose: (data) => {
@@ -24,9 +25,9 @@ const messageParser = new StreamingMessageParser({
 
       // Show workbench when file actions are created, but only if user hasn't manually hidden it
       if (data.action.type === 'file') {
-        const userHid = workbenchStore.userHidWorkbench.get();
+        const userHid = useWorkbenchStore.getState().userHidWorkbench;
         if (!userHid) {
-          workbenchStore.showWorkbench.set(true);
+          useWorkbenchStore.getState().setShowWorkbench(true);
         }
       }
 

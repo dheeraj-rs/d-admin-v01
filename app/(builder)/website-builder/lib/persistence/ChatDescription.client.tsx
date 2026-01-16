@@ -1,6 +1,5 @@
-import { useStore } from '@nanostores/react';
-import { description } from './useChatHistory';
+import { useChatStore } from '@/app/(builder)/website-builder/lib/stores/zustand';
 
 export function ChatDescription() {
-  return useStore(description);
+  return useChatStore(state => state.description);
 }

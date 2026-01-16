@@ -2,10 +2,10 @@
 
 import { useRouter, useParams } from 'next/navigation';
 import { useState, useEffect } from 'react';
-import { atom } from 'nanostores';
 import type { Message } from 'ai';
 import { toast } from 'react-toastify';
 import { workbenchStore } from '@/app/(builder)/website-builder/lib/stores/workbench';
+import { useChatStore } from '@/app/(builder)/website-builder/lib/stores/zustand';
 import {
   getMessages,
   getNextId,
@@ -37,9 +37,6 @@ export const getDb = async () => {
   return dbPromise;
 };
 
-export const chatId = atom<string | undefined>(undefined);
-export const description = atom<string | undefined>(undefined);
-
 export function useChatHistory() {
   const router = useRouter();
   const params = useParams();
@@ -68,8 +65,8 @@ export function useChatHistory() {
             if (storedMessages && storedMessages.messages.length > 0) {
               setInitialMessages(storedMessages.messages);
               setUrlId(storedMessages.urlId);
-              description.set(storedMessages.description);
-              chatId.set(storedMessages.id);
+              useChatStore.getState().setDescription(storedMessages.description);
+              useChatStore.getState().setChatId(storedMessages.id);
             } else {
               router.replace('/');
             }
@@ -102,14 +99,14 @@ export function useChatHistory() {
         setUrlId(urlId);
       }
 
-      if (!description.get() && firstArtifact?.title) {
-        description.set(firstArtifact?.title);
+      if (!useChatStore.getState().description && firstArtifact?.title) {
+        useChatStore.getState().setDescription(firstArtifact?.title);
       }
 
-      if (initialMessages.length === 0 && !chatId.get()) {
+      if (initialMessages.length === 0 && !useChatStore.getState().chatId) {
         const nextId = await getNextId(dbInstance);
 
-        chatId.set(nextId);
+        useChatStore.getState().setChatId(nextId);
 
         if (!urlId) {
           navigateChat(nextId);
@@ -118,10 +115,10 @@ export function useChatHistory() {
 
       await setMessages(
         dbInstance,
-        chatId.get() as string,
+        useChatStore.getState().chatId as string,
         messages,
         urlId,
-        description.get()
+        useChatStore.getState().description
       );
     },
   };

@@ -4,7 +4,7 @@ import { FitAddon } from '@xterm/addon-fit';
 import { WebLinksAddon } from '@xterm/addon-web-links';
 import { Terminal as XTerm } from '@xterm/xterm';
 import { forwardRef, memo, useEffect, useImperativeHandle, useRef } from 'react';
-import type { Theme } from '@/app/(builder)/website-builder/lib/stores/theme';
+import type { Theme } from '@/app/(builder)/website-builder/lib/stores/zustand';
 import { createScopedLogger } from '@/app/(builder)/website-builder/utils/logger';
 import { getTerminalTheme } from './theme';
 

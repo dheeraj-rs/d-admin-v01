@@ -1,5 +1,4 @@
-import { useStore } from '@nanostores/react';
-import { computed } from 'nanostores';
+
 import { memo, useCallback, useEffect } from 'react';
 import { toast } from 'react-toastify';
 import {
@@ -10,6 +9,7 @@ import { IconButton } from '@/app/(builder)/website-builder/components/ui/IconBu
 import { PanelHeaderButton } from '@/app/(builder)/website-builder/components/ui/PanelHeaderButton';
 import { Slider, type SliderOptions } from '@/app/(builder)/website-builder/components/ui/Slider';
 import { workbenchStore, type WorkbenchViewType } from '@/app/(builder)/website-builder/lib/stores/workbench';
+import { useFilesStore, useEditorStore, useWorkbenchStore, usePreviewStore, useTerminalStore } from '@/app/(builder)/website-builder/lib/stores/zustand';
 import { renderLogger } from '@/app/(builder)/website-builder/utils/logger';
 import { EditorPanel } from './EditorPanel';
 import { Preview } from './Preview';
@@ -34,21 +34,17 @@ const sliderOptions: SliderOptions<WorkbenchViewType> = {
 export const Workbench = memo(({ isStreaming }: WorkspaceProps) => {
   renderLogger.trace('Workbench');
 
-  const selectedView = useStore(workbenchStore.currentView);
-  const currentDocument = useStore(workbenchStore.currentDocument);
-  const unsavedFiles = useStore(workbenchStore.unsavedFiles);
-  const files = useStore(workbenchStore.files);
-  const selectedFile = useStore(workbenchStore.selectedFile);
+  const selectedView = useWorkbenchStore(state => state.currentView);
+  const currentDocument = useEditorStore(state => state.getCurrentDocument());
+  const unsavedFiles = useWorkbenchStore(state => state.unsavedFiles);
+  const files = useFilesStore(state => state.files);
+  const selectedFile = useEditorStore(state => state.selectedFile);
 
   const setSelectedView = (view: WorkbenchViewType) => {
-    workbenchStore.currentView.set(view);
+    useWorkbenchStore.getState().setCurrentView(view);
   };
 
-  const hasPreview = useStore(
-    computed(workbenchStore.previews, (previews) => {
-      return previews.length > 0;
-    }),
-  );
+  const hasPreview = usePreviewStore(state => state.previews.length > 0);
 
   useEffect(() => {
     if (hasPreview) {
@@ -91,7 +87,7 @@ export const Workbench = memo(({ isStreaming }: WorkspaceProps) => {
           <PanelHeaderButton
             className="mr-1 text-sm"
             onClick={() => {
-              workbenchStore.toggleTerminal(!workbenchStore.showTerminal.get());
+              workbenchStore.toggleTerminal(!workbenchStore.showTerminal);
             }}
           >
             <div className="i-ph:terminal" />
@@ -103,7 +99,7 @@ export const Workbench = memo(({ isStreaming }: WorkspaceProps) => {
           className="-mr-1"
           size="xl"
           onClick={() => {
-            workbenchStore.showWorkbench.set(false);
+            useWorkbenchStore.getState().setShowWorkbench(false);
           }}
         />
       </div>
