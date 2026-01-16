@@ -1,6 +1,6 @@
 import { useStore } from '@nanostores/react';
 import { memo, useEffect, useState } from 'react';
-import { themeStore } from '@/app/(builder)/website-builder/lib/stores/theme';
+import { useThemeStore } from '@/app/(builder)/website-builder/lib/stores/zustand';
 import { IconButton } from './IconButton';
 
 interface ThemeSwitchProps {
@@ -8,7 +8,7 @@ interface ThemeSwitchProps {
 }
 
 export const ThemeSwitch = memo(({ className }: ThemeSwitchProps) => {
-  const theme = useStore(themeStore);
+  const theme = useThemeStore(state => state.theme);
   const [domLoaded, setDomLoaded] = useState(false);
 
   useEffect(() => {
