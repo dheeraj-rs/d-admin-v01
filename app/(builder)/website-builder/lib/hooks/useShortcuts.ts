@@ -1,6 +1,5 @@
-import { useStore } from '@nanostores/react';
 import { useEffect } from 'react';
-import { shortcutsStore, type Shortcuts } from '@/app/(builder)/website-builder/lib/stores/settings';
+import { useSettingsStore, type Shortcuts } from '@/app/(builder)/website-builder/lib/stores/zustand';
 
 class ShortcutEventEmitter {
   #emitter = new EventTarget();
@@ -21,7 +20,7 @@ class ShortcutEventEmitter {
 export const shortcutEventEmitter = new ShortcutEventEmitter();
 
 export function useShortcuts(): void {
-  const shortcuts = useStore(shortcutsStore);
+  const shortcuts = useSettingsStore(state => state.shortcuts);
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent): void => {
@@ -35,7 +34,7 @@ export function useShortcuts(): void {
           (shortcut.ctrlOrMetaKey
             ? ctrlKey || metaKey
             : (shortcut.ctrlKey === undefined || shortcut.ctrlKey === ctrlKey) &&
-              (shortcut.metaKey === undefined || shortcut.metaKey === metaKey)) &&
+            (shortcut.metaKey === undefined || shortcut.metaKey === metaKey)) &&
           (shortcut.shiftKey === undefined || shortcut.shiftKey === shiftKey) &&
           (shortcut.altKey === undefined || shortcut.altKey === altKey)
         ) {

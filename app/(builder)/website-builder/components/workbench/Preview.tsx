@@ -1,11 +1,10 @@
-import { useStore } from '@nanostores/react';
 import { memo, useRef } from 'react';
-import { iframeUrlStore, previewRefreshTrigger } from '@/app/(builder)/website-builder/lib/stores/preview';
+import { usePreviewStore } from '@/app/(builder)/website-builder/lib/stores/zustand';
 
 export const Preview = memo(() => {
   const iframeRef = useRef<HTMLIFrameElement>(null);
-  const iframeUrl = useStore(iframeUrlStore);
-  const refreshTrigger = useStore(previewRefreshTrigger);
+  const iframeUrl = usePreviewStore(state => state.iframeUrl);
+  const refreshTrigger = usePreviewStore(state => state.refreshTrigger);
 
   return (
     <div className="w-full h-full flex flex-col bg-surface-0">

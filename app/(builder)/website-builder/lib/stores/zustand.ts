@@ -184,3 +184,79 @@ if (typeof window !== 'undefined') {
         attributeFilter: ['class', 'style'],
     });
 }
+
+// ============================================================================
+// PREVIEW STORE
+// ============================================================================
+
+interface PreviewState {
+    activePreviewIndex: number;
+    url: string;
+    iframeUrl: string | undefined;
+    refreshTrigger: number;
+
+    setActivePreviewIndex: (index: number) => void;
+    setUrl: (url: string) => void;
+    setIframeUrl: (url: string | undefined) => void;
+    refreshPreview: () => void;
+}
+
+export const usePreviewStore = create<PreviewState>()(
+    devtools(
+        (set) => ({
+            activePreviewIndex: 0,
+            url: '',
+            iframeUrl: undefined,
+            refreshTrigger: 0,
+
+            setActivePreviewIndex: (index) => set({ activePreviewIndex: index }),
+            setUrl: (url) => set({ url }),
+            setIframeUrl: (url) => set({ iframeUrl: url }),
+            refreshPreview: () => set((state) => ({ refreshTrigger: state.refreshTrigger + 1 })),
+        }),
+        { name: 'PreviewStore' }
+    )
+);
+
+// ============================================================================
+// SETTINGS STORE
+// ============================================================================
+
+export interface Shortcut {
+    key: string;
+    ctrlKey?: boolean;
+    shiftKey?: boolean;
+    altKey?: boolean;
+    metaKey?: boolean;
+    ctrlOrMetaKey?: boolean;
+    action: () => void;
+}
+
+export interface Shortcuts {
+    toggleTerminal: Shortcut;
+}
+
+interface SettingsState {
+    shortcuts: Shortcuts;
+    setShortcuts: (shortcuts: Shortcuts) => void;
+}
+
+// We'll initialize this with a placeholder and update it after workbench store is created
+export const useSettingsStore = create<SettingsState>()(
+    devtools(
+        (set) => ({
+            shortcuts: {
+                toggleTerminal: {
+                    key: 'j',
+                    ctrlOrMetaKey: true,
+                    action: () => {
+                        // This will be updated after workbench store is created
+                        console.log('Toggle terminal');
+                    },
+                },
+            },
+            setShortcuts: (shortcuts) => set({ shortcuts }),
+        }),
+        { name: 'SettingsStore' }
+    )
+);

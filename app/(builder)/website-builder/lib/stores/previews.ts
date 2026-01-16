@@ -1,6 +1,6 @@
 import type { WebContainer } from '@webcontainer/api';
 import { atom } from 'nanostores';
-import { iframeUrlStore } from './preview';
+import { usePreviewStore } from './zustand';
 
 export interface PreviewInfo {
   port: number;
@@ -57,10 +57,10 @@ export class PreviewsStore {
       console.log('[PreviewsStore] Updated previews:', previews);
       this.previews.set([...previews]);
 
-      // Set the iframe URL when preview is ready
+      // Set the iframe URL in Zustand store when preview is ready
       if (type === 'open' && url) {
         console.log('[PreviewsStore] Setting iframe URL:', url);
-        iframeUrlStore.set(url);
+        usePreviewStore.getState().setIframeUrl(url);
       }
     });
   }
