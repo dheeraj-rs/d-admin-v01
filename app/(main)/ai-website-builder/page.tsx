@@ -1,7 +1,6 @@
 'use client';
 
 import React from 'react';
-import './root.css';
 import './ai-builder.scss';
 
 import { Header } from './components/Header';
