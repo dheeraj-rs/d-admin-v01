@@ -35,7 +35,7 @@
     ".next/types/**/*.ts",
     ".next/dev/types/**/*.ts",
     "**/*.mts",
-    "app/(main)/ai-website-builder/page.backup"
+    "app/(main)/ai-website-builder/page2.tsx"
   ],
   "exclude": [
     "node_modules"
