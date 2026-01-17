@@ -1,78 +1,30 @@
 'use client';
 
-import { useState } from 'react';
-import { Panel, PanelGroup, PanelResizeHandle } from 'react-resizable-panels';
-import { Icon } from '@iconify/react';
-import { useIsMobile } from '@/core/hooks/use-mobile';
+import React from 'react';
+import './index.css';
+import './LightRays.css';
+import './chat.css';
+import './root.css';
 
-function AiWebsiteBuilderPage() {
-    const isMobile = useIsMobile();
-    const [activeTab, setActiveTab] = useState<'left' | 'right'>('left');
+import { Header } from './components/Header';
+import { ChatInterface } from './components/ChatInterface';
+import { Workbench } from './components/Workbench';
+import { LightRaysBackground } from './components/LightRaysBackground';
 
-    const LeftPanelContent = (
-        <div className={`h-full w-full flex flex-col items-center justify-center bg-green-500 p-4 text-text-secondary`}>
-            <div className="text-center">
-                <h2 className="text-lg font-medium text-text-primary mb-2">Left Panel</h2>
-                <p className="text-sm">Structure / Configuration</p>
-            </div>
-        </div>
-    );
-
-    const RightPanelContent = (
-        <div className="h-full w-full flex flex-col items-center justify-center bg-red-500 p-4 text-text-secondary">
-            <div className=" h-full w-full flex-1 bg-green-500"><div className="text-center">
-                <h2 className="text-lg font-medium text-text-primary mb-2">Right Panel</h2>
-                <p className="text-sm">Preview / Editor</p>
-            </div></div>
-
-        </div>
-    );
-
-    if (isMobile) {
-        return (
-            <div className="flex flex-col h-full bg-surface-0">
-                <div className="flex-1 overflow-hidden relative">
-                    {activeTab === 'left' ? LeftPanelContent : RightPanelContent}
-                </div>
-                <div className="h-14 border-t border-surface flex items-center justify-around bg-surface-0 px-4">
-                    <button
-                        onClick={() => setActiveTab('left')}
-                        className={`flex flex-col items-center gap-1 text-xs font-medium transition-colors ${activeTab === 'left' ? 'text-primary' : 'text-text-secondary hover:text-text-primary'
-                            }`}
-                    >
-                        <Icon icon="ph:sidebar-simple-duotone" className="text-xl" />
-                        <span>Config</span>
-                    </button>
-                    <button
-                        onClick={() => setActiveTab('right')}
-                        className={`flex flex-col items-center gap-1 text-xs font-medium transition-colors ${activeTab === 'right' ? 'text-primary' : 'text-text-secondary hover:text-text-primary'
-                            }`}
-                    >
-                        <Icon icon="ph:browser-duotone" className="text-xl" />
-                        <span>Preview</span>
-                    </button>
-                </div>
-            </div>
-        );
-    }
-
+export default function AiWebsiteBuilderPage() {
     return (
-        <div className="h-full w-full">
-            <PanelGroup direction="horizontal">
-                <Panel defaultSize={25} minSize={15} maxSize={40} className="bg-surface-0">
-                    {LeftPanelContent}
-                </Panel>
+        <div className="w-full h-full bg-bolt-elements-background-depth-1 relative text-bolt-elements-textPrimary">
+            <LightRaysBackground />
+            <div className="flex flex-col h-full w-full relative z-10">
+                <Header />
+                <div className="_BaseChat_t1btp_1 relative flex h-full w-full overflow-hidden [--side-menu-width:0px] bg-bolt-elements-background-depth-1" data-chat-visible="true" style={{ '--chat-messages-gap': '1.5rem', '--workbench-top-offset': '1rem' } as React.CSSProperties}>
+                    <div className="flex size-full overscroll-contain">
+                        <ChatInterface />
+                        <Workbench />
+                    </div>
+                </div>
 
-                <PanelResizeHandle className="w-2 bg-transparent transition-colors relative group flex justify-center items-center outline-none">
-                    <div className="h-full w-0 border-r border-[var(--d-admin-surface-border)] group-hover:border-[var(--d-admin-primary-600)]" />
-                </PanelResizeHandle>
-
-                <Panel defaultSize={75} minSize={30} className="bg-surface-1">
-                    {RightPanelContent}
-                </Panel>
-            </PanelGroup>
+            </div>
         </div>
     );
 }
-
-export default AiWebsiteBuilderPage;
