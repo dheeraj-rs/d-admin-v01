@@ -1,10 +1,13 @@
 import React from 'react'
 import Layout from '@/core/layouts/Layout'
+import LayoutIsolated from '@/core/layouts/LayoutIsolated'
 
 function MainLayout({ children }: { children: React.ReactNode }) {
     return (
         <Layout>
-            {children}
+            <LayoutIsolated>
+                {children}
+            </LayoutIsolated>
         </Layout>
     )
 }

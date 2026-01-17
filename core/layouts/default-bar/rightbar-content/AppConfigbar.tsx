@@ -51,7 +51,7 @@ const AppConfigbar = () => {
             setIsFullscreen(true);
 
             document.body.style.overflow = 'hidden';
-            document.documentElement.style.background = 'var(--d-admin-bg-color)';
+            document.documentElement.style.background = '';
         } else {
             document.exitFullscreen();
             setIsFullscreen(false);
