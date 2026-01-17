@@ -10,7 +10,7 @@ function AiWebsiteBuilderPage() {
     const [activeTab, setActiveTab] = useState<'left' | 'right'>('left');
 
     const LeftPanelContent = (
-        <div className={`h-full w-full flex flex-col items-center justify-center bg-surface-0 ${!isMobile ? 'border-r border-surface' : ''} p-4 text-text-secondary`}>
+        <div className={`h-full w-full flex flex-col items-center justify-center bg-green-500 p-4 text-text-secondary`}>
             <div className="text-center">
                 <h2 className="text-lg font-medium text-text-primary mb-2">Left Panel</h2>
                 <p className="text-sm">Structure / Configuration</p>
@@ -19,11 +19,12 @@ function AiWebsiteBuilderPage() {
     );
 
     const RightPanelContent = (
-        <div className="h-full w-full flex flex-col items-center justify-center bg-surface-1 p-4 text-text-secondary">
-            <div className="text-center">
+        <div className="h-full w-full flex flex-col items-center justify-center bg-red-500 p-4 text-text-secondary">
+            <div className=" h-full w-full flex-1 bg-green-500"><div className="text-center">
                 <h2 className="text-lg font-medium text-text-primary mb-2">Right Panel</h2>
                 <p className="text-sm">Preview / Editor</p>
-            </div>
+            </div></div>
+
         </div>
     );
 
@@ -62,8 +63,8 @@ function AiWebsiteBuilderPage() {
                     {LeftPanelContent}
                 </Panel>
 
-                <PanelResizeHandle className="w-1 bg-surface transition-colors hover:bg-primary/50 relative group">
-                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-1 h-8 bg-surface-300 rounded-full group-hover:bg-primary" />
+                <PanelResizeHandle className="w-2 bg-transparent transition-colors relative group flex justify-center items-center outline-none">
+                    <div className="h-full w-0 border-r border-[var(--d-admin-surface-border)] group-hover:border-[var(--d-admin-primary-600)]" />
                 </PanelResizeHandle>
 
                 <Panel defaultSize={75} minSize={30} className="bg-surface-1">
