@@ -5,7 +5,7 @@ export function Workbench() {
     const [activeView, setActiveView] = useState<'code' | 'preview'>('preview');
 
     return (
-        <div className="z-workbench w-[var(--workbench-width)]">
+        <div className="z-workbench w-[var(--workbench-width)] bg-red-500">
             <div className="fixed top-0 bottom-4 select-none w-[var(--workbench-inner-width)] z-0 left-[var(--workbench-left)] flex flex-col overflow-hidden">
                 <div className="pointer-events-auto">
                     <div className="flex relative items-center gap-2 py-2 min-h-[var(--panel-header-height)] pl-0">
