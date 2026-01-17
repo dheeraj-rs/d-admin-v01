@@ -37,6 +37,10 @@ export const configTranslations: Record<Language, Record<string, string>> = {
     'config.dAdminThemes': 'D-Admin Themes',
     'config.dAdminLight': 'D-Admin',
     'config.dAdminDark': 'D-Admin',
+    'sidebar.collapse': 'Sidebar',
+    'layout.headerStyle': 'Header',
+    'layout.footerStyle': 'Footer',
+    'nav.webconfig': 'Config',
   },
   hi: {
     ...menuTranslations.hi,
@@ -73,5 +77,9 @@ export const configTranslations: Record<Language, Record<string, string>> = {
     'config.dAdminThemes': 'डी-एडमिन थीम्स',
     'config.dAdminLight': 'डी-एडमिन',
     'config.dAdminDark': 'डी-एडमिन',
+    'sidebar.collapse': 'साइडबार',
+    'layout.headerStyle': 'हेडर',
+    'layout.footerStyle': 'फुटर',
+    'nav.webconfig': 'कॉन्फिग',
   },
 };

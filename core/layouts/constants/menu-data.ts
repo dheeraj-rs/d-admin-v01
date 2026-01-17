@@ -39,6 +39,51 @@ export const MENU_ITEMS = [
                 label: 'Forms2',
                 icon: 'pi pi-fw pi-list-check',
                 to: '/uikit/form',
+              }, {
+                label: 'Buttons2',
+                icon: 'pi pi-fw pi-circle-on',
+                to: '/uikit/button',
+              },
+              {
+                label: 'Forms2',
+                icon: 'pi pi-fw pi-list-check',
+                to: '/uikit/form',
+              }, {
+                label: 'Buttons2',
+                icon: 'pi pi-fw pi-circle-on',
+                to: '/uikit/button',
+              },
+              {
+                label: 'Forms2',
+                icon: 'pi pi-fw pi-list-check',
+                to: '/uikit/form',
+              }, {
+                label: 'Buttons2',
+                icon: 'pi pi-fw pi-circle-on',
+                to: '/uikit/button',
+              },
+              {
+                label: 'Forms2',
+                icon: 'pi pi-fw pi-list-check',
+                to: '/uikit/form',
+              }, {
+                label: 'Buttons2',
+                icon: 'pi pi-fw pi-circle-on',
+                to: '/uikit/button',
+              },
+              {
+                label: 'Forms2',
+                icon: 'pi pi-fw pi-list-check',
+                to: '/uikit/form',
+              }, {
+                label: 'Buttons2',
+                icon: 'pi pi-fw pi-circle-on',
+                to: '/uikit/button',
+              },
+              {
+                label: 'Forms2',
+                icon: 'pi pi-fw pi-list-check',
+                to: '/uikit/form',
               },
             ],
           },

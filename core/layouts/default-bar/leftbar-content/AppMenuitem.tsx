@@ -57,7 +57,7 @@ const AppMenuitemInner = (props: AppMenuItemProps) => {
     const subMenu = item!.items && item!.visible !== false && (
         <ul className={classMixin('layout-submenu', { 'submenu-open': isOpen, 'submenu-closed': !isOpen })}>
             {item!.items.map((child: AppMenuItem, i: number) => {
-                return <AppMenuitem item={child} index={i} className={child.badgeClass} parentKey={key} key={child.label} />;
+                return <AppMenuitem item={child} index={i} className={child.badgeClass} parentKey={key} key={`${child.label}-${i}`} />;
             })}
         </ul>
     );

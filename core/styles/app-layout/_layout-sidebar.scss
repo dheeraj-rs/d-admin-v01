@@ -69,10 +69,12 @@
           box-shadow $duration-transition-base;
         text-wrap: nowrap;
         height: 3rem;
+        color: var(--d-admin-text-color); // Main text color
 
         .layout-menuitem-icon {
           margin-right: 0.5rem;
           max-width: max-content;
+          color: currentColor; // Inherit
         }
 
         .layout-submenu-toggler {
@@ -99,6 +101,7 @@
 
         &:hover {
           background-color: var(--d-admin-surface-hover);
+          color: var(--d-admin-text-color); // Optional: darker on hover
         }
 
         &:focus {

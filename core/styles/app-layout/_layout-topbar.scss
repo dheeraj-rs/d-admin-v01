@@ -36,6 +36,7 @@
             gap: 0.1rem;
             position: relative;
             letter-spacing: 0.08rem;
+            color: var(--d-admin-text-color);
 
             span {
               display: inline-block;
@@ -57,7 +58,7 @@
                     height: 10px;
                     background: linear-gradient(to bottom,
                         transparent,
-                        var(--d-admin-primary-color));
+                        var(--d-admin-text-color));
                     opacity: 0;
                     animation: rainTrail #{math.random(3) +
  2

@@ -1,31 +1,13 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Panel, PanelGroup, PanelResizeHandle } from 'react-resizable-panels';
 import { Icon } from '@iconify/react';
-import { isMobile as checkIsMobile } from '@/app/(builder)/website-builder/utils/mobile';
+import { useIsMobile } from '@/core/hooks/use-mobile';
 
 function AiWebsiteBuilderPage() {
-    const [isMobile, setIsMobile] = useState(false);
+    const isMobile = useIsMobile();
     const [activeTab, setActiveTab] = useState<'left' | 'right'>('left');
-    const [mounted, setMounted] = useState(false);
-
-    useEffect(() => {
-        setMounted(true);
-        const handleResize = () => {
-            setIsMobile(checkIsMobile());
-        };
-
-        // Check on mount
-        handleResize();
-
-        window.addEventListener('resize', handleResize);
-        return () => window.removeEventListener('resize', handleResize);
-    }, []);
-
-    if (!mounted) {
-        return <div className="h-full w-full bg-surface-0" />; // Prevent hydration mismatch
-    }
 
     const LeftPanelContent = (
         <div className={`h-full w-full flex flex-col items-center justify-center bg-surface-0 ${!isMobile ? 'border-r border-surface' : ''} p-4 text-text-secondary`}>
