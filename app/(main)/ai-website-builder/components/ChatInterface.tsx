@@ -20,13 +20,13 @@ export function ChatInterface() {
     };
 
     return (
-        <div className="_Chat_t1btp_5 selection-accent flex flex-col flex-grow relative z-9 overflow-auto w-[var(--chat-min-width)]">
+        <div className="chat-interface-container selection-accent flex flex-col flex-grow relative z-9 overflow-auto w-[var(--chat-min-width)]">
             <div className="flex flex-col h-full">
                 <section aria-label="Chat" className="flex flex-col gap-[--chat-messages-gap] w-full flex-1 max-w-chat py-[--chat-padding] mx-auto z-1 text-sm pl-1">
                     <div className="relative flex flex-col overflow-hidden mx-[var(--chat-padding)] bg-bolt-elements-messages-background px-4 py-3 rounded-lg self-end" data-message-id="ob7bfUjX9XEU52AF">
                         <div className="grid grid-col-1 w-full">
                             <div className="overflow-hidden">
-                                <div className="_MarkdownContent_19116_1">
+                                <div className="markdown-content">
                                     <p>hi</p>
                                 </div>
                             </div>
@@ -54,7 +54,7 @@ export function ChatInterface() {
                                         </button>
                                     </div>
                                     <div className="flex flex-col gap-4">
-                                        <div className="_MarkdownContent_19116_1">
+                                        <div className="markdown-content">
                                             <p>Hi! How can I help you today?</p>
                                         </div>
                                     </div>
