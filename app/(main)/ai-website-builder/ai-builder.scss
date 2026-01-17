@@ -5,88 +5,7 @@
     width: 100%;
     overflow: hidden;
     --side-menu-width: 0px;
-    background-color: var(--d-admin-surface-ground);
-}
-
-.light-ray-container {
-    --gradient-opacity: 0.85;
-    --ray-gradient: radial-gradient(rgba(83, 196, 255, var(--gradient-opacity)) 0%, rgba(43, 166, 255, 0) 100%);
-    transition: opacity 0.25s linear;
-    position: fixed;
-    inset: 0;
-    pointer-events: none;
-    user-select: none;
-
-    &[data-chat-started="false"] {
-        animation: 0.25s linear 0s 1 fade-in;
-    }
-
-    &[data-theme="light"] {
-        --gradient-opacity: 0.5;
-
-        &[data-chat-started="true"] {
-            opacity: 0.5;
-        }
-    }
-
-    .light-ray {
-        position: absolute;
-        border-radius: 100%;
-        background: var(--ray-gradient);
-    }
-
-    .ray-one {
-        width: 480px;
-        height: 680px;
-        transform: rotate(80deg);
-        top: -540px;
-        left: 250px;
-        filter: blur(110px);
-    }
-
-    .ray-two {
-        width: 110px;
-        height: 400px;
-        transform: rotate(-20deg);
-        top: -280px;
-        left: 350px;
-        mix-blend-mode: overlay;
-        opacity: 0.6;
-        filter: blur(60px);
-    }
-
-    .ray-three {
-        width: 400px;
-        height: 370px;
-        top: -350px;
-        left: 200px;
-        mix-blend-mode: overlay;
-        opacity: 0.6;
-        filter: blur(21px);
-    }
-
-    .ray-four {
-        position: absolute;
-        width: 330px;
-        height: 370px;
-        top: -330px;
-        left: 50px;
-        mix-blend-mode: overlay;
-        opacity: 0.5;
-        filter: blur(21px);
-    }
-
-    .ray-five {
-        position: absolute;
-        width: 110px;
-        height: 400px;
-        transform: rotate(-40deg);
-        top: -280px;
-        left: -10px;
-        mix-blend-mode: overlay;
-        opacity: 0.8;
-        filter: blur(60px);
-    }
+    // background-color: var(--d-admin-surface-ground);
 }
 
 .chat-interface-container {
@@ -211,28 +130,6 @@
     --workbench-width: calc(100% - var(--chat-min-width));
     --workbench-inner-width: calc(var(--workbench-width) - 1rem);
     --workbench-left: calc(100% - var(--workbench-width));
-    --toastify-color-progress-success: var(--d-admin-green-500);
-    --toastify-color-progress-error: var(--d-admin-red-500);
-    --bolt-elements-terminal-backgroundColor: var(--d-admin-surface-ground);
-    --bolt-elements-terminal-textColor: var(--d-admin-text-color);
-    --bolt-elements-terminal-cursorColor: var(--d-admin-text-color);
-    --bolt-elements-terminal-selection-backgroundColor: rgba(255, 255, 255, 0.1);
-    --bolt-elements-terminal-color-black: #000000;
-    --bolt-elements-terminal-color-red: var(--d-admin-red-500);
-    --bolt-elements-terminal-color-green: var(--d-admin-green-500);
-    --bolt-elements-terminal-color-yellow: var(--d-admin-yellow-500);
-    --bolt-elements-terminal-color-blue: var(--d-admin-blue-600);
-    --bolt-elements-terminal-color-magenta: #bc05bc;
-    --bolt-elements-terminal-color-cyan: #0598bc;
-    --bolt-elements-terminal-color-white: #e5e5e5;
-    --bolt-elements-terminal-color-brightBlack: #686868;
-    --bolt-elements-terminal-color-brightRed: var(--d-admin-red-500);
-    --bolt-elements-terminal-color-brightGreen: var(--d-admin-green-500);
-    --bolt-elements-terminal-color-brightYellow: var(--d-admin-yellow-500);
-    --bolt-elements-terminal-color-brightBlue: #57c7ff;
-    --bolt-elements-terminal-color-brightMagenta: #ff6ac1;
-    --bolt-elements-terminal-color-brightCyan: #9aedfe;
-    --bolt-elements-terminal-color-brightWhite: #f1f1f0
 }
 
 @property --gradient-end {
@@ -313,13 +210,8 @@ z-layer-0 {
 }
 
 :root {
-    --shimmer-color: rgba(255, 255, 255, .8);
-    --loading-bar-background: linear-gradient(90deg, #F5F5F5 0%, #2BA6FF 21.5%, #FFF 33%, #2BA6FF 65.5%, #F5F5F5 100%)
-}
-
-:root[data-theme=dark] {
     --shimmer-color: rgba(255, 255, 255, .06);
-    --loading-bar-background: linear-gradient(90deg, #0A0A0A 0%, #2BA6FF 21.5%, #FFF 33%, #2BA6FF 65.5%, #0A0A0A 100%)
+    --loading-bar-background: linear-gradient(90deg, #0A0A0A 0%, #2BA6FF 21.5%, #FFF 33%, #2BA6FF 65.5%, #0A0A0A 100%);
 }
 
 .animated {
@@ -401,8 +293,8 @@ z-layer-0 {
 
 .shimmer-icon {
     display: inline-block;
+    --base-color: var(--d-admin-text-color-secondary);
     --base-gradient-color: var(--d-admin-text-color);
-    --base-color: var(--d-admin-gray-600);
     --spread: 20%;
     background-image: linear-gradient(90deg, rgba(0, 0, 0, 0) calc(50% - var(--spread)), var(--base-gradient-color) 50%, rgba(0, 0, 0, 0) calc(50% + var(--spread))), linear-gradient(var(--base-color), var(--base-color));
     background-size: 400% 100%, auto;
@@ -410,11 +302,6 @@ z-layer-0 {
     background-position: 100% 0, 0 0;
     animation: shimmerIcon var(--shimmer-duration, 1.5s) linear infinite;
     animation-delay: var(--shimmer-delay, 0s)
-}
-
-:root[data-theme=dark] .shimmer-icon {
-    --base-color: var(--d-admin-text-color-secondary);
-    --base-gradient-color: var(--d-admin-text-color)
 }
 
 @keyframes shimmerIcon {
@@ -525,7 +412,7 @@ z-layer-0 {
 [data-resize-handle]:focus:after,
 [data-resize-handle][data-resize-handle-state=hover]:after,
 [data-resize-handle][data-resize-handle-state=drag]:after {
-    background-color: #8882
+    background-color: transparent;
 }
 
 .actions .shiki,
@@ -537,47 +424,8 @@ z-layer-0 {
     background-color: var(--d-admin-surface-card) !important
 }
 
-:root {
-    --cm-backgroundColor: var(--d-admin-surface-ground);
-    --cm-textColor: var(--d-admin-text-color);
-    --cm-gutter-backgroundColor: var(--d-admin-surface-ground);
-    --cm-gutter-textColor: var(--d-admin-text-color-secondary);
-    --cm-gutter-activeLineTextColor: var(--d-admin-text-color-secondary);
-    --cm-foldGutter-textColor: var(--d-admin-text-color-secondary);
-    --cm-foldGutter-textColorHover: var(--d-admin-text-color-secondary);
-    --cm-activeLineBackgroundColor: rgba(224, 231, 235, 0.3);
-    --cm-cursor-width: 2px;
-    --cm-cursor-backgroundColor: var(--d-admin-text-color-secondary);
-    --cm-matching-bracket: rgba(50, 140, 130, 0.3);
-    --cm-selection-backgroundColorFocused: var(--d-admin-blue-600);
-    --cm-selection-backgroundOpacityFocused: 0.3;
-    --cm-selection-backgroundColorBlured: #c9e9ff;
-    --cm-selection-backgroundOpacityBlured: 0.3;
-    --cm-panels-borderColor: var(--d-admin-surface-border);
-    --cm-search-backgroundColor: var(--d-admin-surface-ground);
-    --cm-search-textColor: var(--d-admin-text-color-secondary);
-    --cm-search-closeButton-backgroundColor: transparent;
-    --cm-search-closeButton-backgroundColorHover: var(--d-admin-surface-hover);
-    --cm-search-closeButton-textColor: var(--d-admin-text-color-secondary);
-    --cm-search-closeButton-textColorHover: var(--d-admin-text-color);
-    --cm-search-button-backgroundColor: transparent;
-    --cm-search-button-backgroundColorHover: var(--d-admin-surface-hover);
-    --cm-search-button-textColor: var(--d-admin-text-color-secondary);
-    --cm-search-button-textColorHover: var(--d-admin-text-color);
-    --cm-search-button-borderColor: transparent;
-    --cm-search-button-borderColorHover: transparent;
-    --cm-search-button-borderColorFocused: var(--d-admin-blue-600);
-    --cm-search-input-backgroundColor: transparent;
-    --cm-search-input-textColor: var(--d-admin-text-color);
-    --cm-search-input-borderColor: var(--d-admin-surface-border);
-    --cm-search-input-borderColorFocused: var(--d-admin-blue-600);
-    --cm-tooltip-backgroundColor: var(--d-admin-surface-ground);
-    --cm-tooltip-textColor: var(--d-admin-text-color);
-    --cm-tooltip-backgroundColorSelected: rgba(43, 166, 255, 0.3);
-    --cm-tooltip-textColorSelected: var(--d-admin-text-color);
-    --cm-tooltip-borderColor: var(--d-admin-surface-border);
-    --cm-searchMatch-backgroundColor: rgba(234, 92, 0, 0.33)
-}
+
+
 
 
 
@@ -591,20 +439,20 @@ z-layer-0 {
 
 .cm-tooltip.cm-ai-tooltip button {
     --un-bg-opacity: 1;
-    background-color: rgb(20 136 252 / var(--un-bg-opacity));
+    background-color: var(--d-admin-blue-600);
     --un-text-opacity: 1;
-    color: rgb(255 255 255 / var(--un-text-opacity))
+    color: #ffffff;
 }
 
 .cm-tooltip.cm-ai-tooltip button:hover,
 [data-theme=dark] .cm-tooltip.cm-ai-tooltip button {
     --un-bg-opacity: 1;
-    background-color: rgb(13 111 232 / var(--un-bg-opacity))
+    background-color: var(--d-admin-blue-700);
 }
 
 [data-theme=dark] .cm-tooltip.cm-ai-tooltip button:hover {
     --un-bg-opacity: 1;
-    background-color: rgb(20 136 252 / var(--un-bg-opacity))
+    background-color: var(--d-admin-blue-600);
 }
 
 .Toastify__toast {

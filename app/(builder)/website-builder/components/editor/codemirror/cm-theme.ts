@@ -32,12 +32,12 @@ function getEditorTheme(settings: EditorSettings) {
     },
     '&.cm-editor': {
       height: '100%',
-      background: 'var(--cm-backgroundColor)',
-      color: 'var(--cm-textColor)',
+      background: 'var(--d-admin-surface-ground)',
+      color: 'var(--d-admin-text-color)',
     },
     '.cm-cursor': {
       borderLeft:
-        'var(--cm-cursor-width) solid var(--cm-cursor-backgroundColor)',
+        '2px solid var(--d-admin-text-color-secondary)',
     },
     '.cm-scroller': {
       lineHeight: '1.5',
@@ -51,24 +51,24 @@ function getEditorTheme(settings: EditorSettings) {
     '&.cm-focused > .cm-scroller > .cm-selectionLayer .cm-selectionBackground':
     {
       backgroundColor:
-        'var(--cm-selection-backgroundColorFocused) !important',
-      opacity: 'var(--cm-selection-backgroundOpacityFocused, 0.3)',
+        'var(--d-admin-blue-600) !important',
+      opacity: '0.3',
     },
     '&:not(.cm-focused) > .cm-scroller > .cm-selectionLayer .cm-selectionBackground':
     {
-      backgroundColor: 'var(--cm-selection-backgroundColorBlured)',
-      opacity: 'var(--cm-selection-backgroundOpacityBlured, 0.3)',
+      backgroundColor: 'var(--d-admin-blue-200)',
+      opacity: '0.3',
     },
     '&.cm-focused > .cm-scroller .cm-matchingBracket': {
-      backgroundColor: 'var(--cm-matching-bracket)',
+      backgroundColor: 'var(--d-admin-surface-hover)',
     },
     '.cm-activeLine': {
-      background: 'var(--cm-activeLineBackgroundColor)',
+      background: 'var(--d-admin-surface-hover)',
     },
     '.cm-gutters': {
-      background: 'var(--cm-gutter-backgroundColor)',
+      background: 'var(--d-admin-surface-ground)',
       borderRight: 0,
-      color: 'var(--cm-gutter-textColor)',
+      color: 'var(--d-admin-text-color-secondary)',
     },
     '.cm-gutter': {
       '&.cm-lineNumbers': {
@@ -78,14 +78,14 @@ function getEditorTheme(settings: EditorSettings) {
       },
       '& .cm-activeLineGutter': {
         background: 'transparent',
-        color: 'var(--cm-gutter-activeLineTextColor)',
+        color: 'var(--d-admin-text-color-secondary)',
       },
       '&.cm-foldGutter .cm-gutterElement > .fold-icon': {
         cursor: 'pointer',
-        color: 'var(--cm-foldGutter-textColor)',
+        color: 'var(--d-admin-text-color-secondary)',
         transform: 'translateY(2px)',
         '&:hover': {
-          color: 'var(--cm-foldGutter-textColorHover)',
+          color: 'var(--d-admin-text-color-secondary)',
         },
       },
     },
@@ -111,36 +111,36 @@ function getEditorTheme(settings: EditorSettings) {
       marginRight: '4px',
     },
     '.cm-panels': {
-      borderColor: 'var(--cm-panels-borderColor)',
+      borderColor: 'var(--d-admin-surface-border)',
     },
     '.cm-panels-bottom': {
-      borderTop: '1px solid var(--cm-panels-borderColor)',
+      borderTop: '1px solid var(--d-admin-surface-border)',
       backgroundColor: 'transparent',
     },
     '.cm-panel.cm-search': {
-      background: 'var(--cm-search-backgroundColor)',
-      color: 'var(--cm-search-textColor)',
+      background: 'var(--d-admin-surface-ground)',
+      color: 'var(--d-admin-text-color-secondary)',
       padding: '8px',
     },
     '.cm-search .cm-button': {
-      background: 'var(--cm-search-button-backgroundColor)',
-      borderColor: 'var(--cm-search-button-borderColor)',
-      color: 'var(--cm-search-button-textColor)',
+      background: 'transparent',
+      borderColor: 'transparent',
+      color: 'var(--d-admin-text-color-secondary)',
       borderRadius: '4px',
       '&:hover': {
-        color: 'var(--cm-search-button-textColorHover)',
+        color: 'var(--d-admin-text-color)',
       },
       '&:focus-visible': {
         outline: 'none',
-        borderColor: 'var(--cm-search-button-borderColorFocused)',
+        borderColor: 'var(--d-admin-blue-600)',
       },
       '&:hover:not(:focus-visible)': {
-        background: 'var(--cm-search-button-backgroundColorHover)',
-        borderColor: 'var(--cm-search-button-borderColorHover)',
+        background: 'var(--d-admin-surface-hover)',
+        borderColor: 'transparent',
       },
       '&:hover:focus-visible': {
-        background: 'var(--cm-search-button-backgroundColorHover)',
-        borderColor: 'var(--cm-search-button-borderColorFocused)',
+        background: 'var(--d-admin-surface-hover)',
+        borderColor: 'var(--d-admin-blue-600)',
       },
     },
     '.cm-panel.cm-search [name=close]': {
@@ -148,44 +148,44 @@ function getEditorTheme(settings: EditorSettings) {
       right: '6px',
       padding: '0 6px',
       fontSize: '1rem',
-      backgroundColor: 'var(--cm-search-closeButton-backgroundColor)',
-      color: 'var(--cm-search-closeButton-textColor)',
+      backgroundColor: 'transparent',
+      color: 'var(--d-admin-text-color-secondary)',
       '&:hover': {
         'border-radius': '6px',
-        color: 'var(--cm-search-closeButton-textColorHover)',
-        backgroundColor: 'var(--cm-search-closeButton-backgroundColorHover)',
+        color: 'var(--d-admin-text-color)',
+        backgroundColor: 'var(--d-admin-surface-hover)',
       },
     },
     '.cm-search input': {
-      background: 'var(--cm-search-input-backgroundColor)',
-      borderColor: 'var(--cm-search-input-borderColor)',
-      color: 'var(--cm-search-input-textColor)',
+      background: 'transparent',
+      borderColor: 'var(--d-admin-surface-border)',
+      color: 'var(--d-admin-text-color)',
       outline: 'none',
       borderRadius: '4px',
       '&:focus-visible': {
-        borderColor: 'var(--cm-search-input-borderColorFocused)',
+        borderColor: 'var(--d-admin-blue-600)',
       },
     },
     '.cm-tooltip': {
-      background: 'var(--cm-tooltip-backgroundColor)',
+      background: 'var(--d-admin-surface-ground)',
       border: '1px solid transparent',
-      borderColor: 'var(--cm-tooltip-borderColor)',
-      color: 'var(--cm-tooltip-textColor)',
+      borderColor: 'var(--d-admin-surface-border)',
+      color: 'var(--d-admin-text-color)',
     },
     '.cm-tooltip.cm-tooltip-autocomplete ul li[aria-selected]': {
-      background: 'var(--cm-tooltip-backgroundColorSelected)',
-      color: 'var(--cm-tooltip-textColorSelected)',
+      background: 'var(--d-admin-surface-hover)',
+      color: 'var(--d-admin-text-color)',
     },
     '.cm-searchMatch': {
-      backgroundColor: 'var(--cm-searchMatch-backgroundColor)',
+      backgroundColor: 'var(--d-admin-surface-d)',
     },
     '.cm-tooltip.cm-readonly-tooltip': {
       padding: '4px',
       whiteSpace: 'nowrap',
-      backgroundColor: 'var(--bolt-elements-bg-depth-2)',
-      borderColor: 'var(--bolt-elements-borderColorActive)',
+      backgroundColor: 'var(--d-admin-surface-section)',
+      borderColor: 'var(--d-admin-surface-border)',
       '& .cm-tooltip-arrow:before': {
-        borderTopColor: 'var(--bolt-elements-borderColorActive)',
+        borderTopColor: 'var(--d-admin-surface-border)',
       },
       '& .cm-tooltip-arrow:after': {
         borderTopColor: 'transparent',
