@@ -3,7 +3,7 @@ import * as nodePath from 'path-browserify';
 import type { BuilderAction } from '../../types/actions';
 import { createScopedLogger } from '../../utils/logger';
 import { unreachable } from '../../utils/unreachable';
-import { useWorkbenchStore } from '../stores/zustand';
+import { useWorkbenchStore, useFilesStore } from '../stores/zustand';
 import type { ActionCallbackData } from './message-parser';
 
 const logger = createScopedLogger('ActionRunner');
@@ -362,6 +362,7 @@ export class ActionRunner {
       try {
         await webcontainer.fs.mkdir(folder, { recursive: true });
         logger.debug('Created folder', folder);
+        useFilesStore.getState().setFile(folder, { type: 'folder' });
       } catch (error) {
         logger.error('Failed to create folder\n\n', error);
       }
@@ -371,6 +372,11 @@ export class ActionRunner {
       await webcontainer.fs.writeFile(action.filePath, action.content);
       console.timeEnd(`[ActionRunner] Write file: ${action.filePath}`);
       logger.debug(`File written ${action.filePath}`);
+      useFilesStore.getState().setFile(action.filePath, {
+        type: 'file',
+        content: action.content,
+        isBinary: false,
+      });
     } catch (error) {
       console.timeEnd(`[ActionRunner] Write file: ${action.filePath}`);
       logger.error('Failed to write file\n\n', error);
