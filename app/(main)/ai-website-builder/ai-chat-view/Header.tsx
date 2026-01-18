@@ -41,6 +41,7 @@ export function Header() {
     const previews = usePreviewStore(state => state.previews);
     const activePreviewIndex = usePreviewStore(state => state.activePreviewIndex);
     const url = usePreviewStore(state => state.url);
+    const iframeUrl = usePreviewStore(state => state.iframeUrl);
     const activePreview = previews[activePreviewIndex];
 
     const chatStarted = useChatStore(state => state.started);
@@ -51,9 +52,13 @@ export function Header() {
     useEffect(() => {
         if (activePreview) {
             usePreviewStore.getState().setUrl(activePreview.baseUrl);
-            usePreviewStore.getState().setIframeUrl(activePreview.baseUrl);
+
+            // Only set iframeUrl if it's different to prevent reloading
+            if (activePreview.baseUrl !== iframeUrl) {
+                usePreviewStore.getState().setIframeUrl(activePreview.baseUrl);
+            }
         }
-    }, [activePreview]);
+    }, [activePreview, iframeUrl]);
 
     const canHideChat = showWorkbench || !showChat;
 

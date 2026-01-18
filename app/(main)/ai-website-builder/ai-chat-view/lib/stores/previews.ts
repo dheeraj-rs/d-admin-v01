@@ -61,8 +61,11 @@ export class PreviewsStore {
 
       // Set the iframe URL in Zustand store when preview is ready
       if (type === 'open' && url) {
-        console.log('[PreviewsStore] Setting iframe URL:', url);
-        usePreviewStore.getState().setIframeUrl(url);
+        const currentUrl = usePreviewStore.getState().iframeUrl;
+        if (currentUrl !== url) {
+          console.log('[PreviewsStore] Setting iframe URL:', url);
+          usePreviewStore.getState().setIframeUrl(url);
+        }
       }
     });
   }
