@@ -90,7 +90,7 @@ export function ChatInterface() {
                 </div>
 
                 <div className="z-20">
-                    <div className="p-3 pr-1 pb-0 w-full max-w-chat mx-auto z-prompt bg-[var(--d-admin-surface-ground)]">
+                    <div className="p-3 pr-3 pb-3 md:pr-1 w-full max-w-chat mx-auto z-prompt bg-[var(--d-admin-surface-ground)]">
                         <div className="absolute inset-y-0" style={{ left: 'var(--chat-padding)', right: 'var(--chat-padding)' }}></div>
                         <div className="relative" style={{ height: '0px' }}>
                             <div className="flex flex-wrap justify-between py-1 px-2 -top-px absolute transition-opacity duration-350 rounded-t-lg text-xs truncate border left-2 w-[calc(100%-1rem)] border-b-0 border-[var(--d-admin-surface-border)] bg-[var(--d-admin-surface-section)] backdrop-blur opacity-0">
@@ -269,8 +269,8 @@ export function ChatInterface() {
                                 </div>
                             </div>
                         </div>
-                        <div className="pb-[var(--chat-padding)]"></div>
-                        <div className="absolute inset-0 pointer-events-none"></div>
+                        {/* <div className="pb-[var(--chat-padding)]"></div> */}
+                        {/* <div className="absolute inset-0 pointer-events-none"></div> */}
                     </div>
                 </div>
             </div>

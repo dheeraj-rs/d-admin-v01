@@ -1,14 +1,12 @@
 import React, { useState } from 'react';
-import { Icon } from '@iconify/react';
+import { useIsMobile } from '@/core/hooks/use-mobile';
 
 export function Workbench() {
+    const isMobile = useIsMobile();
 
     return (
-        <div className="z-workbench w-full pr-[0.5rem] pb-[0.5rem] h-full">
-
-
-            {/* panels */}
-            <div className=" h-full relative flex-1 overflow-hidden border border-[var(--d-admin-surface-border)] rounded-xl">
+        <div className="z-workbench w-full h-full">
+            <div className={`h-full relative flex-1 overflow-hidden ${isMobile ? 'border-none' : 'border border-[var(--d-admin-surface-border)] border-b-transparent border-r-transparent rounded-xl rounded-tr-none rounded-bl-none'}`}>
 
             </div>
         </div>
