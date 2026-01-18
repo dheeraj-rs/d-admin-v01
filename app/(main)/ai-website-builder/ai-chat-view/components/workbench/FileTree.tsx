@@ -164,9 +164,9 @@ function Folder({ folder: { depth, name }, collapsed, selected = false, onClick 
   return (
     <NodeButton
       className={classNames('group', {
-        'bg-transparent text-text-secondary hover:text-text hover:bg-surface-c':
+        'bg-transparent text-text-secondary hover:text-text hover:bg-surface-c border-transparent':
           !selected,
-        'bg-primary/10 text-primary': selected,
+        'bg-[var(--d-admin-surface-d)] text-[var(--d-admin-primary-color)] !border-l-[var(--d-admin-primary-color)] font-medium': selected,
       })}
       depth={depth}
       iconClasses="scale-98"
@@ -195,8 +195,8 @@ function File({ file: { depth, name }, onClick, selected, unsavedChanges = false
   return (
     <NodeButton
       className={classNames('group', {
-        'bg-transparent hover:bg-surface-c text-text-secondary': !selected,
-        'bg-primary/10 text-primary': selected,
+        'bg-transparent hover:bg-surface-c text-text-secondary border-transparent': !selected,
+        'bg-[var(--d-admin-surface-d)] text-[var(--d-admin-primary-color)] !border-l-[var(--d-admin-primary-color)] font-medium': selected,
       })}
       depth={depth}
       iconClasses={classNames('scale-98', {
