@@ -1,6 +1,7 @@
 import React from 'react';
 import { Icon } from '@iconify/react';
 import { useAiBuilderStore } from '../../../store/ai-builder-store';
+import { workbenchStore } from '../../lib/stores/workbench';
 
 import { useCallback, useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
@@ -96,6 +97,9 @@ export function HistorySidebar({ onSelect }: MenuProps) {
                 <div className="p-4">
                     <Link
                         href="/ai-website-builder"
+                        onClick={() => {
+                            workbenchStore.reset();
+                        }}
                         className="flex gap-2 items-center bg-blue-500/10 text-blue-500 hover:bg-blue-500/20 rounded-md p-2 transition-colors"
                     >
                         <Icon icon="ph:chat-circle-dots" className="text-lg" />

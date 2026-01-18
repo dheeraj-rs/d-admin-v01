@@ -24,4 +24,8 @@ export class TerminalStore {
   onTerminalResize(cols: number, rows: number) {
     useTerminalStore.getState().onTerminalResize(cols, rows);
   }
+
+  reset() {
+    useTerminalStore.getState().reset();
+  }
 }

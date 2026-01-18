@@ -5,7 +5,7 @@ import { useAnimate } from 'framer-motion';
 import { memo, useEffect, useRef, useState } from 'react';
 import { cssTransition, toast, ToastContainer } from 'react-toastify';
 import { useMessageParser, usePromptEnhancer, useShortcuts, useSnapScroll } from '../../lib/hooks';
-import { useChatStore, useWorkbenchStore } from '../../lib/stores/zustand';
+import { useChatStore, useWorkbenchStore, useTerminalStore } from '../../lib/stores/zustand';
 import { workbenchStore } from '../../lib/stores/workbench';
 import { fileModificationsToHTML } from '../../utils/diff';
 import { cubicEasingFn } from '../../utils/easings';
@@ -255,9 +255,10 @@ export const ChatImpl = memo(({ initialMessages, storeMessageHistory }: ChatProp
             onHistoryClick={() => setShowHistory(true)}
             buildError={useWorkbenchStore(state => state.buildError)}
             onFixError={() => {
+                const terminalOutput = useTerminalStore.getState().getOutput();
                 append({
                     role: 'user',
-                    content: 'I noticed a build error in the terminal. Please analyze the error and fix the code.'
+                    content: `I noticed a build error in the terminal. Here is the terminal output:\n\n${terminalOutput}\n\nPlease deeply analyze the code and the error, and provide a comprehensive fix.`
                 });
                 useWorkbenchStore.getState().setBuildError(false);
             }}

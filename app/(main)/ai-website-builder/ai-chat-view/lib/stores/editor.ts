@@ -63,4 +63,8 @@ export class EditorStore {
   updateFile(filePath: string, newContent: string) {
     useEditorStore.getState().updateFile(filePath, newContent);
   }
+
+  reset() {
+    useEditorStore.getState().reset();
+  }
 }

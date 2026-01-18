@@ -58,6 +58,12 @@ export class FilesStore {
     useFilesStore.getState().clearModifiedFiles();
   }
 
+  reset() {
+    this.#size = 0;
+    this.#modifiedFiles.clear();
+    useFilesStore.getState().reset();
+  }
+
   async saveFile(filePath: string, content: string) {
     const webcontainer = await this.#webcontainer;
 

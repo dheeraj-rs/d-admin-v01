@@ -1,0 +1,96 @@
+.light-circle-ray-container {
+    height: 100dvh;
+    min-height: 100dvh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: fixed;
+    /* Changed to fixed to act as background */
+    inset: 0;
+    overflow: hidden;
+    background-color: var(--d-admin-surface-ground);
+    transition: opacity 0.25s linear;
+    pointer-events: none;
+    z-index: 0;
+
+    &::before {
+        content: '';
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: radial-gradient(circle at center,
+                var(--d-admin-surface-d) 0%,
+                transparent 70%);
+        pointer-events: none;
+    }
+
+    .bg-effects {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        z-index: 0;
+
+        .gradient-orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.3;
+            animation: float 20s ease-in-out infinite;
+
+            &.orb-1 {
+                width: 400px;
+                height: 400px;
+                background: radial-gradient(circle,
+                        rgba(255, 255, 255, 0.8) 0%,
+                        rgba(255, 255, 255, 0) 70%);
+                top: -200px;
+                left: -200px;
+                animation-delay: 0s;
+            }
+
+            &.orb-2 {
+                width: 500px;
+                height: 500px;
+                background: radial-gradient(circle,
+                        rgba(138, 43, 226, 0.6) 0%,
+                        rgba(138, 43, 226, 0) 70%);
+                bottom: -250px;
+                right: -250px;
+                animation-delay: 7s;
+            }
+
+            &.orb-3 {
+                width: 350px;
+                height: 350px;
+                background: radial-gradient(circle,
+                        rgba(255, 105, 180, 0.5) 0%,
+                        rgba(255, 105, 180, 0) 70%);
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                animation-delay: 14s;
+            }
+        }
+    }
+
+    @keyframes float {
+
+        0%,
+        100% {
+            transform: translate(0, 0) scale(1);
+        }
+
+        33% {
+            transform: translate(30px, -30px) scale(1.1);
+        }
+
+        66% {
+            transform: translate(-20px, 20px) scale(0.9);
+        }
+    }
+}

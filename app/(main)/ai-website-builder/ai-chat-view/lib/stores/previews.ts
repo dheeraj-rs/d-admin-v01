@@ -66,4 +66,9 @@ export class PreviewsStore {
       }
     });
   }
+
+  reset() {
+    this.#availablePreviews.clear();
+    usePreviewStore.getState().reset();
+  }
 }

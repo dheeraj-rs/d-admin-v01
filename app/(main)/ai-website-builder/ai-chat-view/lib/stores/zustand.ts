@@ -214,6 +214,7 @@ interface PreviewState {
     setIframeUrl: (url: string | undefined) => void;
     setPreviews: (previews: PreviewInfo[]) => void;
     refreshPreview: () => void;
+    reset: () => void;
 }
 
 export const usePreviewStore = create<PreviewState>()(
@@ -230,6 +231,13 @@ export const usePreviewStore = create<PreviewState>()(
             setIframeUrl: (url) => set({ iframeUrl: url }),
             setPreviews: (previews) => set({ previews }),
             refreshPreview: () => set((state) => ({ refreshTrigger: state.refreshTrigger + 1 })),
+            reset: () => set({
+                activePreviewIndex: 0,
+                url: '',
+                iframeUrl: undefined,
+                previews: [],
+                refreshTrigger: 0,
+            }),
         }),
         { name: 'PreviewStore' }
     )
@@ -282,16 +290,22 @@ export const useSettingsStore = create<SettingsState>()(
 // TERMINAL STORE
 // ============================================================================
 
+// Helper to strip ANSI codes
+const stripAnsi = (str: string) => str.replace(/[\u001b\u009b][[()#;?]*(?:[0-9]{1,4}(?:;[0-9]{0,4})*)?[0-9A-ORZcf-nqry=><]/g, '');
+
 interface TerminalState {
     showTerminal: boolean;
     webcontainer: Promise<WebContainer> | null;
     terminals: Array<{ terminal: ITerminal; process: WebContainerProcess }>;
+    terminalOutput: string[]; // Circular buffer for output
 
     // Actions
     setWebContainer: (webcontainer: Promise<WebContainer>) => void;
     toggleTerminal: (value?: boolean) => void;
     attachTerminal: (terminal: ITerminal) => Promise<void>;
     onTerminalResize: (cols: number, rows: number) => void;
+    reset: () => void;
+    getOutput: () => string; // Helper to get full output
 }
 
 export const useTerminalStore = create<TerminalState>()(
@@ -300,6 +314,7 @@ export const useTerminalStore = create<TerminalState>()(
             showTerminal: false,
             webcontainer,
             terminals: [],
+            terminalOutput: [],
 
             setWebContainer: (webcontainer) => set({ webcontainer }),
 
@@ -314,6 +329,20 @@ export const useTerminalStore = create<TerminalState>()(
                     console.error('[TerminalStore] WebContainer not initialized');
                     return;
                 }
+
+                // Intercept terminal.write to capture output
+                const originalWrite = terminal.write.bind(terminal);
+                terminal.write = (data) => {
+                    originalWrite(data);
+                    const text = typeof data === 'string' ? data : new TextDecoder().decode(data);
+
+                    set((state) => {
+                        const newLines = text.split('\n');
+                        // Keep last 1000 lines
+                        const updated = [...state.terminalOutput, ...newLines].slice(-1000);
+                        return { terminalOutput: updated };
+                    });
+                };
 
                 try {
                     const shellProcess = await newShellProcess(await webcontainer, terminal);
@@ -330,6 +359,18 @@ export const useTerminalStore = create<TerminalState>()(
                 for (const { process } of terminals) {
                     process.resize({ cols, rows });
                 }
+            },
+
+            reset: () => set({
+                showTerminal: false,
+                terminals: [],
+                terminalOutput: [],
+                // webcontainer is persistent, do not reset
+            }),
+
+            getOutput: () => {
+                // Join lines and strip ANSI codes for cleaner AI prompt
+                return stripAnsi(get().terminalOutput.join('\n'));
             },
         }),
         { name: 'TerminalStore' }
@@ -377,6 +418,7 @@ interface FilesState {
     setModifiedFile: (path: string, content: string) => void;
     clearModifiedFiles: () => void;
     getFile: (path: string) => File | undefined;
+    reset: () => void;
 }
 
 export const useFilesStore = create<FilesState>()(
@@ -408,6 +450,12 @@ export const useFilesStore = create<FilesState>()(
                 if (dirent?.type !== 'file') return undefined;
                 return dirent;
             },
+
+            reset: () => set({
+                files: {},
+                filesCount: 0,
+                modifiedFiles: new Map(),
+            }),
         }),
         { name: 'FilesStore' }
     )
@@ -440,6 +488,7 @@ interface EditorState {
     updateScrollPosition: (path: string, position: ScrollPosition) => void;
     updateFile: (path: string, content: string) => void;
     getCurrentDocument: () => EditorDocument | undefined;
+    reset: () => void;
 }
 
 export const useEditorStore = create<EditorState>()(
@@ -488,6 +537,11 @@ export const useEditorStore = create<EditorState>()(
                 if (!selectedFile) return undefined;
                 return get().documents[selectedFile];
             },
+
+            reset: () => set({
+                selectedFile: undefined,
+                documents: {},
+            }),
         }),
         { name: 'EditorStore' }
     )
@@ -525,6 +579,7 @@ interface WorkbenchState {
     removeUnsavedFile: (file: string) => void;
     setArtifact: (id: string, artifact: ArtifactState) => void;
     setArtifactIdList: (list: string[]) => void;
+    reset: () => void;
 }
 
 export const useWorkbenchStore = create<WorkbenchState>()(
@@ -561,6 +616,16 @@ export const useWorkbenchStore = create<WorkbenchState>()(
             })),
 
             setArtifactIdList: (list) => set({ artifactIdList: list }),
+
+            reset: () => set({
+                showWorkbench: true,
+                userHidWorkbench: false,
+                currentView: 'code',
+                unsavedFiles: new Set(),
+                artifacts: {},
+                artifactIdList: [],
+                buildError: false,
+            }),
         }),
         { name: 'WorkbenchStore' }
     )

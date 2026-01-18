@@ -1,5 +1,4 @@
 'use client';
-import { LightRaysBackground } from '@/core/components/not-found/LightRaysBackground';
 import { Panel, PanelGroup, PanelResizeHandle } from 'react-resizable-panels';
 import { useIsMobile } from '@/core/hooks/use-mobile';
 import { HistorySidebar } from '../ai-chat-view/components/sidebar/HistorySidebar';
@@ -11,6 +10,7 @@ import { WorkbenchPanel } from '../ai-chat-view/WorkbenchPanel';
 import { DragDropInterface } from '../components/drag-drop-view/DragDropInterface';
 import { TemplatesInterface } from '../components/templates-view/TemplatesInterface';
 import { Header } from '../ai-chat-view/Header';
+import LightCircleRayBackground from '@/core/components/not-found/LightCircleRayBackground';
 
 export default function AiWebsiteBuilderPage() {
     const { activeMobilePanel, builderView } = useAiBuilderStore();
@@ -37,7 +37,7 @@ export default function AiWebsiteBuilderPage() {
 
     return (
         <div className="w-full h-full bg-[var(--d-admin-surface-ground)] relative text-[var(--d-admin-text-color)]">
-            <LightRaysBackground />
+            <LightCircleRayBackground />
             <HistorySidebar />
             <div className="flex flex-col h-full w-full relative z-10">
                 <Header />

@@ -309,6 +309,14 @@ export class WorkbenchStore {
     artifact.runner.runAction(data);
   }
 
+  reset() {
+    this.#filesStore.reset();
+    this.#editorStore.reset();
+    this.#terminalStore.reset();
+    this.#previewsStore.reset(); // Assuming PreviewsStore uses usePreviewStore.getState().reset() internally or I need to check PreviewsStore
+    useWorkbenchStore.getState().reset();
+  }
+
   #getArtifact(id: string) {
     const artifacts = this.artifacts;
     return artifacts[id];
