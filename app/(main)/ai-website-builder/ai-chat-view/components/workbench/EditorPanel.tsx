@@ -225,7 +225,7 @@ export const EditorPanel = memo(
                   const isActive = activeTerminal === index;
 
                   return (
-                    <button
+                    <div
                       key={index}
                       className={classNames(
                         'flex items-center text-sm cursor-pointer gap-1 px-2 py-1.5 h-full whitespace-nowrap rounded-full transition-colors group',
@@ -249,7 +249,7 @@ export const EditorPanel = memo(
                           <Icon icon="ph:x" className="text-xs" />
                         </button>
                       )}
-                    </button>
+                    </div>
                   );
                 })}
                 {terminalCount < MAX_TERMINALS && (

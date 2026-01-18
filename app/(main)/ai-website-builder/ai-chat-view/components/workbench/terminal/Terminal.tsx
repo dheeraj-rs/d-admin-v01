@@ -3,6 +3,7 @@
 import { FitAddon } from '@xterm/addon-fit';
 import { WebLinksAddon } from '@xterm/addon-web-links';
 import { Terminal as XTerm } from '@xterm/xterm';
+import '@xterm/xterm/css/xterm.css';
 import { forwardRef, memo, useEffect, useImperativeHandle, useRef } from 'react';
 import type { Theme } from '../../../lib/stores/zustand';
 import { createScopedLogger } from '../../../utils/logger';
@@ -48,9 +49,17 @@ export const Terminal = memo(
       terminal.loadAddon(webLinksAddon);
       terminal.open(element);
 
+      let resizeTimeout: any;
+
       const resizeObserver = new ResizeObserver(() => {
-        fitAddon.fit();
-        onTerminalResize?.(terminal.cols, terminal.rows);
+        if (resizeTimeout) {
+          clearTimeout(resizeTimeout);
+        }
+
+        resizeTimeout = setTimeout(() => {
+          fitAddon.fit();
+          onTerminalResize?.(terminal.cols, terminal.rows);
+        }, 100);
       });
 
       resizeObserver.observe(element);
@@ -60,6 +69,9 @@ export const Terminal = memo(
       onTerminalReady?.(terminal);
 
       return () => {
+        if (resizeTimeout) {
+          clearTimeout(resizeTimeout);
+        }
         resizeObserver.disconnect();
         terminal.dispose();
       };

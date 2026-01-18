@@ -7,4 +7,5 @@ export interface ITerminal {
     dispose: () => void;
   };
   write(data: string | Uint8Array): void;
+  clear(): void;
 }
