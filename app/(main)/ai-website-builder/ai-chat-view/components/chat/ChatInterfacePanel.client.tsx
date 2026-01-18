@@ -219,6 +219,27 @@ export const ChatImpl = memo(({ initialMessages, storeMessageHistory }: ChatProp
 
     const [messageRef, scrollRef] = useSnapScroll();
 
+    // Handle external fix requests (e.g. from Artifact UI)
+    const pendingFix = useChatStore(state => state.pendingFix);
+    const pendingErrorLog = useChatStore(state => state.pendingErrorLog);
+    const setPendingFix = useChatStore(state => state.setPendingFix);
+    const setPendingErrorLog = useChatStore(state => state.setPendingErrorLog);
+
+    useEffect(() => {
+        if (pendingFix) {
+            // Use captured log if available, otherwise get specific terminal output
+            const logContent = pendingErrorLog || useTerminalStore.getState().getOutput();
+
+            append({
+                role: 'user',
+                content: `I noticed a build error in the terminal. Here is the terminal output:\n\n${logContent}\n\nPlease deeply analyze the code and the error, and provide a comprehensive fix.`
+            });
+            useWorkbenchStore.getState().setBuildError(false);
+            setPendingFix(false);
+            setPendingErrorLog(undefined);
+        }
+    }, [pendingFix, pendingErrorLog, append, setPendingFix, setPendingErrorLog]);
+
     return (
         <ChatInterface
             ref={animationScope}

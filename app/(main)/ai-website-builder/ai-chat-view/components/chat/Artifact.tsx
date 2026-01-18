@@ -157,78 +157,149 @@ const ActionList = memo(({ actions }: ActionListProps) => {
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.15 }}>
             <ul className="list-none space-y-2.5">
                 {actions.map((action, index) => {
-                    const { status, type, content } = action;
-                    const isLast = index === actions.length - 1;
-
                     return (
-                        <motion.li
+                        <ActionItem
                             key={index}
-                            variants={actionVariants}
-                            initial="hidden"
-                            animate="visible"
-                            transition={{
-                                duration: 0.2,
-                                ease: cubicEasingFn,
-                            }}
-                        >
-                            <div className="flex items-center gap-1.5 text-sm">
-                                <div className={classNames('text-lg', getIconColor(action.status))}>
-                                    {status === 'running' ? (
-                                        <Icon icon="svg-spinners:90-ring-with-bg" />
-                                    ) : status === 'pending' ? (
-                                        <Icon icon="ph:circle-duotone" />
-                                    ) : status === 'complete' ? (
-                                        <Icon icon="ph:check" />
-                                    ) : status === 'failed' || status === 'aborted' ? (
-                                        <Icon icon="ph:x" />
-                                    ) : null}
-                                </div>
-                                {type === 'file' ? (
-                                    <div>
-                                        Create{' '}
-                                        <code className="px-1.5 py-1 rounded-md" style={{ backgroundColor: 'var(--d-admin-surface-c)', color: 'var(--d-admin-text-color-secondary)' }}>
-                                            {action.filePath}
-                                        </code>
-                                    </div>
-                                ) : type === 'shell' ? (
-                                    <div className="flex items-center w-full min-h-[28px]">
-                                        <span className="flex-1">Run command</span>
-                                    </div>
-                                ) : null}
-                            </div>
-                            {type === 'shell' && (
-                                <>
-                                    <ShellCodeBlock
-                                        classsName={classNames('mt-1', {
-                                            'mb-3.5': !isLast && status !== 'failed',
-                                        })}
-                                        code={content}
-                                    />
-                                    {status === 'failed' && 'error' in action && action.error && (
-                                        <div className="mt-2 mb-3.5 p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-md">
-                                            <div className="flex items-start gap-2">
-                                                <Icon icon="ph:warning-circle" className="text-red-500 text-lg mt-0.5 flex-shrink-0" />
-                                                <div className="flex-1">
-                                                    <div className="text-xs font-medium text-red-700 dark:text-red-400 mb-1">
-                                                        Command Failed
-                                                    </div>
-                                                    <div className="text-xs text-red-600 dark:text-red-300">
-                                                        {action.error}
-                                                    </div>
-                                                    <div className="text-xs text-red-500 dark:text-red-400 mt-2 opacity-75">
-                                                        Check the terminal output above for details. The system will auto-retry if dependencies are missing.
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    )}
-                                </>
-                            )}
-                        </motion.li>
+                            action={action}
+                            index={index}
+                            isLast={index === actions.length - 1}
+                        />
                     );
                 })}
             </ul>
         </motion.div>
+    );
+});
+
+interface ActionItemProps {
+    action: ActionState;
+    index: number;
+    isLast: boolean;
+}
+
+const ActionItem = memo(({ action, index, isLast }: ActionItemProps) => {
+    const { status, type, content, output } = action;
+    const [isOpen, setIsOpen] = useState(false);
+
+    // Subscribe to build error state for this specific component to re-render if it changes
+    const globalBuildError = useWorkbenchStore(state => state.buildError);
+
+    // Ref for auto-scrolling terminal output
+    const terminalRef = useRef<HTMLDivElement>(null);
+
+    // Auto-expand on error or when running
+    useEffect(() => {
+        if (status === 'running' || status === 'failed') {
+            setIsOpen(true);
+        }
+    }, [status]);
+
+    // Auto-scroll to bottom of terminal output
+    useEffect(() => {
+        if (isOpen && terminalRef.current) {
+            terminalRef.current.scrollTop = terminalRef.current.scrollHeight;
+        }
+    }, [output, isOpen]);
+
+    return (
+        <motion.li
+            variants={actionVariants}
+            initial="hidden"
+            animate="visible"
+            transition={{
+                duration: 0.2,
+                ease: cubicEasingFn,
+            }}
+        >
+            <div className="flex items-center gap-1.5 text-sm">
+                <div className={classNames('text-lg', getIconColor(status))}>
+                    {status === 'running' ? (
+                        <Icon icon="svg-spinners:90-ring-with-bg" />
+                    ) : status === 'pending' ? (
+                        <Icon icon="ph:circle-duotone" />
+                    ) : status === 'complete' ? (
+                        <Icon icon="ph:check" />
+                    ) : status === 'failed' || status === 'aborted' ? (
+                        <Icon icon="ph:x" />
+                    ) : null}
+                </div>
+                {type === 'file' ? (
+                    <div>
+                        Create{' '}
+                        <code className="px-1.5 py-1 rounded-md" style={{ backgroundColor: 'var(--d-admin-surface-c)', color: 'var(--d-admin-text-color-secondary)' }}>
+                            {action.filePath}
+                        </code>
+                    </div>
+                ) : type === 'shell' ? (
+                    <div className="flex items-center w-full min-h-[28px]">
+                        <span className="flex-1">Run command</span>
+                    </div>
+                ) : null}
+            </div>
+            {type === 'shell' && (
+                <>
+                    <ShellCodeBlock
+                        classsName={classNames('mt-1', {
+                            'mb-3.5': !isLast && status !== 'failed',
+                        })}
+                        code={content}
+                    />
+
+                    {/* Shell Output Display */}
+                    {(output || status === 'running' || status === 'failed') && (
+                        <div className="mt-2 mb-3.5">
+                            <button
+                                onClick={() => setIsOpen(!isOpen)}
+                                className="flex items-center gap-1 text-xs text-[var(--d-admin-text-color-secondary)] hover:text-[var(--d-admin-text-color)] transition-colors mb-2"
+                            >
+                                <Icon icon={isOpen ? 'ph:caret-down-bold' : 'ph:caret-right-bold'} />
+                                {status === 'running' ? 'Installing...' : 'Terminal Output'}
+                            </button>
+
+                            {isOpen && (
+                                <div
+                                    ref={terminalRef}
+                                    className="p-3 bg-black/90 text-green-400 font-mono text-xs rounded-md overflow-x-auto max-h-[200px] whitespace-pre-wrap scroll-smooth"
+                                >
+                                    {output?.trim() || (status === 'running' ? 'Waiting for output...' : 'No output')}
+                                </div>
+                            )}
+                        </div>
+                    )}
+
+                    {/* Show error box if failed OR if running with a detected build error */}
+                    {((status === 'failed') || (status === 'running' && globalBuildError)) && (
+                        <div className="mt-2 mb-3.5 p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-md">
+                            <div className="flex items-start gap-2">
+                                <Icon icon="ph:warning-circle" className="text-red-500 text-lg mt-0.5 flex-shrink-0" />
+                                <div className="flex-1">
+                                    <div className="text-xs font-medium text-red-700 dark:text-red-400 mb-1">
+                                        {status === 'failed' ? 'Command Failed' : 'Build Error Detected'}
+                                    </div>
+                                    <div className="text-xs text-red-600 dark:text-red-300">
+                                        {status === 'failed' && 'error' in action ? action.error : 'A build error was detected in the output.'}
+                                    </div>
+                                    <div className="text-xs text-red-500 dark:text-red-400 mt-2 opacity-75">
+                                        Check the terminal output above for details.
+                                    </div>
+                                    <button
+                                        onClick={() => {
+                                            const { useChatStore } = require('../../lib/stores/zustand');
+                                            useChatStore.getState().setPendingErrorLog(output || '');
+                                            useChatStore.getState().setPendingFix(true);
+                                        }}
+                                        className="mt-3 flex items-center gap-1.5 px-3 py-1.5 bg-red-100 dark:bg-red-900/40 hover:bg-red-200 dark:hover:bg-red-900/60 text-red-700 dark:text-red-300 rounded-md text-xs font-medium transition-colors"
+                                    >
+                                        <Icon icon="ph:wrench-duotone" />
+                                        Fix Error
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+                </>
+            )}
+        </motion.li>
     );
 });
 

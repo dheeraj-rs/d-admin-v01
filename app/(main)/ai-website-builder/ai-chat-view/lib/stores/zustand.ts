@@ -26,6 +26,8 @@ interface ChatState {
     selectedProvider: ModelProvider;
     chatId: string | undefined;
     description: string | undefined;
+    pendingFix: boolean;
+    pendingErrorLog: string | undefined;
 
     // Actions
     setStarted: (started: boolean) => void;
@@ -35,6 +37,8 @@ interface ChatState {
     setSelectedProvider: (provider: ModelProvider) => void;
     setChatId: (id: string | undefined) => void;
     setDescription: (desc: string | undefined) => void;
+    setPendingFix: (pending: boolean) => void;
+    setPendingErrorLog: (log: string | undefined) => void;
 }
 
 export const useChatStore = create<ChatState>()(
@@ -47,6 +51,8 @@ export const useChatStore = create<ChatState>()(
             selectedProvider: 'google',
             chatId: undefined,
             description: undefined,
+            pendingFix: false,
+            pendingErrorLog: undefined,
 
             // Actions - simple setters
             setStarted: (started) => set({ started }),
@@ -56,6 +62,8 @@ export const useChatStore = create<ChatState>()(
             setSelectedProvider: (provider) => set({ selectedProvider: provider }),
             setChatId: (id) => set({ chatId: id }),
             setDescription: (desc) => set({ description: desc }),
+            setPendingFix: (pending) => set({ pendingFix: pending }),
+            setPendingErrorLog: (log) => set({ pendingErrorLog: log }),
         }),
         { name: 'ChatStore' }
     )

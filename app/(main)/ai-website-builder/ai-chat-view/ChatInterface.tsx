@@ -181,7 +181,7 @@ export const ChatInterface = React.forwardRef<HTMLDivElement, BaseChatProps>(
                     </div>
 
                     <div className="z-20">
-                        <div className="p-3 pr-3 pb-3 md:pr-1 w-full max-w-chat mx-auto z-prompt bg-[var(--d-admin-surface-ground)]">
+                        <div className="p-3 pr-3 pb-3 md:pr-1 w-full max-w-chat mx-auto z-prompt">
                             {/* <div className="absolute inset-y-0" style={{ left: 'var(--chat-padding)', right: 'var(--chat-padding)' }}></div> */}
                             <div className="relative" style={{ height: '0px' }}>
                                 <div className="flex flex-wrap justify-between py-1 px-2 -top-px absolute transition-opacity duration-350 rounded-t-lg text-xs truncate border left-2 w-[calc(100%-1rem)] border-b-0 border-[var(--d-admin-surface-border)] bg-[var(--d-admin-surface-section)] backdrop-blur opacity-0">
@@ -193,7 +193,7 @@ export const ChatInterface = React.forwardRef<HTMLDivElement, BaseChatProps>(
                                 </div>
                             </div>
                             <div className="relative shadow-xs p-[1px] rounded-lg">
-                                <div className="absolute inset-0 bg-[var(--d-admin-surface-border)] -z-1"></div>
+                                {/* <div className="absolute inset-0 bg-[var(--d-admin-surface-border)] -z-1"></div> */}
                                 <div className="bg-[var(--d-admin-surface-card)] rounded-lg dark:shadow-lg">
                                     <div className="border-transparent" style={{ height: '0px' }}>
                                         <div className="overflow-hidden h-full border-[var(--d-admin-surface-border)] relative bg-[var(--d-admin-surface-section)] transition-opacity duration-200 rounded-t-[0.44rem] border-b-px left-0 right-0 opacity-0">

@@ -9,6 +9,32 @@ import type { ActionCallbackData } from './message-parser';
 
 const logger = createScopedLogger('ActionRunner');
 
+// Helper to strip ANSI codes, handle backspaces, carriage returns, and excessive newlines
+const stripAnsi = (str: string) => {
+  // 1. Pre-process Cursor control codes
+  let clean = str
+    // Move Cursor Left (ESC[D or ESC[nD) -> Backspace(s). Default n=1.
+    .replace(/\x1b\[(\d+)?D/g, (match, p1) => '\x08'.repeat(p1 ? parseInt(p1, 10) : 1))
+    // Clear Line (ESC[2K or ESC[K) or Cursor Column (ESC[G or ESC[nG) -> Carriage Return (\r)
+    .replace(/\x1b\[[0-2]?K|\x1b\[(\d+)?G/g, '\r');
+
+  // 2. Strip standard ANSI color codes
+  clean = clean.replace(/[\u001b\u009b][[()#;?]*(?:[0-9]{1,4}(?:;[0-9]{0,4})*)?[0-9A-ORZcf-nqry=><]/g, '');
+
+  // 3. Handle Backspace (\x08)
+  while (clean.includes('\x08')) {
+    clean = clean.replace(/[^\x08]\x08/g, '').replace(/^\x08+/g, '');
+  }
+
+  // 4. Handle Carriage Return (\r): keep last non-empty segment
+  clean = clean.split('\n').map(line => {
+    return line.split('\r').reduce((acc, curr) => curr || acc, '');
+  }).join('\n');
+
+  // 5. Collapse excessive newlines (max 2)
+  return clean.replace(/\n{3,}/g, '\n\n');
+};
+
 export type ActionStatus =
   | 'pending'
   | 'running'
@@ -21,6 +47,7 @@ export type BaseActionState = BuilderAction & {
   abort: () => void;
   executed: boolean;
   abortSignal: AbortSignal;
+  output?: string; // Add output field
 };
 
 export type FailedActionState = BuilderAction &
@@ -32,7 +59,7 @@ export type FailedActionState = BuilderAction &
 export type ActionState = BaseActionState | FailedActionState;
 
 type BaseActionUpdate = Partial<
-  Pick<BaseActionState, 'status' | 'abort' | 'executed'>
+  Pick<BaseActionState, 'status' | 'abort' | 'executed' | 'output'>
 >;
 
 export type ActionStateUpdate =
@@ -72,6 +99,7 @@ export class ActionRunner {
         this.#updateAction(actionId, { status: 'aborted' });
       },
       abortSignal: abortController.signal,
+      output: '',
     };
 
     this.#updateArtifactActions({ ...actions, [actionId]: newAction });
@@ -119,7 +147,7 @@ export class ActionRunner {
     try {
       switch (action.type) {
         case 'shell': {
-          await this.#runShellAction(action);
+          await this.#runShellAction(action, actionId);
           break;
         }
         case 'file': {
@@ -132,20 +160,21 @@ export class ActionRunner {
       this.#updateAction(actionId, {
         status: action.abortSignal.aborted ? 'aborted' : 'complete',
       });
-    } catch (error) {
+    } catch (error: any) {
       console.timeEnd(`[ActionRunner] Action ${actionId}`);
-      console.error(`[ActionRunner] Action ${actionId} failed:`, error);
+      // Use warn to avoid triggering Next.js error overlay
+      console.warn(`[ActionRunner] Action ${actionId} failed:`, error);
+
       this.#updateAction(actionId, {
         status: 'failed',
-        error: 'Action failed',
+        error: error.message || 'Action failed',
       });
 
-      // re-throw the error to be caught in the promise chain
-      throw error;
+      // Do NOT re-throw, as we have handled the failure in the UI
     }
   }
 
-  async #runShellAction(action: ActionState): Promise<void> {
+  async #runShellAction(action: ActionState, actionId: string): Promise<void> {
     if (action.type !== 'shell') {
       unreachable('Expected shell action');
     }
@@ -167,49 +196,53 @@ export class ActionRunner {
     const isDevServer = this.#isDevServerCommand(action.content);
     let devServerStarted = false;
     let outputBuffer = '';
-    let rawOutput = '';
+    let rawOutput = ''; // Keep track of raw output for error reporting
     let missingDependencyDetected = false;
     let syntaxErrorDetected = false;
     let buildErrorDetected = false;
     let portConflictDetected = false;
 
+    // Throttled update for UI
+    let lastUpdate = Date.now();
+    const updateInterval = 200; // ms
+
     process.output.pipeTo(
       new WritableStream({
-        write(data) {
-          console.log(data);
+        write: (data) => {
+          // console.log(data); // Removed logging to reduce noise
 
           const str = data.toString();
-          outputBuffer += str.toLowerCase();
+          outputBuffer += str; // ANSI codes included for now, might need stripping if rendering issue
           rawOutput += str;
 
+          // Update UI periodically
+          const now = Date.now();
+          if (now - lastUpdate > updateInterval) {
+            this.#updateAction(actionId, { output: stripAnsi(outputBuffer) });
+            lastUpdate = now;
+          }
+
+          const lowerStr = str.toLowerCase();
+
           // Detect various error types
-          if (str.includes('command not found') || str.includes('not found:') || str.includes('Cannot find module')) {
+          if (rawOutput.toLowerCase().includes('command not found') || rawOutput.toLowerCase().includes('not found:') || rawOutput.toLowerCase().includes('cannot find module')) {
             missingDependencyDetected = true;
           }
 
-          if (str.match(/SyntaxError|Unexpected token|Parse error/i)) {
+          if (rawOutput.match(/SyntaxError|Unexpected token|Parse error/i)) {
             syntaxErrorDetected = true;
             logger.error('Syntax error detected in generated code');
           }
 
-          if (str.match(/Failed to compile|Build failed|compilation error|Failed to resolve import/i)) {
+          if (rawOutput.match(/Failed to compile|Build failed|compilation error|Failed to resolve import/i)) {
             buildErrorDetected = true;
             useWorkbenchStore.getState().setBuildError(true);
             logger.error('Build error detected');
           }
 
-          if (str.match(/EADDRINUSE|port.*already in use/i)) {
+          if (rawOutput.match(/EADDRINUSE|port.*already in use/i)) {
             portConflictDetected = true;
             logger.warn('Port conflict detected');
-          }
-
-          if (str.includes(action.content) && str.match(/not found/i)) {
-            // command not found
-          }
-
-          // accumulate output for dev server detection
-          if (isDevServer && !devServerStarted) {
-            // outputBuffer handled above
           }
         },
       })
@@ -217,13 +250,29 @@ export class ActionRunner {
 
     // for dev servers, monitor output and mark complete when started
     if (isDevServer) {
+      // ... (dev server block - only updating usage of stripAnsi if needed, but since it's now top-level it works)
+      // Actually I need to replace the whole method content to be safe or use targeted replace.
+      // Let's replace the Logic inside runShellAction related to throwing.
+    }
+    // ...
+    // replacing just the throw block
+
+
+    // for dev servers, monitor output and mark complete when started
+    if (isDevServer) {
+      // Force initial update
+      this.#updateAction(actionId, { output: 'Starting dev server...\n' });
+
       const startDetectionPromise = new Promise<void>((resolve) => {
         const checkInterval = setInterval(() => {
-          if (this.#detectDevServerStart(outputBuffer)) {
+          if (this.#detectDevServerStart(rawOutput.toLowerCase())) {
             devServerStarted = true;
             clearInterval(checkInterval);
             // safe to clear timeout if it exists, though here we use a race
             logger.debug('Dev server detected as started');
+
+            // Final update of output
+            this.#updateAction(actionId, { output: stripAnsi(outputBuffer) });
 
             // Auto-switch to preview on success
             useAiBuilderStore.getState().setActiveMobilePanel('workbench');
@@ -243,6 +292,9 @@ export class ActionRunner {
       try {
         const result = await Promise.race([startDetectionPromise, processExitPromise]);
 
+        // Final update upon completion/failure
+        this.#updateAction(actionId, { output: stripAnsi(outputBuffer) });
+
         // If result has a type 'exit', the process finished before the server started
         if (result && 'type' in result && result.type === 'exit') {
           const code = (result as { code: number }).code;
@@ -260,25 +312,38 @@ export class ActionRunner {
           }
         }
       } catch (error) {
+        // Final update on error
+        this.#updateAction(actionId, { output: stripAnsi(outputBuffer) });
+
         // If process exited with error, check if we should recover
         if (missingDependencyDetected) {
           logger.info(
             'Detected missing dependency. Attempting auto-recovery with npm install...'
           );
 
+          this.#updateAction(actionId, { output: stripAnsi(outputBuffer) + '\n\n[Auto-Recovery] Installing missing dependencies...\n' });
+
           // Notify user (via terminal output mostly)
           const installProcess = await webcontainer.spawn('npm', ['install']);
           installProcess.output.pipeTo(
             new WritableStream({
-              write(data) {
-                console.log(data);
+              write: (data) => {
+                const str = data.toString();
+                outputBuffer += str;
+                // Update UI periodically during recovery
+                const now = Date.now();
+                if (now - lastUpdate > updateInterval) {
+                  this.#updateAction(actionId, { output: stripAnsi(outputBuffer) });
+                  lastUpdate = now;
+                }
               },
             })
           );
           await installProcess.exit;
 
+          this.#updateAction(actionId, { output: stripAnsi(outputBuffer) });
           logger.info('Auto-recovery complete. Retrying original command...');
-          return this.#runShellAction(action);
+          return this.#runShellAction(action, actionId);
         }
 
         // Log other error types for visibility
@@ -306,25 +371,36 @@ export class ActionRunner {
 
     // for non-dev-server commands, wait for exit as before
     const exitCode = await process.exit;
+    this.#updateAction(actionId, { output: stripAnsi(outputBuffer) });
 
     // Auto-recovery for non-dev commands too
     if (exitCode !== 0 && missingDependencyDetected) {
       logger.info(
         'Detected missing dependency on non-dev command. Installing...'
       );
+      this.#updateAction(actionId, { output: stripAnsi(outputBuffer) + '\n\n[Auto-Recovery] Installing missing dependencies...\n' });
+
       const installProcess = await webcontainer.spawn('npm', ['install']);
       installProcess.output.pipeTo(
         new WritableStream({
-          write(d) {
-            console.log(d);
+          write: (d) => {
+            const str = d.toString();
+            outputBuffer += str;
+            // Update UI periodically during recovery
+            const now = Date.now();
+            if (now - lastUpdate > updateInterval) {
+              this.#updateAction(actionId, { output: stripAnsi(outputBuffer) });
+              lastUpdate = now;
+            }
           },
         })
       );
       await installProcess.exit;
+      this.#updateAction(actionId, { output: stripAnsi(outputBuffer) });
 
       // Retry
       logger.info('Retrying original command...');
-      return this.#runShellAction(action);
+      return this.#runShellAction(action, actionId);
     }
 
     logger.debug(`Process terminated with code ${exitCode}`);
