@@ -143,7 +143,7 @@ export const EditorPanel = memo(
         <Panel defaultSize={showTerminal ? DEFAULT_EDITOR_SIZE : 100} minSize={20}>
           <PanelGroup direction="horizontal">
             <Panel defaultSize={20} minSize={10} collapsible>
-              <div className="flex flex-col border-r border-surface h-full bg-surface-0">
+              <div className="flex flex-col border-r border-[var(--d-admin-surface-border)] h-full bg-surface-0">
                 <PanelHeader>
                   <Icon icon="ph:tree-structure-duotone" className="shrink-0 text-lg" />
                   Files
@@ -220,7 +220,7 @@ export const EditorPanel = memo(
         >
           <div className="h-full">
             <div className="bg-surface-0 h-full flex flex-col">
-              <div className="flex items-center bg-surface-b border-y border-surface gap-1.5 min-h-[34px] p-2">
+              <div className="flex items-center bg-surface-b border-y border-[var(--d-admin-surface-border)] gap-1.5 min-h-[34px] p-2">
                 {Array.from({ length: terminalCount }, (_, index) => {
                   const isActive = activeTerminal === index;
 
