@@ -31,59 +31,24 @@ export const MENU_ITEMS = [
             to: '/uikit/button',
             items: [
               {
+                label: 'Buttons1',
+                icon: 'pi pi-fw pi-circle-on',
+                to: '/uikit/button',
+              },
+              {
                 label: 'Buttons2',
                 icon: 'pi pi-fw pi-circle-on',
                 to: '/uikit/button',
               },
               {
-                label: 'Forms2',
-                icon: 'pi pi-fw pi-list-check',
-                to: '/uikit/form',
-              }, {
-                label: 'Buttons2',
+                label: 'Buttons3',
                 icon: 'pi pi-fw pi-circle-on',
                 to: '/uikit/button',
               },
               {
-                label: 'Forms2',
-                icon: 'pi pi-fw pi-list-check',
-                to: '/uikit/form',
-              }, {
-                label: 'Buttons2',
+                label: 'Buttons4',
                 icon: 'pi pi-fw pi-circle-on',
                 to: '/uikit/button',
-              },
-              {
-                label: 'Forms2',
-                icon: 'pi pi-fw pi-list-check',
-                to: '/uikit/form',
-              }, {
-                label: 'Buttons2',
-                icon: 'pi pi-fw pi-circle-on',
-                to: '/uikit/button',
-              },
-              {
-                label: 'Forms2',
-                icon: 'pi pi-fw pi-list-check',
-                to: '/uikit/form',
-              }, {
-                label: 'Buttons2',
-                icon: 'pi pi-fw pi-circle-on',
-                to: '/uikit/button',
-              },
-              {
-                label: 'Forms2',
-                icon: 'pi pi-fw pi-list-check',
-                to: '/uikit/form',
-              }, {
-                label: 'Buttons2',
-                icon: 'pi pi-fw pi-circle-on',
-                to: '/uikit/button',
-              },
-              {
-                label: 'Forms2',
-                icon: 'pi pi-fw pi-list-check',
-                to: '/uikit/form',
               },
             ],
           },

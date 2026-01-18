@@ -2,6 +2,7 @@ import { useState, useCallback, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Icon } from '@iconify/react';
 import { useIsMobile } from '@/core/hooks/use-mobile';
+import { toast } from 'react-toastify';
 import Link from 'next/link';
 import { useAiBuilderStore } from '../store/ai-builder-store';
 // ==================================
@@ -240,21 +241,33 @@ export function Header() {
                                         if (e.key === 'Enter') {
                                             if (validateUrl(url)) {
                                                 usePreviewStore.getState().setIframeUrl(url);
-                                            } else {
-                                                usePreviewStore.getState().setIframeUrl(url);
                                             }
                                         }
                                     }}
                                 />
                                 <div className="flex items-center gap-1 ml-2">
                                     <button
-                                        className="p-1 hover:bg-surface-d rounded-md text-gray-400 hover:text-color transition-colors"
+                                        className="p-1 hover:bg-[var(--d-admin-surface-hover)] rounded-md text-[var(--d-admin-text-color-secondary)] hover:text-[var(--d-admin-text-color)] transition-colors"
                                         onClick={() => {
                                             usePreviewStore.getState().setIframeUrl(url);
                                             usePreviewStore.getState().refreshPreview();
                                         }}
+                                        title="Refresh Preview"
                                     >
-                                        <Icon icon="ph:arrow-clockwise" />
+                                        <Icon icon="ph:arrow-clockwise" className="size-4" />
+                                    </button>
+                                    <button
+                                        className="p-1 hover:bg-[var(--d-admin-surface-hover)] rounded-md text-[var(--d-admin-text-color-secondary)] hover:text-[var(--d-admin-text-color)] transition-colors"
+                                        onClick={() => {
+                                            toast.info('Opening in new tab. You may need to click "Connect to Project" to authorize.', {
+                                                autoClose: 5000,
+                                                position: "bottom-right"
+                                            });
+                                            window.open(url, '_blank');
+                                        }}
+                                        title="Open in New Tab"
+                                    >
+                                        <Icon icon="ph:arrow-square-out" className="size-4" />
                                     </button>
                                 </div>
                             </div>
