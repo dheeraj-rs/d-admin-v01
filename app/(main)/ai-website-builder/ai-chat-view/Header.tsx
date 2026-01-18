@@ -185,36 +185,36 @@ export function Header() {
 
                     {(!isMobile || activeMobilePanel === 'workbench') && (
                         <div className=" flex items-center gap-2">
-                            <div className="flex items-center flex-wrap shrink-0 overflow-hidden rounded-xl p-1 border border-[var(--d-admin-surface-border)]">
+                            <div className="flex items-center shrink-0 overflow-hidden rounded-lg p-0.5 border border-[var(--d-admin-surface-border)] h-8">
                                 <button
                                     onClick={() => useWorkbenchStore.getState().setCurrentView('preview')}
-                                    className={`relative bg-transparent text-xs sm:text-sm px-2.5 py-1 rounded-lg transition-all ${activeView === 'preview' ? 'text-[var(--d-admin-text-color)]' : 'text-[var(--d-admin-text-color-secondary)] hover:text-[var(--d-admin-text-color)]'}`}
+                                    className={`relative bg-transparent text-xs px-3 h-full rounded-md transition-all flex items-center justify-center ${activeView === 'preview' ? 'text-[var(--d-admin-text-color)]' : 'text-[var(--d-admin-text-color-secondary)] hover:text-[var(--d-admin-text-color)]'}`}
                                 >
                                     <span className="relative z-10 flex items-center font-medium gap-1.5">
-                                        <Icon icon="lucide:eye" className="size-4" />
+                                        <Icon icon="lucide:eye" className="size-3.5" />
                                         <span className="hidden sm:inline-block">Preview</span>
                                     </span>
-                                    {activeView === 'preview' && <span className="absolute inset-0 z-0 bg-[var(--d-admin-surface-hover)] rounded-lg shadow-sm"></span>}
+                                    {activeView === 'preview' && <span className="absolute inset-0 z-0 bg-[var(--d-admin-surface-hover)] rounded-md shadow-sm"></span>}
                                 </button>
                                 <button
                                     onClick={() => useWorkbenchStore.getState().setCurrentView('code')}
-                                    className={`relative bg-transparent text-xs sm:text-sm px-2.5 py-1 rounded-lg transition-all ${activeView === 'code' ? 'text-[var(--d-admin-text-color)]' : 'text-[var(--d-admin-text-color-secondary)] hover:text-[var(--d-admin-text-color)]'}`}
+                                    className={`relative bg-transparent text-xs px-3 h-full rounded-md transition-all flex items-center justify-center ${activeView === 'code' ? 'text-[var(--d-admin-text-color)]' : 'text-[var(--d-admin-text-color-secondary)] hover:text-[var(--d-admin-text-color)]'}`}
                                 >
                                     <span className="relative z-10 flex items-center font-medium gap-1.5">
-                                        <Icon icon="lucide:code" className="size-4" />
+                                        <Icon icon="lucide:code" className="size-3.5" />
                                         <span className="hidden sm:inline-block">Code</span>
                                     </span>
-                                    {activeView === 'code' && <span className="absolute inset-0 z-0 bg-[var(--d-admin-surface-hover)] rounded-lg shadow-sm"></span>}
+                                    {activeView === 'code' && <span className="absolute inset-0 z-0 bg-[var(--d-admin-surface-hover)] rounded-md shadow-sm"></span>}
                                 </button>
                             </div>
                             <div className="flex items-center">
-                                <button type="button" id="radix-:r4g:" aria-haspopup="menu" aria-expanded="false" data-state="closed" className="bg-transparent p-0" aria-label="More Options">
+                                {/* <button type="button" id="radix-:r4g:" aria-haspopup="menu" aria-expanded="false" data-state="closed" className="bg-transparent p-0" aria-label="More Options">
                                     <div className="flex items-center bg-transparent text-sm px-2 py-1 rounded-full relative text-[var(--d-admin-text-color-secondary)] hover:text-[var(--d-admin-text-color)] pl-1 pr-1.5 h-5 opacity-90 hover:opacity-100" data-state="closed">
                                         <Icon icon="ph:gear-six-duotone" className="w-4 h-4" />
                                     </div>
-                                </button>
+                                </button> */}
                                 <div className="builder-topbar-center hidden md:block flex-1 max-w-2xl mx-auto">
-                                    <div className="relative flex items-center w-full bg-surface-c rounded-lg border border-surface px-3 py-2">
+                                    <div className="relative flex items-center w-full bg-[var(--d-admin-surface-section)] rounded-md border border-[var(--d-admin-surface-border)] px-3 h-8">
                                         {activePreview && (
                                             <div className="mr-2">
                                                 <PortDropdown
@@ -262,14 +262,14 @@ export function Header() {
 
                     {/* Desktop Actions */}
                     <div className="ml-auto hidden md:flex gap-3">
-                        <button className="items-center justify-center gap-2 font-medium min-w-0 max-w-full rounded-md focus-visible:outline-2 disabled:op-50 relative disabled:cursor-not-allowed focus-visible:outline-[var(--d-admin-blue-600)] bg-[var(--d-admin-text-color)] text-[var(--d-admin-surface-ground)] flex gap-1.7 shrink-0 h-8 text-sm px-3" type="button" onClick={() => {
+                        <button className="items-center justify-center gap-2 font-medium min-w-0 max-w-full rounded-md focus-visible:outline-2 disabled:op-50 relative disabled:cursor-not-allowed focus-visible:outline-[var(--d-admin-blue-600)] bg-[var(--d-admin-surface-section)] border border-[var(--d-admin-surface-border)] text-[var(--d-admin-text-color)] hover:bg-[var(--d-admin-surface-hover)] transition-colors flex gap-1.7 shrink-0 h-8 text-sm px-3" type="button" onClick={() => {
                             const files = useFilesStore.getState().files;
                             exportProjectAsZip(files);
                         }}
                             title="Export as ZIP">                    <Icon icon="ph:download-duotone" className="text-lg" />
                             <span>Export</span></button>
 
-                        <Link href="/ai-website-builder/ai-chat-view/publish" className="items-center justify-center gap-2 font-medium min-w-0 max-w-full rounded-md focus-visible:outline-2 disabled:op-50 relative disabled:cursor-not-allowed focus-visible:outline-[var(--d-admin-blue-600)] bg-[var(--d-admin-text-color)] text-[var(--d-admin-surface-ground)] flex gap-1.7 shrink-0 h-8 text-sm px-3" title="Deploy to Vercel" >                    <Icon icon="ph:rocket-launch-duotone" className="text-lg" />
+                        <Link href="/ai-website-builder/ai-chat-view/publish" className="items-center justify-center gap-2 font-medium min-w-0 max-w-full rounded-md focus-visible:outline-2 disabled:op-50 relative disabled:cursor-not-allowed focus-visible:outline-[var(--d-admin-blue-600)] bg-[var(--d-admin-surface-section)] border border-[var(--d-admin-surface-border)] text-[var(--d-admin-text-color)] hover:bg-[var(--d-admin-surface-hover)] transition-colors flex gap-1.7 shrink-0 h-8 text-sm px-3" title="Deploy to Vercel" >                    <Icon icon="ph:rocket-launch-duotone" className="text-lg" />
                             <span>Publish</span>
                         </Link>
                     </div>
