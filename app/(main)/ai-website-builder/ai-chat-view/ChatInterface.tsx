@@ -241,7 +241,7 @@ export const ChatInterface = React.forwardRef<HTMLDivElement, BaseChatProps>(
                                             value={input}
                                             onChange={(event) => {
                                                 handleInputChange?.(event);
-                                            }} aria-label="How can Bolt help you today? (or /command)" className="w-full pl-5 pt-5 pr-16 focus:outline-none resize-none text-[var(--d-admin-text-color)] placeholder-[var(--d-admin-gray-600)] bg-transparent text-sm" placeholder="How can Bolt help you today? (or /command)" translate="no" style={{ minHeight: '80px', maxHeight: '400px', height: '80px', overflowY: 'hidden' }} />
+                                            }} aria-label="How can D Admin help you today?" className="w-full pl-5 pt-5 pr-16 focus:outline-none resize-none text-[var(--d-admin-text-color)] placeholder-[var(--d-admin-gray-600)] bg-transparent text-sm" placeholder="How can Bolt help you today? (or /command)" translate="no" style={{ minHeight: '80px', maxHeight: '400px', height: '80px', overflowY: 'hidden' }} />
                                     </div>
                                     <div className="flex justify-between items-center text-sm px-3 pb-3 pt-2 gap-2">
                                         <div className="flex gap-1 items-center min-w-0 flex-shrink">

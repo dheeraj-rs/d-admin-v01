@@ -165,18 +165,24 @@ export const EditorPanel = memo(
                 {activeFileSegments?.length && (
                   <div className="flex items-center flex-1 text-sm">
                     <FileBreadcrumb pathSegments={activeFileSegments} files={files} onFileSelect={onFileSelect} />
-                    {activeFileUnsaved && (
-                      <div className="flex gap-1 ml-auto -mr-1.5">
-                        <PanelHeaderButton onClick={onFileSave}>
-                          <Icon icon="ph:floppy-disk-duotone" />
-                          Save
-                        </PanelHeaderButton>
-                        <PanelHeaderButton onClick={onFileReset}>
-                          <Icon icon="ph:clock-counter-clockwise-duotone" />
-                          Reset
-                        </PanelHeaderButton>
-                      </div>
-                    )}
+                    <div className="flex gap-1 ml-auto -mr-1.5 items-center">
+                      {activeFileUnsaved && (
+                        <>
+                          <PanelHeaderButton onClick={onFileSave}>
+                            <Icon icon="ph:floppy-disk-duotone" />
+                            Save
+                          </PanelHeaderButton>
+                          <PanelHeaderButton onClick={onFileReset}>
+                            <Icon icon="ph:clock-counter-clockwise-duotone" />
+                            Reset
+                          </PanelHeaderButton>
+                        </>
+                      )}
+                      <PanelHeaderButton onClick={() => workbenchStore.toggleTerminal(!showTerminal)}>
+                        <Icon icon="ph:terminal" />
+                        Toggle Terminal
+                      </PanelHeaderButton>
+                    </div>
                   </div>
                 )}
               </PanelHeader>

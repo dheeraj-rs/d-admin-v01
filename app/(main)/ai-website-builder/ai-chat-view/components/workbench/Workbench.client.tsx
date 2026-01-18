@@ -76,29 +76,6 @@ export const Workbench = memo(({ isStreaming }: WorkspaceProps) => {
 
   return (
     <div className="h-full w-full flex flex-col overflow-hidden bg-surface-0">
-      <div className="flex items-center px-3 py-2 border-b border-surface">
-        <Slider selected={selectedView} options={sliderOptions} setSelected={setSelectedView} />
-        <div className="ml-auto" />
-        {selectedView === 'code' && (
-          <PanelHeaderButton
-            className="mr-1 text-sm"
-            onClick={() => {
-              workbenchStore.toggleTerminal(!workbenchStore.showTerminal);
-            }}
-          >
-            <div className="i-ph:terminal" />
-            Toggle Terminal
-          </PanelHeaderButton>
-        )}
-        <IconButton
-          icon="i-ph:x-circle"
-          className="-mr-1"
-          size="xl"
-          onClick={() => {
-            useWorkbenchStore.getState().setShowWorkbench(false);
-          }}
-        />
-      </div>
       <div className="relative flex-1 overflow-hidden">
         <View
           animate={{ x: selectedView === 'code' ? 0 : '-100%' }}
