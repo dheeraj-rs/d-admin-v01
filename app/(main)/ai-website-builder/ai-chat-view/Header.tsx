@@ -85,7 +85,7 @@ export function Header() {
 
     return (
         <header className="flex shrink-0 select-none items-center pl-2 pr-3 h-[var(--header-height)] w-full">
-            <div className="flex items-center gap-2 flex-1 min-w-0 w-full max-w-[40.5%]">
+            <div className="flex items-center gap-2 flex-1 min-w-0 w-full max-w-[70%] md:max-w-[40.5%]">
                 <button
                     onClick={() => router.back()}
                     className="flex items-center justify-center font-medium shrink-0 min-w-0 max-w-full rounded-md focus-visible:outline-2 disabled:op-50 relative disabled:cursor-not-allowed gap-1 h-9 focus-visible:outline-[var(--d-admin-blue-600)] bg-transparent enabled:hover:bg-[var(--d-admin-surface-hover)] text-[var(--d-admin-text-color)] text-sm px-2 -mr-px"
@@ -101,14 +101,14 @@ export function Header() {
                     <Icon icon="ph:clock-counter-clockwise" className="size-5" />
                 </button>
                 <span className="text-[var(--d-admin-text-color)] opacity-[.12] text-xl antialiased mx-1">/</span>
-                <button className={`flex items-center justify-center font-medium min-w-0 rounded-md focus-visible:outline-2 disabled:op-50 relative disabled:cursor-not-allowed gap-1 h-9 focus-visible:outline-[var(--d-admin-blue-600)] bg-transparent enabled:hover:bg-[var(--d-admin-surface-hover)] text-[var(--d-admin-text-color)] text-sm px-2 -mr-px ${isMobile && activeMobilePanel === 'workbench' ? 'hidden' : 'flex'}`} type="button">
-                    <span className="truncate max-w-[100px] md:max-w-md lg:max-w-lg">{chatStarted ? (
+                <button className={`flex-1 md:flex-none flex items-center justify-center font-medium min-w-0 rounded-md focus-visible:outline-2 disabled:op-50 relative disabled:cursor-not-allowed gap-1 h-9 focus-visible:outline-[var(--d-admin-blue-600)] bg-transparent enabled:hover:bg-[var(--d-admin-surface-hover)] text-[var(--d-admin-text-color)] text-sm px-2 -mr-px ${isMobile && activeMobilePanel === 'workbench' ? 'hidden' : 'flex'}`} type="button">
+                    <span className="truncate max-w-full md:max-w-md lg:max-w-lg">{chatStarted ? (
                         <span className="flex-1 truncate text-center text-primary">
                             {chatDescription}
                         </span>
                     ) : 'New Project'}</span>
                 </button>
-                <div className="relative ml-2 shrink-0">
+                <div className="relative ml-2 shrink-0 hidden md:block">
                     <button
                         className="flex items-center justify-center font-medium max-w-full rounded-md gap-1.5 h-8 bg-transparent text-[var(--d-admin-text-color)] text-xs px-2.5 transition-all duration-300 group shrink min-w-0 hover:bg-[var(--d-admin-surface-hover)]"
                         type="button"
@@ -154,8 +154,8 @@ export function Header() {
 
             </div>
 
-            <div className="flex items-center pointer-events-auto shrink-0 ml-auto gap-2 w-full max-w-[59.5%]">
-                <div className="flex relative justify-end w-full items-center gap-2 py-2 min-h-[var(--panel-header-height)] pl-0">
+            <div className="flex items-center pointer-events-auto shrink-0 ml-auto gap-2 w-auto md:w-full md:max-w-[59.5%]">
+                <div className="flex relative justify-end w-auto md:w-full items-center gap-2 py-2 min-h-[var(--panel-header-height)] pl-0">
                     {/* Mobile Panel Switcher */}
                     {isMobile && (
                         <div className="flex items-center gap-2 mr-0">
@@ -210,7 +210,7 @@ export function Header() {
 
                         </div>
                     )}
-                    <div className="w-full flex-1 flex items-center justify-center">
+                    <div className="w-full flex-1 hidden md:flex items-center justify-center">
                         {/* <button type="button" id="radix-:r4g:" aria-haspopup="menu" aria-expanded="false" data-state="closed" className="bg-transparent p-0" aria-label="More Options">
                                     <div className="flex items-center bg-transparent text-sm px-2 py-1 rounded-full relative text-[var(--d-admin-text-color-secondary)] hover:text-[var(--d-admin-text-color)] pl-1 pr-1.5 h-5 opacity-90 hover:opacity-100" data-state="closed">
                                         <Icon icon="ph:gear-six-duotone" className="w-4 h-4" />
@@ -287,7 +287,36 @@ export function Header() {
                         {isMoreMenuOpen && (
                             <>
                                 <div className="fixed inset-0 z-40" onClick={() => setIsMoreMenuOpen(false)}></div>
-                                <div className="absolute top-full right-0 mt-2 w-48 bg-[var(--d-admin-surface-section)] border border-[var(--d-admin-surface-border)] rounded-lg shadow-xl overflow-hidden z-50 animate-in fade-in zoom-in-95 duration-100 flex flex-col p-1">
+                                <div className="absolute top-full right-0 mt-2 w-56 bg-[var(--d-admin-surface-section)] border border-[var(--d-admin-surface-border)] rounded-lg shadow-xl overflow-hidden z-50 animate-in fade-in zoom-in-95 duration-100 flex flex-col p-1">
+                                    <div className="px-2 py-1.5 text-xs font-medium text-[var(--d-admin-text-color-secondary)] uppercase">Builder View</div>
+                                    <button
+                                        onClick={() => { setBuilderView('chat'); setIsMoreMenuOpen(false); }}
+                                        className={`flex items-center gap-2 px-2 py-1.5 text-xs rounded-md w-full text-left transition-colors ${builderView === 'chat' ? 'bg-[var(--d-admin-surface-hover)] text-[var(--d-admin-text-color)]' : 'text-[var(--d-admin-text-color-secondary)] hover:text-[var(--d-admin-text-color)] hover:bg-[var(--d-admin-surface-hover)]'}`}
+                                    >
+                                        <Icon icon="lucide:sparkles" className="size-3.5" />
+                                        <span>AI Chat</span>
+                                        {builderView === 'chat' && <Icon icon="ph:check" className="ml-auto size-3" />}
+                                    </button>
+                                    <button
+                                        onClick={() => { setBuilderView('drag-drop'); setIsMoreMenuOpen(false); }}
+                                        className={`flex items-center gap-2 px-2 py-1.5 text-xs rounded-md w-full text-left transition-colors ${builderView === 'drag-drop' ? 'bg-[var(--d-admin-surface-hover)] text-[var(--d-admin-text-color)]' : 'text-[var(--d-admin-text-color-secondary)] hover:text-[var(--d-admin-text-color)] hover:bg-[var(--d-admin-surface-hover)]'}`}
+                                    >
+                                        <Icon icon="lucide:hand" className="size-3.5" />
+                                        <span>Drag & Drop Snippet</span>
+                                        {builderView === 'drag-drop' && <Icon icon="ph:check" className="ml-auto size-3" />}
+                                    </button>
+                                    <button
+                                        onClick={() => { setBuilderView('templates'); setIsMoreMenuOpen(false); }}
+                                        className={`flex items-center gap-2 px-2 py-1.5 text-xs rounded-md w-full text-left transition-colors ${builderView === 'templates' ? 'bg-[var(--d-admin-surface-hover)] text-[var(--d-admin-text-color)]' : 'text-[var(--d-admin-text-color-secondary)] hover:text-[var(--d-admin-text-color)] hover:bg-[var(--d-admin-surface-hover)]'}`}
+                                    >
+                                        <Icon icon="lucide:layout-template" className="size-3.5" />
+                                        <span>Templates</span>
+                                        {builderView === 'templates' && <Icon icon="ph:check" className="ml-auto size-3" />}
+                                    </button>
+
+                                    <div className="h-px bg-[var(--d-admin-surface-border)] my-1"></div>
+                                    <div className="px-2 py-1.5 text-xs font-medium text-[var(--d-admin-text-color-secondary)] uppercase">Actions</div>
+
                                     <button
                                         onClick={() => {
                                             const files = useFilesStore.getState().files;
