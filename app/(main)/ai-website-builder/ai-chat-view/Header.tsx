@@ -186,28 +186,26 @@ export function Header() {
                     {(!isMobile || activeMobilePanel === 'workbench') && (
                         <div className=" flex items-center gap-2">
                             <div className="flex items-center flex-wrap shrink-0 overflow-hidden rounded-xl p-1 border border-[var(--d-admin-surface-border)]">
-                                <div className="flex items-center">
-                                    <button
-                                        aria-label="Preview"
-                                        aria-pressed={activeView === 'preview'}
-                                        onClick={() => useWorkbenchStore.getState().setCurrentView('preview')}
-                                        className={`bg-transparent text-sm px-2 py-1 rounded-full relative ${activeView === 'preview' ? 'text-[var(--d-admin-primary-color)]' : 'text-[var(--d-admin-text-color-secondary)] hover:text-[var(--d-admin-text-color)]'}`}
-                                        data-state="closed"
-                                    >
-                                        <Icon icon="lucide:eye" className="size-4 block" />
-                                    </button>
-                                </div>
-                                <div className="flex items-center">
-                                    <button
-                                        aria-label="Code"
-                                        aria-pressed={activeView === 'code'}
-                                        onClick={() => useWorkbenchStore.getState().setCurrentView('code')}
-                                        className={`bg-transparent text-sm px-2 py-1 rounded-full relative ${activeView === 'code' ? 'text-[var(--d-admin-primary-color)]' : 'text-[var(--d-admin-text-color-secondary)] hover:text-[var(--d-admin-text-color)]'}`}
-                                        data-state="closed"
-                                    >
-                                        <Icon icon="lucide:code" className="size-4 block" />
-                                    </button>
-                                </div>
+                                <button
+                                    onClick={() => useWorkbenchStore.getState().setCurrentView('preview')}
+                                    className={`relative bg-transparent text-xs sm:text-sm px-2.5 py-1 rounded-lg transition-all ${activeView === 'preview' ? 'text-[var(--d-admin-text-color)]' : 'text-[var(--d-admin-text-color-secondary)] hover:text-[var(--d-admin-text-color)]'}`}
+                                >
+                                    <span className="relative z-10 flex items-center font-medium gap-1.5">
+                                        <Icon icon="lucide:eye" className="size-4" />
+                                        <span className="hidden sm:inline-block">Preview</span>
+                                    </span>
+                                    {activeView === 'preview' && <span className="absolute inset-0 z-0 bg-[var(--d-admin-surface-hover)] rounded-lg shadow-sm"></span>}
+                                </button>
+                                <button
+                                    onClick={() => useWorkbenchStore.getState().setCurrentView('code')}
+                                    className={`relative bg-transparent text-xs sm:text-sm px-2.5 py-1 rounded-lg transition-all ${activeView === 'code' ? 'text-[var(--d-admin-text-color)]' : 'text-[var(--d-admin-text-color-secondary)] hover:text-[var(--d-admin-text-color)]'}`}
+                                >
+                                    <span className="relative z-10 flex items-center font-medium gap-1.5">
+                                        <Icon icon="lucide:code" className="size-4" />
+                                        <span className="hidden sm:inline-block">Code</span>
+                                    </span>
+                                    {activeView === 'code' && <span className="absolute inset-0 z-0 bg-[var(--d-admin-surface-hover)] rounded-lg shadow-sm"></span>}
+                                </button>
                             </div>
                             <div className="flex items-center">
                                 <button type="button" id="radix-:r4g:" aria-haspopup="menu" aria-expanded="false" data-state="closed" className="bg-transparent p-0" aria-label="More Options">
