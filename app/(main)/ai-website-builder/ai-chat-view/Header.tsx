@@ -85,7 +85,7 @@ export function Header() {
 
     return (
         <header className="flex shrink-0 select-none items-center pl-2 pr-3 h-[var(--header-height)] w-full">
-            <div className="flex items-center gap-2 flex-1 min-w-0">
+            <div className="flex items-center gap-2 flex-1 min-w-0 w-full max-w-[40.5%]">
                 <button
                     onClick={() => router.back()}
                     className="flex items-center justify-center font-medium shrink-0 min-w-0 max-w-full rounded-md focus-visible:outline-2 disabled:op-50 relative disabled:cursor-not-allowed gap-1 h-9 focus-visible:outline-[var(--d-admin-blue-600)] bg-transparent enabled:hover:bg-[var(--d-admin-surface-hover)] text-[var(--d-admin-text-color)] text-sm px-2 -mr-px"
@@ -154,7 +154,7 @@ export function Header() {
 
             </div>
 
-            <div className="flex items-center pointer-events-auto shrink-0 ml-auto gap-2">
+            <div className="flex items-center pointer-events-auto shrink-0 ml-auto gap-2 w-full max-w-[59.5%]">
                 <div className="flex relative justify-end w-full items-center gap-2 py-2 min-h-[var(--panel-header-height)] pl-0">
                     {/* Mobile Panel Switcher */}
                     {isMobile && (
@@ -207,58 +207,59 @@ export function Header() {
                                     {activeView === 'code' && <span className="absolute inset-0 z-0 bg-[var(--d-admin-surface-hover)] rounded-md shadow-sm"></span>}
                                 </button>
                             </div>
-                            <div className="flex items-center">
-                                {/* <button type="button" id="radix-:r4g:" aria-haspopup="menu" aria-expanded="false" data-state="closed" className="bg-transparent p-0" aria-label="More Options">
+
+                        </div>
+                    )}
+                    <div className="w-full flex-1 flex items-center justify-center">
+                        {/* <button type="button" id="radix-:r4g:" aria-haspopup="menu" aria-expanded="false" data-state="closed" className="bg-transparent p-0" aria-label="More Options">
                                     <div className="flex items-center bg-transparent text-sm px-2 py-1 rounded-full relative text-[var(--d-admin-text-color-secondary)] hover:text-[var(--d-admin-text-color)] pl-1 pr-1.5 h-5 opacity-90 hover:opacity-100" data-state="closed">
                                         <Icon icon="ph:gear-six-duotone" className="w-4 h-4" />
                                     </div>
                                 </button> */}
-                                <div className="builder-topbar-center hidden md:block flex-1 max-w-2xl mx-auto">
-                                    <div className="relative flex items-center w-full bg-[var(--d-admin-surface-section)] rounded-md border border-[var(--d-admin-surface-border)] px-3 h-8">
-                                        {activePreview && (
-                                            <div className="mr-2">
-                                                <PortDropdown
-                                                    activePreviewIndex={activePreviewIndex}
-                                                    setActivePreviewIndex={(index) => usePreviewStore.getState().setActivePreviewIndex(index)}
-                                                    isDropdownOpen={isDropdownOpen}
-                                                    setIsDropdownOpen={setIsDropdownOpen}
-                                                    setHasSelectedPreview={() => { }}
-                                                    previews={previews}
-                                                />
-                                            </div>
-                                        )}
-                                        {!activePreview && <Icon icon="ph:lock-key-duotone" className="text-gray-400 mr-2" />}
-                                        <input
-                                            className="w-full bg-transparent outline-none text-sm text-color md:block hidden"
-                                            type="text"
-                                            value={url}
-                                            onChange={(e) => usePreviewStore.getState().setUrl(e.target.value)}
-                                            onKeyDown={(e) => {
-                                                if (e.key === 'Enter') {
-                                                    if (validateUrl(url)) {
-                                                        usePreviewStore.getState().setIframeUrl(url);
-                                                    } else {
-                                                        usePreviewStore.getState().setIframeUrl(url);
-                                                    }
-                                                }
-                                            }}
+                        <div className="builder-topbar-center hidden md:block flex-1 mx-auto w-full max-w-[400px]">
+                            <div className="relative flex items-center w-full bg-[var(--d-admin-surface-section)] rounded-md border border-[var(--d-admin-surface-border)] px-3 h-8">
+                                {activePreview && (
+                                    <div className="mr-2">
+                                        <PortDropdown
+                                            activePreviewIndex={activePreviewIndex}
+                                            setActivePreviewIndex={(index) => usePreviewStore.getState().setActivePreviewIndex(index)}
+                                            isDropdownOpen={isDropdownOpen}
+                                            setIsDropdownOpen={setIsDropdownOpen}
+                                            setHasSelectedPreview={() => { }}
+                                            previews={previews}
                                         />
-                                        <div className="flex items-center gap-1 ml-2">
-                                            <button
-                                                className="p-1 hover:bg-surface-d rounded-md text-gray-400 hover:text-color transition-colors"
-                                                onClick={() => {
-                                                    usePreviewStore.getState().setIframeUrl(url);
-                                                    usePreviewStore.getState().refreshPreview();
-                                                }}
-                                            >
-                                                <Icon icon="ph:arrow-clockwise" />
-                                            </button>
-                                        </div>
                                     </div>
+                                )}
+                                {!activePreview && <Icon icon="ph:lock-key-duotone" className="text-gray-400 mr-2" />}
+                                <input
+                                    className="w-full bg-transparent outline-none text-sm text-color md:block hidden"
+                                    type="text"
+                                    value={url}
+                                    onChange={(e) => usePreviewStore.getState().setUrl(e.target.value)}
+                                    onKeyDown={(e) => {
+                                        if (e.key === 'Enter') {
+                                            if (validateUrl(url)) {
+                                                usePreviewStore.getState().setIframeUrl(url);
+                                            } else {
+                                                usePreviewStore.getState().setIframeUrl(url);
+                                            }
+                                        }
+                                    }}
+                                />
+                                <div className="flex items-center gap-1 ml-2">
+                                    <button
+                                        className="p-1 hover:bg-surface-d rounded-md text-gray-400 hover:text-color transition-colors"
+                                        onClick={() => {
+                                            usePreviewStore.getState().setIframeUrl(url);
+                                            usePreviewStore.getState().refreshPreview();
+                                        }}
+                                    >
+                                        <Icon icon="ph:arrow-clockwise" />
+                                    </button>
                                 </div>
                             </div>
                         </div>
-                    )}
+                    </div>
 
                     {/* Desktop Actions */}
                     <div className="ml-auto hidden md:flex gap-3">
