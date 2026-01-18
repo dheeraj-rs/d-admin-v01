@@ -36,7 +36,7 @@
     ".next/dev/types/**/*.ts",
     "**/*.mts",
     "app/(main)/ai-website-builder/page2.tsx",
-    "app/(main)/ai-website-builder/components/ai-chat-view/ChatInterface.backup"
+    "app/(main)/ai-website-builder/ai-chat-view/ChatInterface.backup"
   ],
   "exclude": [
     "node_modules"

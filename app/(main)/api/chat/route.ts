@@ -6,7 +6,7 @@ import {
   type Messages,
   type AIProvider,
   SwitchableStream,
-} from '@/app/(main)/ai-website-builder/website-builder/lib/.server/llm';
+} from '@/app/(main)/ai-website-builder/ai-chat-view/lib/.server/llm';
 
 const CONTINUE_PROMPT =
   'Continue your response from exactly where you left off.';

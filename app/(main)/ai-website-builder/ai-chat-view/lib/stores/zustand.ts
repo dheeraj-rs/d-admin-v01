@@ -2,7 +2,7 @@ import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
 import type { WebContainer, WebContainerProcess } from '@webcontainer/api';
 import type { ITerminal } from '../../types/terminal';
-import type { PreviewInfo } from '../stores/previews';
+import type { PreviewInfo } from './previews';
 import { newShellProcess } from '../../utils/shell';
 import { coloredText } from '../../utils/terminal';
 import { webcontainer } from '../webcontainer';
