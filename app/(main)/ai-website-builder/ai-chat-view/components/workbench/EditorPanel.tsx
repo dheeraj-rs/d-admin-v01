@@ -162,29 +162,29 @@ export const EditorPanel = memo(
             <PanelResizeHandle />
             <Panel className="flex flex-col" defaultSize={80} minSize={20}>
               <PanelHeader className="overflow-x-auto">
-                {activeFileSegments?.length && (
-                  <div className="flex items-center flex-1 text-sm">
+                <div className="flex items-center flex-1 text-sm">
+                  {activeFileSegments?.length && (
                     <FileBreadcrumb pathSegments={activeFileSegments} files={files} onFileSelect={onFileSelect} />
-                    <div className="flex gap-1 ml-auto -mr-1.5 items-center">
-                      {activeFileUnsaved && (
-                        <>
-                          <PanelHeaderButton onClick={onFileSave}>
-                            <Icon icon="ph:floppy-disk-duotone" />
-                            Save
-                          </PanelHeaderButton>
-                          <PanelHeaderButton onClick={onFileReset}>
-                            <Icon icon="ph:clock-counter-clockwise-duotone" />
-                            Reset
-                          </PanelHeaderButton>
-                        </>
-                      )}
-                      <PanelHeaderButton onClick={() => workbenchStore.toggleTerminal(!showTerminal)}>
-                        <Icon icon="ph:terminal" />
-                        Toggle Terminal
-                      </PanelHeaderButton>
-                    </div>
+                  )}
+                  <div className="flex gap-1 ml-auto -mr-1.5 items-center">
+                    {activeFileUnsaved && (
+                      <>
+                        <PanelHeaderButton onClick={onFileSave}>
+                          <Icon icon="ph:floppy-disk-duotone" />
+                          Save
+                        </PanelHeaderButton>
+                        <PanelHeaderButton onClick={onFileReset}>
+                          <Icon icon="ph:clock-counter-clockwise-duotone" />
+                          Reset
+                        </PanelHeaderButton>
+                      </>
+                    )}
+                    <PanelHeaderButton onClick={() => workbenchStore.toggleTerminal(!showTerminal)}>
+                      <Icon icon="ph:terminal" />
+                      Toggle Terminal
+                    </PanelHeaderButton>
                   </div>
-                )}
+                </div>
               </PanelHeader>
               <div className="h-full flex-1 overflow-hidden">
                 <CodeMirrorEditor
