@@ -4,6 +4,7 @@ import type { BuilderAction } from '../../types/actions';
 import { createScopedLogger } from '../../utils/logger';
 import { unreachable } from '../../utils/unreachable';
 import { useWorkbenchStore, useFilesStore } from '../stores/zustand';
+import { useAiBuilderStore } from '../../../store/ai-builder-store';
 import type { ActionCallbackData } from './message-parser';
 
 const logger = createScopedLogger('ActionRunner');
@@ -166,6 +167,7 @@ export class ActionRunner {
     const isDevServer = this.#isDevServerCommand(action.content);
     let devServerStarted = false;
     let outputBuffer = '';
+    let rawOutput = '';
     let missingDependencyDetected = false;
     let syntaxErrorDetected = false;
     let buildErrorDetected = false;
@@ -178,9 +180,10 @@ export class ActionRunner {
 
           const str = data.toString();
           outputBuffer += str.toLowerCase();
+          rawOutput += str;
 
           // Detect various error types
-          if (str.includes('command not found') || str.includes('not found:')) {
+          if (str.includes('command not found') || str.includes('not found:') || str.includes('Cannot find module')) {
             missingDependencyDetected = true;
           }
 
@@ -221,6 +224,11 @@ export class ActionRunner {
             clearInterval(checkInterval);
             // safe to clear timeout if it exists, though here we use a race
             logger.debug('Dev server detected as started');
+
+            // Auto-switch to preview on success
+            useAiBuilderStore.getState().setActiveMobilePanel('workbench');
+            useWorkbenchStore.getState().setCurrentView('preview');
+
             resolve();
           }
         }, 100);
@@ -229,13 +237,28 @@ export class ActionRunner {
       });
 
       const processExitPromise = process.exit.then((code) => {
-        if (code !== 0) {
-          throw new Error(`Process exited with code ${code}`);
-        }
+        return { type: 'exit', code };
       });
 
       try {
-        await Promise.race([startDetectionPromise, processExitPromise]);
+        const result = await Promise.race([startDetectionPromise, processExitPromise]);
+
+        // If result has a type 'exit', the process finished before the server started
+        if (result && 'type' in result && result.type === 'exit') {
+          const code = (result as { code: number }).code;
+          if (code !== 0) {
+            const errorOutput = rawOutput.slice(-2000) || 'No output captured';
+            throw new Error(`Process exited with code ${code}\nOutput:\n${errorOutput}`);
+          }
+          // If code is 0 but server didn't start, it might be a quick command or the Mock
+          if (!devServerStarted) {
+            // If it's the mock (which returns 0 immediately), we shouldn't fail, 
+            // but strictly speaking a "dev server" command should keep running.
+            // For now, we assume if it exits 0, it's fine (or it was the mock).
+            logger.debug('Process exited with code 0 before dev server start detected.');
+            return;
+          }
+        }
       } catch (error) {
         // If process exited with error, check if we should recover
         if (missingDependencyDetected) {

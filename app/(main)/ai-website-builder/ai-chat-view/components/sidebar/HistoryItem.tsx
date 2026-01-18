@@ -4,6 +4,8 @@ import { useEffect, useRef, useState } from 'react';
 import { formatDistanceToNow } from 'date-fns';
 import { type ChatHistoryItem } from '../../lib/persistence';
 import Link from 'next/link';
+import { useAiBuilderStore } from '../../../store/ai-builder-store';
+import { useChatStore } from '../../lib/stores/zustand';
 
 interface HistoryItemProps {
   item: ChatHistoryItem;
@@ -50,7 +52,12 @@ export function HistoryItem({ item, onDelete, onSelect }: HistoryItemProps) {
         <Link
           href={`/ai-website-builder/${item.urlId}`}
           className="flex w-full relative truncate block"
-          onClick={() => onSelect?.()}
+          onClick={() => {
+            onSelect?.();
+            useAiBuilderStore.getState().setIsHistoryOpen(false);
+            useChatStore.getState().setShowHistory(false);
+            useAiBuilderStore.getState().setActiveMobilePanel('chat');
+          }}
         >
           <div className="flex flex-col w-full min-w-0">
             <span className="truncate">{item.description}</span>

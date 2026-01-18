@@ -79,7 +79,7 @@ export function useChatHistory() {
       }
     };
     init();
-  }, []);
+  }, [mixedId]);
 
   return {
     ready: !mixedId || ready,

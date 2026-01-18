@@ -9,7 +9,7 @@ export const MENU_ITEMS = [
       {
         label: 'Website Builder',
         icon: 'pi pi-fw pi-desktop',
-        to: '/website-builder',
+        to: '/ai-website-builder',
       },
       {
         label: 'Drag Drop Builder',

@@ -46,11 +46,7 @@ export const Workbench = memo(({ isStreaming }: WorkspaceProps) => {
 
   const hasPreview = usePreviewStore(state => state.previews.length > 0);
 
-  useEffect(() => {
-    if (hasPreview) {
-      setSelectedView('preview');
-    }
-  }, [hasPreview]);
+
 
   useEffect(() => {
     workbenchStore.setDocuments(files);

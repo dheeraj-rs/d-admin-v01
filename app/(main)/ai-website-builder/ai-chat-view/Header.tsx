@@ -11,7 +11,7 @@ import { useChatStore, useWorkbenchStore, usePreviewStore, useFilesStore } from 
 
 export function Header() {
     const router = useRouter();
-    const [activeView, setActiveView] = useState<'code' | 'preview'>('preview');
+    const activeView = useWorkbenchStore(state => state.currentView);
     const { activeMobilePanel, setActiveMobilePanel, isHistoryOpen, setIsHistoryOpen, builderView, setBuilderView } = useAiBuilderStore();
     const [isBuilderMenuOpen, setIsBuilderMenuOpen] = useState(false);
     const isMobile = useIsMobile();
@@ -183,7 +183,7 @@ export function Header() {
                                     <button
                                         aria-label="Preview"
                                         aria-pressed={activeView === 'preview'}
-                                        onClick={() => setActiveView('preview')}
+                                        onClick={() => useWorkbenchStore.getState().setCurrentView('preview')}
                                         className={`bg-transparent text-sm px-2 py-1 rounded-full relative ${activeView === 'preview' ? 'text-[var(--d-admin-primary-color)]' : 'text-[var(--d-admin-text-color-secondary)] hover:text-[var(--d-admin-text-color)]'}`}
                                         data-state="closed"
                                     >
@@ -195,7 +195,7 @@ export function Header() {
                                     <button
                                         aria-label="Code"
                                         aria-pressed={activeView === 'code'}
-                                        onClick={() => setActiveView('code')}
+                                        onClick={() => useWorkbenchStore.getState().setCurrentView('code')}
                                         className={`bg-transparent text-sm px-2 py-1 rounded-full relative ${activeView === 'code' ? 'text-[var(--d-admin-primary-color)]' : 'text-[var(--d-admin-text-color-secondary)] hover:text-[var(--d-admin-text-color)]'}`}
                                         data-state="closed"
                                     >

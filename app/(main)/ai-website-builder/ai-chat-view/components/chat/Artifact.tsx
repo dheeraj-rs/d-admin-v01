@@ -4,6 +4,7 @@ import { memo, useEffect, useRef, useState } from 'react';
 import { createHighlighter, type BundledLanguage, type BundledTheme, type HighlighterGeneric } from 'shiki';
 import type { ActionState } from '../../lib/runtime/action-runner';
 import { useWorkbenchStore } from '../../lib/stores/zustand';
+import { useAiBuilderStore } from '../../../store/ai-builder-store';
 import { classNames } from '../../utils/classNames';
 import { cubicEasingFn } from '../../utils/easings';
 
@@ -58,6 +59,11 @@ export const Artifact = memo(({ messageId }: ArtifactProps) => {
                         const newShowState = !showWorkbench;
                         useWorkbenchStore.getState().setUserHidWorkbench(!newShowState);
                         useWorkbenchStore.getState().setShowWorkbench(newShowState);
+
+                        if (newShowState) {
+                            useAiBuilderStore.getState().setActiveMobilePanel('workbench');
+                            useWorkbenchStore.getState().setCurrentView('code');
+                        }
                     }}
                 >
                     <div className="px-5 p-3.5 w-full text-left">
