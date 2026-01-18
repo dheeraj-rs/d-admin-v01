@@ -1,20 +1,21 @@
 'use client';
-import { Header } from './ai-chat-view/Header';
-import { DragDropInterface } from './components/drag-drop-view/DragDropInterface';
-import { TemplatesInterface } from './components/templates-view/TemplatesInterface';
-import { WorkbenchPanel } from './ai-chat-view/WorkbenchPanel';
-import { DragDropWorkbench } from './components/drag-drop-view/DragDropWorkbench';
-import { TemplatesWorkbench } from './components/templates-view/TemplatesWorkbench';
 import { LightRaysBackground } from '@/core/components/not-found/LightRaysBackground';
 import { Panel, PanelGroup, PanelResizeHandle } from 'react-resizable-panels';
-import { useAiBuilderStore } from './store/ai-builder-store';
 import { useIsMobile } from '@/core/hooks/use-mobile';
-import { ChatInterfacePanel } from './ai-chat-view/components/chat/ChatInterfacePanel.client';
-import { HistorySidebar } from './ai-chat-view/components/sidebar/HistorySidebar';
+import { HistorySidebar } from '../ai-chat-view/components/sidebar/HistorySidebar';
+import { ChatInterfacePanel } from '../ai-chat-view/components/chat/ChatInterfacePanel.client';
+import { useAiBuilderStore } from '../store/ai-builder-store';
+import { TemplatesWorkbench } from '../components/templates-view/TemplatesWorkbench';
+import { DragDropWorkbench } from '../components/drag-drop-view/DragDropWorkbench';
+import { WorkbenchPanel } from '../ai-chat-view/WorkbenchPanel';
+import { DragDropInterface } from '../components/drag-drop-view/DragDropInterface';
+import { TemplatesInterface } from '../components/templates-view/TemplatesInterface';
+import { Header } from '../ai-chat-view/Header';
 
 export default function AiWebsiteBuilderPage() {
     const { activeMobilePanel, builderView } = useAiBuilderStore();
     const isMobile = useIsMobile();
+
 
     const InterfaceComponents = {
         chat: ChatInterfacePanel,

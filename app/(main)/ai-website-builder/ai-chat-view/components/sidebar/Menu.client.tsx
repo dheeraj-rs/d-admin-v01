@@ -81,7 +81,7 @@ export function Menu({ onSelect }: MenuProps) {
           {list.length === 0 && <div className="pl-2">No previous conversations</div>}
           <DialogRoot open={dialogContent !== null}>
             {binDates(list).map(({ category, items }) => (
-              <div key={category} className="mt-4 first:mt-0 space-y-1">
+              <div key={category} className="flex flex-col gap-1">
                 <div className="sticky top-0 z-1 pl-2 pt-2 pb-1">
                   {category}
                 </div>
