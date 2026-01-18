@@ -1,13 +1,9 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-
-import { toast } from 'react-toastify';
 import { useFilesStore } from '../lib/stores/zustand';
 import { extractFilesForDeployment, validateDeploymentFiles } from '../lib/utils/extractFiles';
 import { Rocket, Loader2, CheckCircle2, XCircle, ExternalLink, GitBranch, Terminal, ChevronDown, Plus, Trash2 } from 'lucide-react';
-import { classNames } from '../utils/classNames';
-import { IconButton } from '../components/ui/IconButton';
 
 const DEPLOYMENT_STEPS = [
     { id: 1, label: 'Initiating deployment...', duration: 1000 },
@@ -409,7 +405,7 @@ export default function PublishView() {
                         </div>
 
                         <div className="w-full max-w-md">
-                            <div className="h-2 w-full bg-surface-tertiary rounded-full overflow-hidden">
+                            <div className="h-3 w-full bg-surface-tertiary border border-border rounded-full overflow-hidden shadow-sm">
                                 <div
                                     className="h-full bg-primary transition-all duration-300 ease-out"
                                     style={{ width: `${progress}%` }}

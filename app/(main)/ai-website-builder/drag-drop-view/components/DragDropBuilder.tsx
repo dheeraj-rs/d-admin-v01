@@ -545,11 +545,11 @@ export default function DragDropBuilder({ standaloneServer = false }: DragDropBu
                         onClose={() => setShowPublishDialog(false)}
                         onPublishHTML={() => {
                             localStorage.setItem('drag-drop-builder-format', 'html');
-                            window.location.href = '/drag-drop-builder/publish';
+                            window.location.href = '/ai-website-builder/drag-drop-view/publish';
                         }}
                         onPublishReact={() => {
                             localStorage.setItem('drag-drop-builder-format', 'react');
-                            window.location.href = '/drag-drop-builder/publish';
+                            window.location.href = '/ai-website-builder/drag-drop-view/publish';
                         }}
                     />
 

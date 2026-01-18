@@ -43,14 +43,42 @@ export async function POST(request: NextRequest) {
     console.log('📁 Files to deploy:', files.length);
     console.log('📄 File paths:', files.map((f: any) => f.path).join(', '));
 
-    // Format files for Vercel API
-    const vercelFiles = files.map(
-      (file: { path: string; content: string }) => ({
-        file: file.path,
-        data: Buffer.from(file.content).toString('base64'),
-        encoding: 'base64',
+    // Format files for Vercel API - filter out empty files and ensure valid content
+    const vercelFiles = files
+      .filter((file: { path: string; content: string }) => {
+        // Skip files with no content or invalid paths
+        if (!file.path || file.path.trim() === '') {
+          console.warn('⚠️ Skipping file with empty path');
+          return false;
+        }
+        // Allow empty content for certain files (like .gitkeep)
+        if (file.content === undefined || file.content === null) {
+          console.warn(`⚠️ Skipping file with no content: ${file.path}`);
+          return false;
+        }
+        return true;
       })
-    );
+      .map((file: { path: string; content: string }) => {
+        // Ensure content is a string
+        const content = String(file.content || '');
+        return {
+          file: file.path,
+          data: Buffer.from(content, 'utf-8').toString('base64'),
+          encoding: 'base64' as const,
+        };
+      });
+
+    console.log('📦 Valid files after filtering:', vercelFiles.length);
+
+    if (vercelFiles.length === 0) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: 'No valid files to deploy after filtering.',
+        },
+        { status: 400 }
+      );
+    }
 
     const deploymentPayload: any = {
       name: projectName,
@@ -90,12 +118,28 @@ export async function POST(request: NextRequest) {
 
     if (!deploymentResponse.ok) {
       const errorData = await deploymentResponse.json();
-      console.error('Vercel API Error:', errorData);
+      console.error('❌ Vercel API Error:', JSON.stringify(errorData, null, 2));
+
+      // Extract more detailed error message
+      let errorMessage = 'Failed to deploy to Vercel';
+      if (errorData.error) {
+        if (typeof errorData.error === 'string') {
+          errorMessage = errorData.error;
+        } else if (errorData.error.message) {
+          errorMessage = errorData.error.message;
+        }
+      }
+
+      // Check for specific file-related errors
+      if (errorData.error?.code === 'invalid_files' || errorMessage.includes('file definitions')) {
+        errorMessage = 'One or more file definitions contain errors. Please ensure all files have valid content and paths.';
+      }
 
       return NextResponse.json(
         {
           success: false,
-          error: errorData.error?.message || 'Failed to deploy to Vercel',
+          error: errorMessage,
+          details: errorData, // Include full error details for debugging
         },
         { status: deploymentResponse.status }
       );

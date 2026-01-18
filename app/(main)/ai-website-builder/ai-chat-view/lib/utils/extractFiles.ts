@@ -7,7 +7,8 @@ import type { FileMap } from '../stores/files';
 export function extractFilesForDeployment(
   files: FileMap
 ): Array<{ path: string; content: string }> {
-  const deploymentFiles: Array<{ path: string; content: string }> = [];
+  // Use a Map to deduplicate files by their relative path
+  const fileMap = new Map<string, string>();
 
   // Directories and files to exclude from deployment
   const excludePatterns = [
@@ -49,12 +50,15 @@ export function extractFilesForDeployment(
       relativePath = relativePath.substring(1);
     }
 
-    // Add to deployment files
-    deploymentFiles.push({
-      path: relativePath,
-      content,
-    });
+    // Use Map to automatically deduplicate by path (last occurrence wins)
+    fileMap.set(relativePath, content);
   }
+
+  // Convert Map to array
+  const deploymentFiles = Array.from(fileMap.entries()).map(([path, content]) => ({
+    path,
+    content,
+  }));
 
   return deploymentFiles;
 }
