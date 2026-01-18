@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Icon } from '@iconify/react';
 // =======
 import type { Message } from 'ai';
@@ -7,7 +7,7 @@ import { ClientOnly } from './components/ClientOnly';
 import { IconButton } from './components/ui/IconButton';
 import { classNames } from './utils/classNames';
 import { Messages } from './components/chat/Messages.client';
-import { ModelSelector, type ModelProvider } from './components/chat/ModelSelector';
+import { ModelSelector, MODELS, type ModelProvider } from './components/chat/ModelSelector';
 import { SendButton } from './components/chat/SendButton.client';
 
 
@@ -70,6 +70,27 @@ export const ChatInterface = React.forwardRef<HTMLDivElement, BaseChatProps>(
         const [isModelPickerOpen, setIsModelPickerOpen] = useState(false);
         const [attachedImage, setAttachedImage] = useState<string | null>(null);
         const fileInputRef = React.useRef<HTMLInputElement>(null);
+        const modelSelectorRef = useRef<HTMLDivElement>(null);
+        const menuRef = useRef<HTMLDivElement>(null);
+
+        useEffect(() => {
+            const handleClickOutside = (event: MouseEvent) => {
+                if (modelSelectorRef.current && !modelSelectorRef.current.contains(event.target as Node)) {
+                    setIsModelPickerOpen(false);
+                }
+                if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+                    setIsMenuOpen(false);
+                }
+            };
+
+            if (isModelPickerOpen || isMenuOpen) {
+                document.addEventListener('mousedown', handleClickOutside);
+            }
+
+            return () => {
+                document.removeEventListener('mousedown', handleClickOutside);
+            };
+        }, [isModelPickerOpen, isMenuOpen]);
 
         const handleFileSelection = (e: React.ChangeEvent<HTMLInputElement>) => {
             if (e.target.files && e.target.files[0]) {
@@ -192,9 +213,23 @@ export const ChatInterface = React.forwardRef<HTMLDivElement, BaseChatProps>(
                                     </button>
                                 </div>
                             </div>
-                            <div className="relative shadow-xs p-[1px] rounded-lg">
+                            <div className="relative shadow-xs p-[1px] rounded-lg bg-[var(--d-admin-surface-section)]">
                                 {/* <div className="absolute inset-0 bg-[var(--d-admin-surface-border)] -z-1"></div> */}
-                                <div className="bg-[var(--d-admin-surface-card)] rounded-lg dark:shadow-lg">
+
+                                {attachedImage && (
+                                    <div className="p-3">
+                                        <div className="relative group w-20 h-20 bg-[var(--d-admin-surface-card)] rounded-lg overflow-hidden border border-[var(--d-admin-surface-border)]">
+                                            <img src={attachedImage} alt="Attached" className="w-full h-full object-cover" />
+                                            <button
+                                                onClick={() => setAttachedImage(null)}
+                                                className="absolute top-1 right-1 p-1 bg-transparent hover:bg-[var(--d-admin-surface-hover)] text-[var(--d-admin-text-color)] rounded-full transition-colors border border-[var(--d-admin-surface-border)] flex items-center justify-center"
+                                            >
+                                                <Icon icon="ph:x" className="size-3" />
+                                            </button>
+                                        </div>
+                                    </div>
+                                )}
+                                <div className="bg-[var(--d-admin-surface-ground)] rounded-lg dark:shadow-lg">
                                     <div className="border-transparent" style={{ height: '0px' }}>
                                         <div className="overflow-hidden h-full border-[var(--d-admin-surface-border)] relative bg-[var(--d-admin-surface-section)] transition-opacity duration-200 rounded-t-[0.44rem] border-b-px left-0 right-0 opacity-0">
                                             <div className="flex py-2.5 px-2.5 font-medium text-xs">
@@ -216,19 +251,7 @@ export const ChatInterface = React.forwardRef<HTMLDivElement, BaseChatProps>(
                                         </div>
                                     </div>
                                     <div className="relative select-none">
-                                        {attachedImage && (
-                                            <div className="px-5 pt-4 pb-0">
-                                                <div className="relative group w-20 h-20 bg-[var(--d-admin-surface-card)] rounded-lg overflow-hidden border border-[var(--d-admin-surface-border)]">
-                                                    <img src={attachedImage} alt="Attached" className="w-full h-full object-cover" />
-                                                    <button
-                                                        onClick={() => setAttachedImage(null)}
-                                                        className="absolute top-1 right-1 p-1 bg-transparent hover:bg-[var(--d-admin-surface-hover)] text-[var(--d-admin-text-color)] rounded-full transition-colors border border-[var(--d-admin-surface-border)] flex items-center justify-center"
-                                                    >
-                                                        <Icon icon="ph:x" className="size-3" />
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        )}
+
                                         <textarea ref={textareaRef} onKeyDown={(event) => {
                                             if (event.key === 'Enter') {
                                                 if (event.shiftKey) {
@@ -241,11 +264,11 @@ export const ChatInterface = React.forwardRef<HTMLDivElement, BaseChatProps>(
                                             value={input}
                                             onChange={(event) => {
                                                 handleInputChange?.(event);
-                                            }} aria-label="How can D Admin help you today?" className="w-full pl-5 pt-5 pr-16 focus:outline-none resize-none text-[var(--d-admin-text-color)] placeholder-[var(--d-admin-gray-600)] bg-transparent text-sm" placeholder="How can Bolt help you today? (or /command)" translate="no" style={{ minHeight: '80px', maxHeight: '400px', height: '80px', overflowY: 'hidden' }} />
+                                            }} aria-label="How can D Admin help you today?" className="w-full pl-5 pt-5 pr-16 focus:outline-none resize-none text-[var(--d-admin-text-color)] placeholder-[var(--d-admin-gray-600)] bg-transparent text-sm" placeholder="How can D Admin help you today?" translate="no" style={{ minHeight: '80px', maxHeight: '400px', height: '80px', overflowY: 'hidden' }} />
                                     </div>
                                     <div className="flex justify-between items-center text-sm px-3 pb-3 pt-2 gap-2">
                                         <div className="flex gap-1 items-center min-w-0 flex-shrink">
-                                            <div className="relative">
+                                            <div className="relative" ref={menuRef}>
                                                 <button
                                                     onClick={() => setIsMenuOpen(!isMenuOpen)}
                                                     aria-label="Prompt actions"
@@ -277,14 +300,6 @@ export const ChatInterface = React.forwardRef<HTMLDivElement, BaseChatProps>(
                                                                 <span>Attach file</span>
                                                             </button>
                                                             <button className="flex items-center gap-2 px-2 py-1.5 text-sm text-[var(--d-admin-text-color)] hover:bg-[var(--d-admin-surface-hover)] rounded-lg w-full text-left transition-colors">
-                                                                <Icon icon="ph:notebook" className="text-lg text-[var(--d-admin-text-color-secondary)]" />
-                                                                <span>Open Prompt Library</span>
-                                                            </button>
-                                                            <button className="flex items-center gap-2 px-2 py-1.5 text-sm text-[var(--d-admin-text-color)] hover:bg-[var(--d-admin-surface-hover)] rounded-lg w-full text-left transition-colors">
-                                                                <Icon icon="ph:sparkle" className="text-lg text-[var(--d-admin-text-color-secondary)]" />
-                                                                <span className="text-[var(--d-admin-gray-600)]">Enhance prompt</span>
-                                                            </button>
-                                                            <button className="flex items-center gap-2 px-2 py-1.5 text-sm text-[var(--d-admin-text-color)] hover:bg-[var(--d-admin-surface-hover)] rounded-lg w-full text-left transition-colors">
                                                                 <Icon icon="ph:question" className="text-lg text-[var(--d-admin-text-color-secondary)]" />
                                                                 <span>Search Help Center</span>
                                                             </button>
@@ -295,27 +310,40 @@ export const ChatInterface = React.forwardRef<HTMLDivElement, BaseChatProps>(
                                             <div className="flex">
                                                 <div className="ml-1">
                                                     <div style={{ opacity: 1 }}>
-                                                        <div className="relative">
-                                                            <button
-                                                                onClick={() => setIsModelPickerOpen(!isModelPickerOpen)}
-                                                                className="flex items-center justify-center shrink-0 min-w-0 max-w-full focus-visible:outline-2 disabled:op-50 relative disabled:cursor-not-allowed gap-1 text-xs px-2 h-7 focus-visible:outline-[var(--d-admin-blue-600)] bg-transparent enabled:hover:bg-[var(--d-admin-surface-hover)] rounded-full group/button font-normal text-[var(--d-admin-text-color)] dark:text-[var(--d-admin-text-color)] hover:text-[var(--d-admin-text-color)]"
-                                                                type="button"
-                                                                aria-haspopup="menu"
-                                                                aria-expanded={isModelPickerOpen}
-                                                                data-state={isModelPickerOpen ? 'open' : 'closed'}
-                                                            >
-                                                                <Icon icon="logos:claude" className="[--agent-color:#D97757] size-4 group-hover/button:text-[--agent-color] flex items-center justify-center h-4 text-base leading-4" />
-                                                                <span className="truncate"><span className="ml-1 text-xs">{selectedProvider}</span></span>
-                                                                <Icon icon="heroicons:chevron-up-down" className="size-3 opacity-70 group-hover/button:opacity-100 flex items-center justify-center h-4 text-base leading-4" />
-                                                            </button>
+                                                        <div className="relative" ref={modelSelectorRef}>
+                                                            {(() => {
+                                                                const model = MODELS.find(m => m.value === selectedProvider);
+                                                                const label = model?.label || selectedProvider;
+                                                                const icon = model?.icon || 'logos:claude';
 
-                                                            {isModelPickerOpen && (
-                                                                <ClientOnly>
-                                                                    {() => (
-                                                                        <ModelSelector value={selectedProvider} handleSelectModel={onProviderChange} />
-                                                                    )}
-                                                                </ClientOnly>
-                                                            )}
+                                                                return (
+                                                                    <>
+                                                                        <button
+                                                                            onClick={() => setIsModelPickerOpen(!isModelPickerOpen)}
+                                                                            className="flex items-center justify-center shrink-0 min-w-0 max-w-full focus-visible:outline-2 disabled:op-50 relative disabled:cursor-not-allowed gap-2 text-sm px-3 h-9 focus-visible:outline-[var(--d-admin-blue-600)] bg-transparent enabled:hover:bg-[var(--d-admin-surface-hover)] rounded-full group/button font-medium text-[var(--d-admin-text-color)] dark:text-[var(--d-admin-text-color)] hover:text-[var(--d-admin-text-color)]"
+                                                                            type="button"
+                                                                            aria-haspopup="menu"
+                                                                            aria-expanded={isModelPickerOpen}
+                                                                            data-state={isModelPickerOpen ? 'open' : 'closed'}
+                                                                        >
+                                                                            <Icon icon={icon} className="size-5 flex items-center justify-center text-lg leading-none" />
+                                                                            <span className="truncate"><span className="ml-1">{label}</span></span>
+                                                                            <Icon icon="heroicons:chevron-up-down" className="size-4 opacity-70 group-hover/button:opacity-100 flex items-center justify-center" />
+                                                                        </button>
+
+                                                                        {isModelPickerOpen && (
+                                                                            <ClientOnly>
+                                                                                {() => (
+                                                                                    <ModelSelector value={selectedProvider} handleSelectModel={(val) => {
+                                                                                        onProviderChange(val);
+                                                                                        setIsModelPickerOpen(false);
+                                                                                    }} />
+                                                                                )}
+                                                                            </ClientOnly>
+                                                                        )}
+                                                                    </>
+                                                                );
+                                                            })()}
                                                         </div>
                                                     </div>
                                                 </div>
