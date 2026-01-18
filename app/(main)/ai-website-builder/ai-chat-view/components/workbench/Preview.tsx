@@ -12,6 +12,10 @@ export const Preview = memo(() => {
     setIsSecureContext(window.crossOriginIsolated);
   }, []);
 
+
+  useEffect(() => {
+    console.log('[Preview] iframeUrl changed to:', iframeUrl);
+  }, [iframeUrl]);
   if (!isSecureContext) {
     return (
       <div className="w-full h-full flex flex-col items-center justify-center bg-surface-0 p-6 text-center">

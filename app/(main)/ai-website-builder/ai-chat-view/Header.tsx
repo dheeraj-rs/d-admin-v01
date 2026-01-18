@@ -45,21 +45,52 @@ export function Header() {
     const iframeUrl = usePreviewStore(state => state.iframeUrl);
     const activePreview = previews[activePreviewIndex];
 
+    // Local state for the "pretty" URL shown to users
+    const [displayUrl, setDisplayUrl] = useState('');
+
     const chatStarted = useChatStore(state => state.started);
     const chatDescription = useChatStore(state => state.description);
     const showHistory = useChatStore(state => state.showHistory);
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
+    // Sync displayUrl with the actual URL from the store
+    useEffect(() => {
+        if (previews.length === 0) {
+            setDisplayUrl('');
+            return;
+        }
+
+        const currentPreview = previews[activePreviewIndex];
+        if (!currentPreview) return;
+
+        // Extract just the path from the full WebContainer URL
+        if (url.startsWith(currentPreview.baseUrl)) {
+            const path = url.slice(currentPreview.baseUrl.length) || '/';
+            console.log('[Header] URL:', url);
+            console.log('[Header] Base URL:', currentPreview.baseUrl);
+            console.log('[Header] Extracted path:', path);
+            setDisplayUrl(path);
+        } else {
+            // Fallback for external URLs
+            console.log('[Header] External URL:', url);
+            setDisplayUrl(url);
+        }
+    }, [url, activePreviewIndex, previews]);
+
     useEffect(() => {
         if (activePreview) {
-            usePreviewStore.getState().setUrl(activePreview.baseUrl);
+            // Initial setup: Ensure store has the base URL if empty
+            if (!url) {
+                usePreviewStore.getState().setUrl(activePreview.baseUrl);
+            }
 
             // Only set iframeUrl if it's different to prevent reloading
-            if (activePreview.baseUrl !== iframeUrl) {
+            if (activePreview.baseUrl !== iframeUrl && !iframeUrl) {
                 usePreviewStore.getState().setIframeUrl(activePreview.baseUrl);
             }
         }
-    }, [activePreview, iframeUrl]);
+    }, [activePreview]);
+
 
     const canHideChat = showWorkbench || !showChat;
 
@@ -235,15 +266,40 @@ export function Header() {
                                 <input
                                     className="w-full bg-transparent outline-none text-sm text-color md:block hidden"
                                     type="text"
-                                    value={url}
-                                    onChange={(e) => usePreviewStore.getState().setUrl(e.target.value)}
+                                    value={displayUrl}
+                                    onChange={(e) => setDisplayUrl(e.target.value)}
                                     onKeyDown={(e) => {
                                         if (e.key === 'Enter') {
-                                            if (validateUrl(url)) {
-                                                usePreviewStore.getState().setIframeUrl(url);
+                                            if (!activePreview) return;
+
+                                            let targetUrl = displayUrl.trim();
+
+                                            // If user types a path (starts with /), use it directly
+                                            if (targetUrl.startsWith('/')) {
+                                                targetUrl = `${activePreview.baseUrl}${targetUrl}`;
                                             }
+                                            // If user types just a page name (e.g., 'home'), prepend /
+                                            else if (!targetUrl.includes('://') && !targetUrl.startsWith('/')) {
+                                                targetUrl = `${activePreview.baseUrl}/${targetUrl}`;
+                                            }
+                                            // If user types localhost URL, convert it
+                                            else if (targetUrl.includes('localhost') || targetUrl.includes('127.0.0.1')) {
+                                                const localhostPattern = new RegExp(`^https?:\\/\\/(?:localhost|127\\.0\\.0\\.1):${activePreview.port}`);
+                                                targetUrl = targetUrl.replace(localhostPattern, activePreview.baseUrl);
+                                            }
+                                            // Otherwise assume it's already a full URL
+                                            else if (!targetUrl.startsWith(activePreview.baseUrl)) {
+                                                targetUrl = `${activePreview.baseUrl}${targetUrl.startsWith('/') ? '' : '/'}${targetUrl}`;
+                                            }
+
+
+                                            console.log('[Header] Navigating to:', targetUrl);
+                                            // Always navigate - let the website handle 404s
+                                            usePreviewStore.getState().setUrl(targetUrl);
+                                            usePreviewStore.getState().setIframeUrl(targetUrl);
                                         }
                                     }}
+                                    placeholder="/"
                                 />
                                 <div className="flex items-center gap-1 ml-2">
                                     <button
@@ -255,19 +311,6 @@ export function Header() {
                                         title="Refresh Preview"
                                     >
                                         <Icon icon="ph:arrow-clockwise" className="size-4" />
-                                    </button>
-                                    <button
-                                        className="p-1 hover:bg-[var(--d-admin-surface-hover)] rounded-md text-[var(--d-admin-text-color-secondary)] hover:text-[var(--d-admin-text-color)] transition-colors"
-                                        onClick={() => {
-                                            toast.info('Opening in new tab. You may need to click "Connect to Project" to authorize.', {
-                                                autoClose: 5000,
-                                                position: "bottom-right"
-                                            });
-                                            window.open(url, '_blank');
-                                        }}
-                                        title="Open in New Tab"
-                                    >
-                                        <Icon icon="ph:arrow-square-out" className="size-4" />
                                     </button>
                                 </div>
                             </div>
