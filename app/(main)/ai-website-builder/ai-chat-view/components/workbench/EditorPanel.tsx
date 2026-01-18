@@ -23,6 +23,7 @@ import { renderLogger } from '../../utils/logger';
 import { isMobile } from '../../utils/mobile';
 import { FileBreadcrumb } from './FileBreadcrumb';
 import { FileTree } from './FileTree';
+import { EmptyStateIllustration } from './EmptyStateIllustration';
 import { Terminal, type TerminalRef } from './terminal/Terminal';
 
 interface EditorPanelProps {
@@ -186,17 +187,29 @@ export const EditorPanel = memo(
                   </div>
                 </div>
               </PanelHeader>
-              <div className="h-full flex-1 overflow-hidden">
-                <CodeMirrorEditor
-                  theme={theme}
-                  editable={!isStreaming && editorDocument !== undefined}
-                  settings={editorSettings}
-                  doc={editorDocument}
-                  autoFocusOnDocumentChange={!isMobile()}
-                  onScroll={onEditorScroll}
-                  onChange={onEditorChange}
-                  onSave={onFileSave}
-                />
+              <div className="h-full flex-1 overflow-hidden relative">
+                {activeFileSegments?.length ? (
+                  <CodeMirrorEditor
+                    theme={theme}
+                    editable={!isStreaming && editorDocument !== undefined}
+                    settings={editorSettings}
+                    doc={editorDocument}
+                    autoFocusOnDocumentChange={!isMobile()}
+                    onScroll={onEditorScroll}
+                    onChange={onEditorChange}
+                    onSave={onFileSave}
+                  />
+                ) : (
+                  <div className="absolute inset-0 flex flex-col items-center justify-center bg-surface-1 text-text-secondary select-none">
+                    <div className="opacity-50 mb-6 scale-125">
+                      <EmptyStateIllustration />
+                    </div>
+                    <div className="text-center space-y-2">
+                      <p className="text-xl font-medium text-text-primary">Select a file to edit</p>
+                      <p className="text-sm opacity-60">Choose a file from the explorer on the left</p>
+                    </div>
+                  </div>
+                )}
               </div>
             </Panel>
           </PanelGroup>
