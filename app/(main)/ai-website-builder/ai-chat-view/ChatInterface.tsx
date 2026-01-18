@@ -123,26 +123,58 @@ export const ChatInterface = React.forwardRef<HTMLDivElement, BaseChatProps>(
                                 }}
                             </ClientOnly>
                         ) : (
-                            <div id="intro" className="h-full flex flex-col items-center justify-center">
-                                <h1 className="text-5xl text-center font-bold text-primary mb-2">
-                                    What will you build today?
-                                </h1>
-                                <p className="mb-4 text-center text-secondary">
-                                    Create stunning apps & websites by chatting with AI.
-                                </p>
+                            <div id="intro" className="h-full flex flex-col items-center justify-center relative overflow-hidden px-4">
+                                {/* Subtle background glow */}
+                                <div className="absolute inset-0 opacity-10">
+                                    <div className="absolute top-0 left-1/4 w-96 h-96 bg-[var(--d-admin-primary-color)]/30 rounded-full blur-3xl"></div>
+                                    <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-[var(--d-admin-primary-color)]/20 rounded-full blur-3xl"></div>
+                                </div>
 
-                                {/* Example prompts in the center */}
-                                <div id="examples-center" className="flex flex-col gap-2">
-                                    {EXAMPLE_PROMPTS.map((examplePrompt, index) => (
-                                        <button
-                                            key={index}
-                                            onClick={(event) => sendMessage?.(event, examplePrompt.text)}
-                                            className="flex items-center gap-2 px-4 py-2 rounded-lg bg-secondary hover:bg-secondary/80 transition-colors"
-                                        >
-                                            {examplePrompt.text}
-                                            <Icon icon="ph:arrow-right" />
-                                        </button>
-                                    ))}
+                                {/* Main content */}
+                                <div className="relative z-10 w-full max-w-2xl">
+                                    {/* Title */}
+                                    <div className="text-center mb-6 space-y-2">
+                                        <h1 className="text-4xl md:text-5xl font-bold text-[var(--d-admin-text-color)] mb-2 animate-in fade-in slide-in-from-bottom-4 duration-700">
+                                            <span className="bg-gradient-to-r from-[var(--d-admin-primary-color)] to-[var(--d-admin-primary-600)] bg-clip-text text-transparent">
+                                                What will you build today?
+                                            </span>
+                                        </h1>
+                                        <p className="text-sm text-[var(--d-admin-text-color-secondary)] animate-in fade-in slide-in-from-bottom-4 duration-700" style={{ animationDelay: '100ms' }}>
+                                            Create stunning apps & websites by chatting with AI.
+                                        </p>
+                                    </div>
+
+                                    {/* Scrollable Text List with Border */}
+                                    <div className="border border-[var(--d-admin-surface-border)] rounded-xl p-4 bg-[var(--d-admin-surface-section)]/30">
+                                        <div className="max-h-[400px] overflow-y-auto px-2 scrollbar-thin scrollbar-thumb-[var(--d-admin-surface-border)] scrollbar-track-transparent">
+                                            <div className="flex flex-col gap-1 items-center">
+                                                {EXAMPLE_PROMPTS.map((examplePrompt, index) => (
+                                                    <button
+                                                        key={index}
+                                                        onClick={(event) => sendMessage?.(event, examplePrompt.text)}
+                                                        className="group relative py-2 px-4 transition-all duration-300 animate-in fade-in slide-in-from-bottom-4"
+                                                        style={{
+                                                            animationDelay: `${200 + index * 80}ms`,
+                                                            animationFillMode: 'backwards'
+                                                        }}
+                                                    >
+                                                        <div className="flex items-center gap-2">
+                                                            {/* Text with gradient on hover */}
+                                                            <span className="text-[var(--d-admin-text-color)] text-base font-medium group-hover:bg-gradient-to-r group-hover:from-[var(--d-admin-primary-color)] group-hover:to-[var(--d-admin-primary-600)] group-hover:bg-clip-text group-hover:text-transparent transition-all duration-300">
+                                                                {examplePrompt.text}
+                                                            </span>
+
+                                                            {/* Arrow right next to text */}
+                                                            <Icon
+                                                                icon="ph:arrow-right"
+                                                                className="text-lg text-[var(--d-admin-text-color-secondary)] group-hover:text-[var(--d-admin-primary-color)] group-hover:translate-x-1 transition-all duration-300"
+                                                            />
+                                                        </div>
+                                                    </button>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         )}
@@ -213,7 +245,7 @@ export const ChatInterface = React.forwardRef<HTMLDivElement, BaseChatProps>(
                                     </button>
                                 </div>
                             </div>
-                            <div className="relative shadow-xs p-[1px] rounded-lg bg-[var(--d-admin-surface-section)]">
+                            <div className="relative shadow-xs p-[1px] rounded-lg bg-[var(--d-admin-surface-section)] border border-[var(--d-admin-surface-border)]">
                                 {/* <div className="absolute inset-0 bg-[var(--d-admin-surface-border)] -z-1"></div> */}
 
                                 {attachedImage && (
