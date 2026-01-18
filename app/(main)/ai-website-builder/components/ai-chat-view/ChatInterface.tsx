@@ -20,11 +20,11 @@ export function ChatInterface() {
     };
 
     return (
-        <div className="chat-interface-container3 selection-accent flex flex-col flex-grow relative z-9 overflow-hidden w-full h-full">
+        <div className="flex flex-col flex-grow relative z-9 overflow-hidden w-full h-full">
             <div className="flex flex-col h-full">
                 <div className="flex-1 overflow-y-auto w-full relative min-h-0">
-                    <section aria-label="Chat" className="flex flex-col gap-[--chat-messages-gap] w-full flex-1 max-w-chat py-[--chat-padding] mx-auto z-1 text-sm pl-1">
-                        <div className="relative flex flex-col overflow-hidden mx-[var(--chat-padding)] bg-[var(--d-admin-surface-ground)] px-4 py-3 rounded-lg self-end" data-message-id="ob7bfUjX9XEU52AF">
+                    <section aria-label="Chat" className="flex flex-col w-full flex-1 max-w-chat py-[1rem] mx-auto z-1 text-sm pl-1">
+                        <div className="relative flex flex-col overflow-hidden mx-[1rem] bg-[var(--d-admin-surface-ground)] px-4 py-3 rounded-lg self-end" data-message-id="ob7bfUjX9XEU52AF">
                             <div className="grid grid-col-1 w-full">
                                 <div className="overflow-hidden">
                                     <div className="markdown-content">
@@ -33,7 +33,7 @@ export function ChatInterface() {
                                 </div>
                             </div>
                         </div>
-                        <div className="relative flex flex-col overflow-hidden mx-[var(--chat-padding)]" data-message-id="6WgN99BeD4Z9nCG6">
+                        <div className="relative flex flex-col overflow-hidden mx-[1rem]" data-message-id="6WgN99BeD4Z9nCG6">
                             <div className="grid grid-col-1 w-full">
                                 <div className="grid [&>*]:[grid-area:1/1/2/2]">
                                     <div className="pointer-events-none" style={{
@@ -269,8 +269,6 @@ export function ChatInterface() {
                                 </div>
                             </div>
                         </div>
-                        {/* <div className="pb-[var(--chat-padding)]"></div> */}
-                        {/* <div className="absolute inset-0 pointer-events-none"></div> */}
                     </div>
                 </div>
             </div>
