@@ -1,7 +1,7 @@
 import { Icon } from '@iconify/react';
 import * as Dialog from '@radix-ui/react-dialog';
 import { useEffect, useRef, useState } from 'react';
-import { format } from 'date-fns';
+import { formatDistanceToNow } from 'date-fns';
 import { type ChatHistoryItem } from '../../lib/persistence';
 import Link from 'next/link';
 
@@ -54,8 +54,8 @@ export function HistoryItem({ item, onDelete, onSelect }: HistoryItemProps) {
         >
           <div className="flex flex-col w-full min-w-0">
             <span className="truncate">{item.description}</span>
-            <span className="text-xs truncate">
-              {format(new Date(item.timestamp), 'MMM d, yyyy h:mm a')}
+            <span className="text-xs truncate text-[var(--d-admin-text-color-secondary)]">
+              {formatDistanceToNow(new Date(item.timestamp), { addSuffix: true })}
             </span>
           </div>
           <div className="absolute right-0 z-1 top-0 bottom-0 w-10 flex justify-end group-hover:w-15 group-hover:from-45%">

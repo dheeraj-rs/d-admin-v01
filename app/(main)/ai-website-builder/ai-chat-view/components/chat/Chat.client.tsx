@@ -11,7 +11,7 @@ import { workbenchStore } from '../../lib/stores/workbench';
 import { fileModificationsToHTML } from '../../utils/diff';
 import { cubicEasingFn } from '../../utils/easings';
 import { createScopedLogger, renderLogger } from '../../utils/logger';
-import { BaseChat } from './BaseChat';
+import ChatInterface from '../../ChatInterface';
 import type { ModelProvider } from './ModelSelector';
 
 const toastAnimation = cssTransition({
@@ -220,7 +220,7 @@ export const ChatImpl = memo(({ initialMessages, storeMessageHistory }: ChatProp
   const [messageRef, scrollRef] = useSnapScroll();
 
   return (
-    <BaseChat
+    <ChatInterface
       ref={animationScope}
       textareaRef={textareaRef as React.RefObject<HTMLTextAreaElement>}
       input={input}
