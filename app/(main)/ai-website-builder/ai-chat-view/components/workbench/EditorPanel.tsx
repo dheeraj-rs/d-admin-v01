@@ -67,6 +67,9 @@ export const EditorPanel = memo(
     const terminalPanelRef = useRef<ImperativePanelHandle>(null);
     const terminalToggledByShortcut = useRef(false);
 
+    const filePanelRef = useRef<ImperativePanelHandle>(null);
+    const [isFilePanelCollapsed, setIsFilePanelCollapsed] = useState(false);
+
     const [activeTerminal, setActiveTerminal] = useState(0);
     const [terminalCount, setTerminalCount] = useState(1);
 
@@ -142,8 +145,15 @@ export const EditorPanel = memo(
     return (
       <PanelGroup direction="vertical">
         <Panel defaultSize={showTerminal ? DEFAULT_EDITOR_SIZE : 100} minSize={20}>
-          <PanelGroup direction="horizontal">
-            <Panel defaultSize={20} minSize={10} collapsible>
+          <PanelGroup direction="horizontal" style={{ touchAction: 'none' }}>
+            <Panel
+              ref={filePanelRef}
+              defaultSize={30}
+              minSize={25}
+              collapsible
+              onCollapse={() => setIsFilePanelCollapsed(true)}
+              onExpand={() => setIsFilePanelCollapsed(false)}
+            >
               <div className="flex flex-col border-r border-[var(--d-admin-surface-border)] h-full bg-surface-0">
                 <PanelHeader>
                   <Icon icon="ph:tree-structure-duotone" className="shrink-0 text-lg" />
@@ -160,8 +170,22 @@ export const EditorPanel = memo(
                 />
               </div>
             </Panel>
-            <PanelResizeHandle />
-            <Panel className="flex flex-col" defaultSize={80} minSize={20}>
+
+            {/* Collapsed panel indicator - shows when file panel is collapsed */}
+            {isFilePanelCollapsed && (
+              <div
+                className="absolute left-0 top-1/2 -translate-y-1/2 w-3 h-20 bg-surface-b border border-[var(--d-admin-surface-border)] rounded-r-md flex items-center justify-center cursor-pointer z-20 hover:bg-surface-c transition-colors"
+                onClick={() => filePanelRef.current?.expand()}
+                style={{ touchAction: 'none' }}
+              >
+                <div className="text-text-secondary text-sm">⋮</div>
+              </div>
+            )}
+
+            <PanelResizeHandle className="group relative" style={{ touchAction: 'none' }}>
+              <div className="absolute inset-0 z-10 flex items-center justify-center w-2" />
+            </PanelResizeHandle>
+            <Panel className="flex flex-col" defaultSize={70} minSize={30}>
               <PanelHeader className="overflow-x-auto">
                 <div className="flex items-center flex-1 text-sm">
                   {activeFileSegments?.length && (
@@ -200,13 +224,13 @@ export const EditorPanel = memo(
                     onSave={onFileSave}
                   />
                 ) : (
-                  <div className="absolute inset-0 flex flex-col items-center justify-center bg-surface-1 text-text-secondary select-none">
-                    <div className="opacity-50 mb-6 scale-125">
+                  <div className="absolute inset-0 flex flex-col items-center justify-center bg-surface-1 text-text-secondary select-none px-4">
+                    <div className="opacity-50 mb-3 md:mb-6 scale-75 md:scale-125">
                       <EmptyStateIllustration />
                     </div>
-                    <div className="text-center space-y-2">
-                      <p className="text-xl font-medium text-text-primary">Select a file to edit</p>
-                      <p className="text-sm opacity-60">Choose a file from the explorer on the left</p>
+                    <div className="text-center space-y-1 md:space-y-2">
+                      <p className="text-base md:text-xl font-medium text-text-primary">Select a file to edit</p>
+                      <p className="text-xs md:text-sm opacity-60">Choose a file from the explorer on the left</p>
                     </div>
                   </div>
                 )}
@@ -214,7 +238,10 @@ export const EditorPanel = memo(
             </Panel>
           </PanelGroup>
         </Panel>
-        <PanelResizeHandle />
+        <PanelResizeHandle className="group relative" style={{ touchAction: 'none' }}>
+          <div className="absolute inset-0 flex items-center justify-center h-2" />
+
+        </PanelResizeHandle>
         <Panel
           ref={terminalPanelRef}
           defaultSize={showTerminal ? DEFAULT_TERMINAL_SIZE : 0}
