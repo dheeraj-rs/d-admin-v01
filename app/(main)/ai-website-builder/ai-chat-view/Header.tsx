@@ -9,6 +9,8 @@ import { useAiBuilderStore } from '../store/ai-builder-store';
 import { PortDropdown } from './components/workbench/PortDropdown';
 import { exportProjectAsZip } from './utils/zip';
 import { useChatStore, useWorkbenchStore, usePreviewStore, useFilesStore } from './lib/stores/zustand';
+import { useParams } from 'next/navigation';
+import DeploymentModal from './publish/DeploymentModal';
 
 export function Header() {
     const router = useRouter();
@@ -52,6 +54,9 @@ export function Header() {
     const chatDescription = useChatStore(state => state.description);
     const showHistory = useChatStore(state => state.showHistory);
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+    const [isDeployModalOpen, setIsDeployModalOpen] = useState(false);
+    const params = useParams();
+    const chatId = params?.id as string | undefined;
 
     // Sync displayUrl with the actual URL from the store
     useEffect(() => {
@@ -326,9 +331,13 @@ export function Header() {
                             title="Export as ZIP">                    <Icon icon="ph:download-duotone" className="text-lg" />
                             <span>Export</span></button>
 
-                        <Link href="/ai-website-builder/ai-chat-view/publish" className="items-center justify-center gap-2 font-medium min-w-0 max-w-full rounded-md focus-visible:outline-2 disabled:op-50 relative disabled:cursor-not-allowed focus-visible:outline-[var(--d-admin-blue-600)] bg-[var(--d-admin-surface-section)] border border-[var(--d-admin-surface-border)] text-[var(--d-admin-text-color)] hover:bg-[var(--d-admin-surface-hover)] transition-colors flex gap-1.7 shrink-0 h-8 text-sm px-3" title="Deploy to Vercel" >                    <Icon icon="ph:rocket-launch-duotone" className="text-lg" />
+                        <button
+                            className="items-center justify-center gap-2 font-medium min-w-0 max-w-full rounded-md focus-visible:outline-2 disabled:op-50 relative disabled:cursor-not-allowed focus-visible:outline-[var(--d-admin-blue-600)] bg-[var(--d-admin-surface-section)] border border-[var(--d-admin-surface-border)] text-[var(--d-admin-text-color)] hover:bg-[var(--d-admin-surface-hover)] transition-colors flex gap-1.7 shrink-0 h-8 text-sm px-3"
+                            title="Deploy to Vercel"
+                            onClick={() => setIsDeployModalOpen(true)}
+                        >                    <Icon icon="ph:rocket-launch-duotone" className="text-lg" />
                             <span>Publish</span>
-                        </Link>
+                        </button>
                     </div>
 
                     {/* Mobile More Menu */}
@@ -384,20 +393,29 @@ export function Header() {
                                         <Icon icon="ph:download-duotone" className="size-4" />
                                         <span>Export as ZIP</span>
                                     </button>
-                                    <Link
-                                        href="/ai-website-builder/ai-chat-view/publish"
-                                        onClick={() => setIsMoreMenuOpen(false)}
+                                    <button
+                                        onClick={() => {
+                                            setIsMoreMenuOpen(false);
+                                            setIsDeployModalOpen(true);
+                                        }}
                                         className="flex items-center gap-2 px-3 py-2 text-sm rounded-md w-full text-left text-[var(--d-admin-text-color)] hover:bg-[var(--d-admin-surface-hover)] transition-colors"
                                     >
                                         <Icon icon="ph:rocket-launch-duotone" className="size-4" />
                                         <span>Publish</span>
-                                    </Link>
+                                    </button>
                                 </div>
                             </>
                         )}
                     </div>
                 </div>
             </div>
+            {isDeployModalOpen && (
+                <DeploymentModal
+                    isOpen={isDeployModalOpen}
+                    onClose={() => setIsDeployModalOpen(false)}
+                    chatId={chatId}
+                />
+            )}
         </header>
     );
 }

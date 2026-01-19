@@ -79,11 +79,6 @@ export default function DeploymentModal({ isOpen, onClose, chatId }: DeploymentM
     const handleBackToBuilder = () => {
         reset();
         onClose();
-        if (chatId) {
-            router.push(`/ai-website-builder/${chatId}`);
-        } else {
-            router.push('/ai-website-builder');
-        }
     };
 
     const fileCount = Object.keys(files).filter(path => files[path]?.type !== 'folder').length;
@@ -235,10 +230,10 @@ export default function DeploymentModal({ isOpen, onClose, chatId }: DeploymentM
                             <div key={step.id} className="flex items-center gap-3">
                                 <div
                                     className={`w-7 h-7 rounded-full flex items-center justify-center ${currentStep > step.id
-                                            ? 'bg-green-500'
-                                            : currentStep === step.id
-                                                ? 'bg-primary'
-                                                : 'bg-surface-tertiary'
+                                        ? 'bg-green-500'
+                                        : currentStep === step.id
+                                            ? 'bg-primary'
+                                            : 'bg-surface-tertiary'
                                         }`}
                                 >
                                     {currentStep > step.id && <CheckCircle2 className="h-4 w-4 text-white" />}

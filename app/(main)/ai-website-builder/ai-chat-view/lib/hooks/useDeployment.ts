@@ -44,7 +44,7 @@ export function useDeployment() {
                         setProgress(10);
                     } else if (data.status === 'BUILDING' || data.status === 'ANALYZING') {
                         setCurrentStep(2);
-                        setProgress((prev) => Math.min(prev + 1, 60));
+                        setProgress((prev) => Math.min(prev + 5, 60));
                     } else if (data.status === 'DEPLOYING') {
                         setCurrentStep(4);
                         setProgress(80);
@@ -56,7 +56,7 @@ export function useDeployment() {
                         setTimeout(() => {
                             setStatus('success');
                             setDeploymentUrl(data.url);
-                        }, 2000);
+                        }, 1000);
                     } else if (data.status === 'ERROR' || data.status === 'CANCELED') {
                         clearInterval(pollInterval);
                         setStatus('error');
@@ -66,7 +66,7 @@ export function useDeployment() {
             } catch (error) {
                 console.error('Polling error:', error);
             }
-        }, 3000);
+        }, 1000);
 
         return () => clearInterval(pollInterval);
     }, []);
