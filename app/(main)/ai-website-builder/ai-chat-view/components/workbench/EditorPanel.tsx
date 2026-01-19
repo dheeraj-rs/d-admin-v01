@@ -18,7 +18,7 @@ import type { FileMap } from '../../lib/stores/files';
 import { workbenchStore } from '../../lib/stores/workbench';
 import { useTerminalStore, useThemeStore } from '../../lib/stores/zustand';
 import { classNames } from '../../utils/classNames';
-import { WORK_DIR } from '../../utils/constants';
+import { WORK_DIR, PANEL_SIZES, MAX_TERMINALS, EDITOR_SETTINGS } from '../../utils/constants';
 import { renderLogger } from '../../utils/logger';
 import { isMobile } from '../../utils/mobile';
 import { FileBreadcrumb } from './FileBreadcrumb';
@@ -39,11 +39,8 @@ interface EditorPanelProps {
   onFileReset?: () => void;
 }
 
-const MAX_TERMINALS = 3;
-const DEFAULT_TERMINAL_SIZE = 25;
+const DEFAULT_TERMINAL_SIZE = PANEL_SIZES.TERMINAL.default;
 const DEFAULT_EDITOR_SIZE = 100 - DEFAULT_TERMINAL_SIZE;
-
-const editorSettings: EditorSettings = { tabSize: 2 };
 
 export const EditorPanel = memo(
   ({
@@ -148,8 +145,8 @@ export const EditorPanel = memo(
           <PanelGroup direction="horizontal" style={{ touchAction: 'none' }}>
             <Panel
               ref={filePanelRef}
-              defaultSize={30}
-              minSize={25}
+              defaultSize={PANEL_SIZES.FILE_TREE.default}
+              minSize={PANEL_SIZES.FILE_TREE.min}
               collapsible
               onCollapse={() => setIsFilePanelCollapsed(true)}
               onExpand={() => setIsFilePanelCollapsed(false)}
@@ -174,8 +171,17 @@ export const EditorPanel = memo(
             {/* Collapsed panel indicator - shows when file panel is collapsed */}
             {isFilePanelCollapsed && (
               <div
-                className="absolute left-0 top-1/2 -translate-y-1/2 w-3 h-20 bg-surface-b border border-[var(--d-admin-surface-border)] rounded-r-md flex items-center justify-center cursor-pointer z-20 hover:bg-surface-c transition-colors"
+                role="button"
+                aria-label="Expand file panel"
+                tabIndex={0}
+                className="absolute left-0 top-1/2 -translate-y-1/2 w-3 h-20 bg-surface-b border border-[var(--d-admin-surface-border)] rounded-r-md flex items-center justify-center cursor-pointer z-20 hover:bg-surface-c transition-colors focus:outline-none focus:ring-2 focus:ring-primary"
                 onClick={() => filePanelRef.current?.expand()}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    filePanelRef.current?.expand();
+                  }
+                }}
                 style={{ touchAction: 'none' }}
               >
                 <div className="text-text-secondary text-sm">⋮</div>
@@ -185,7 +191,7 @@ export const EditorPanel = memo(
             <PanelResizeHandle className="group relative" style={{ touchAction: 'none' }}>
               <div className="absolute inset-0 z-10 flex items-center justify-center w-2" />
             </PanelResizeHandle>
-            <Panel className="flex flex-col" defaultSize={70} minSize={30}>
+            <Panel className="flex flex-col" defaultSize={PANEL_SIZES.EDITOR.default} minSize={PANEL_SIZES.EDITOR.min}>
               <PanelHeader className="overflow-x-auto">
                 <div className="flex items-center flex-1 text-sm">
                   {activeFileSegments?.length && (
@@ -216,7 +222,7 @@ export const EditorPanel = memo(
                   <CodeMirrorEditor
                     theme={theme}
                     editable={!isStreaming && editorDocument !== undefined}
-                    settings={editorSettings}
+                    settings={EDITOR_SETTINGS}
                     doc={editorDocument}
                     autoFocusOnDocumentChange={!isMobile()}
                     onScroll={onEditorScroll}

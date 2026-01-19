@@ -40,3 +40,28 @@ export const ALLOW_EDITS_EXTENSIONS = [
   '.xml',
   '.svg',
 ];
+
+// Panel size constants
+export const PANEL_SIZES = {
+  FILE_TREE: {
+    default: 30,
+    min: 25,
+  },
+  EDITOR: {
+    default: 70,
+    min: 30,
+  },
+  TERMINAL: {
+    default: 25,
+    min: 10,
+  },
+} as const;
+
+// Terminal constants
+export const MAX_TERMINALS = 3;
+
+// Editor settings
+export const EDITOR_SETTINGS = {
+  tabSize: 2,
+} as const;
+
