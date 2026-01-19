@@ -96,7 +96,7 @@ export const ChatImpl = memo(({ initialMessages, storeMessageHistory }: ChatProp
 
     const [animationScope, animate] = useAnimate();
 
-    const { messages, isLoading, input, handleInputChange, setInput, stop, append } = useChat({
+    const { messages, isLoading, input, handleInputChange, setInput, stop, append, setMessages } = useChat({
         api: '/api/chat',
         body: {
             provider: selectedProvider,
@@ -118,11 +118,16 @@ export const ChatImpl = memo(({ initialMessages, storeMessageHistory }: ChatProp
 
     useEffect(() => {
         setStarted(initialMessages.length > 0);
-        // Update chatStarted when messages are loaded from persistence
+        // Update chatStarted based on initialMessages
         if (initialMessages.length > 0 && !chatStarted) {
             setChatStarted(true);
+        } else if (initialMessages.length === 0) {
+            setChatStarted(false);
+            setMessages([]);
+            setInput('');
+            stop();
         }
-    }, [initialMessages, chatStarted, setStarted]);
+    }, [initialMessages, chatStarted, setStarted, setMessages, setInput, stop]);
 
     useEffect(() => {
         parseMessages(messages, isLoading);

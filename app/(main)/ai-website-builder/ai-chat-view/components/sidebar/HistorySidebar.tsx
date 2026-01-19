@@ -99,6 +99,7 @@ export function HistorySidebar({ onSelect }: MenuProps) {
                         href="/ai-website-builder?new=true"
                         onClick={() => {
                             workbenchStore.reset();
+                            setIsHistoryOpen(false);
                         }}
                         className="flex gap-2 items-center bg-blue-500/10 text-blue-500 hover:bg-blue-500/20 rounded-md p-2 transition-colors"
                     >

@@ -12,9 +12,12 @@ import { ChatInterfacePanel } from './ai-chat-view/components/chat/ChatInterface
 import { HistorySidebar } from './ai-chat-view/components/sidebar/HistorySidebar';
 import LightCircleRayBackground from '@/core/components/not-found/LightCircleRayBackground';
 
+import { useChatStore } from './ai-chat-view/lib/stores/zustand';
+
 export default function AiWebsiteBuilderPage() {
     const { activeMobilePanel, builderView } = useAiBuilderStore();
     const isMobile = useIsMobile();
+    const chatId = useChatStore(state => state.chatId);
 
     const InterfaceComponents = {
         chat: ChatInterfacePanel,

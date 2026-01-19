@@ -110,6 +110,10 @@ export function useChatHistory() {
             setReady(true);
           });
       } else {
+        setInitialMessages([]);
+        setUrlId(undefined);
+        useChatStore.getState().setDescription(undefined);
+        useChatStore.getState().setChatId(undefined);
         setReady(true);
       }
     };
