@@ -245,7 +245,7 @@ export const EditorPanel = memo(
           </PanelGroup>
         </Panel>
         <PanelResizeHandle className="group relative" style={{ touchAction: 'none' }}>
-          <div className="absolute inset-0 flex items-center justify-center h-3" />
+          <div className="absolute inset-0 flex items-center justify-center h-" />
 
         </PanelResizeHandle>
         <Panel

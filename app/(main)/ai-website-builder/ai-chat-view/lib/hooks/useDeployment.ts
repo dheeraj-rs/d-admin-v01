@@ -74,8 +74,10 @@ export function useDeployment() {
     const deploy = useCallback(async (files: any[], config: DeploymentConfig) => {
         setStatus('deploying');
         setErrorMessage('');
-        setCurrentStep(0);
-        setProgress(0);
+        setStatus('deploying');
+        setErrorMessage('');
+        setCurrentStep(1);
+        setProgress(5);
 
         try {
             const response = await fetch('/api/deploy', {

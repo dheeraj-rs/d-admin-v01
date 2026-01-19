@@ -145,7 +145,7 @@ export const ChatInterface = React.forwardRef<HTMLDivElement, BaseChatProps>(
                                     </div>
 
                                     {/* Scrollable Text List with Border */}
-                                    <div className="border border-[var(--d-admin-surface-border)] rounded-xl p-4 bg-[var(--d-admin-surface-section)]/30">
+                                    <div className="p-4">
                                         <div className="max-h-[400px] overflow-y-auto px-2 scrollbar-thin scrollbar-thumb-[var(--d-admin-surface-border)] scrollbar-track-transparent">
                                             <div className="flex flex-col gap-1 items-center">
                                                 {EXAMPLE_PROMPTS.map((examplePrompt, index) => (

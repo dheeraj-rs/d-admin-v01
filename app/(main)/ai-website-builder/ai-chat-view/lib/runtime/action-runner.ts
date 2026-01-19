@@ -137,6 +137,11 @@ export class ActionRunner {
     const actions = useWorkbenchStore.getState().artifacts[this.#artifactId]?.actions || {};
     const action = actions[actionId];
 
+    if (!action) {
+      console.warn(`[ActionRunner] Action ${actionId} not found, skipping execution`);
+      return;
+    }
+
     console.log(
       `[ActionRunner] Executing action ${actionId}, type: ${action.type}`
     );
