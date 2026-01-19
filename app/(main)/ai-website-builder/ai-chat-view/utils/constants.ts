@@ -21,6 +21,7 @@ export const IGNORE_PATTERNS = [
   '**/npm-debug.log*',
   '**/yarn-debug.log*',
   '**/yarn-error.log*',
+  '**/vite.config.js.timestamp-*',
 ];
 
 export const ALLOW_EDITS_EXTENSIONS = [

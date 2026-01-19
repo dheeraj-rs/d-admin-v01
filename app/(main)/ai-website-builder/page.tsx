@@ -35,8 +35,8 @@ export default function AiWebsiteBuilderPage() {
     const showWorkbench = isMobile ? activeMobilePanel === 'workbench' : true;
 
     return (
-        <div className="w-full h-full bg-[var(--d-admin-surface-ground)] relative text-[var(--d-admin-text-color)]">
-            <LightCircleRayBackground />
+        <div className="w-full h-full relative text-[var(--d-admin-text-color)] bg-gradient-to-tl from-[var(--d-admin-surface-ground)] to-[var(--d-admin-surface-section)]">
+            {/* <LightCircleRayBackground /> */}
             <HistorySidebar />
             <div className="flex flex-col h-full w-full relative z-10">
                 <Header />

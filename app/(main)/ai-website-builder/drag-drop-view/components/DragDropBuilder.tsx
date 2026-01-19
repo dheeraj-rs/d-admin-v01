@@ -166,7 +166,7 @@ export default function DragDropBuilder({ standaloneServer = false }: DragDropBu
         const observer = new MutationObserver(
             debounce(() => {
                 console.log('dom changed');
-                const html = canvasRef.current!.innerHTML;
+                const html = canvasRef.current?.innerHTML;
                 if (html) savePage(html, standaloneServer);
             })
         );

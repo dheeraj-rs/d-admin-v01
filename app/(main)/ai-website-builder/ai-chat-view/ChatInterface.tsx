@@ -261,7 +261,7 @@ export const ChatInterface = React.forwardRef<HTMLDivElement, BaseChatProps>(
                                         </div>
                                     </div>
                                 )}
-                                <div className="bg-[var(--d-admin-surface-ground)] rounded-lg dark:shadow-lg">
+                                <div className="rounded-lg dark:shadow-lg">
                                     <div className="border-transparent" style={{ height: '0px' }}>
                                         <div className="overflow-hidden h-full border-[var(--d-admin-surface-border)] relative bg-[var(--d-admin-surface-section)] transition-opacity duration-200 rounded-t-[0.44rem] border-b-px left-0 right-0 opacity-0">
                                             <div className="flex py-2.5 px-2.5 font-medium text-xs">

@@ -1,12 +1,13 @@
 'use client';
 
-import { useRouter, useParams } from 'next/navigation';
+import { useRouter, useParams, useSearchParams } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import type { Message } from 'ai';
 import { toast } from 'react-toastify';
 import { workbenchStore } from '../stores/workbench';
 import { useChatStore } from '../stores/zustand';
 import {
+  getAll,
   getMessages,
   getNextId,
   getUrlId,
@@ -40,7 +41,9 @@ export const getDb = async () => {
 export function useChatHistory() {
   const router = useRouter();
   const params = useParams();
+  const searchParams = useSearchParams();
   const mixedId = params?.id as string | undefined;
+  const isNewChat = searchParams?.get('new') === 'true';
 
   const [initialMessages, setInitialMessages] = useState<Message[]>([]);
   const [ready, setReady] = useState<boolean>(false);
@@ -75,7 +78,39 @@ export function useChatHistory() {
           })
           .catch((error) => {
             toast.error(error.message);
+            setReady(true);
           });
+      } else if (!isNewChat) {
+        // No ID in URL and not explicitly a new chat - load most recent chat
+        getAll(dbInstance)
+          .then((allChats) => {
+            if (allChats && allChats.length > 0) {
+              // Sort by timestamp to get most recent
+              const sortedChats = allChats.sort((a: ChatHistoryItem, b: ChatHistoryItem) =>
+                new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
+              );
+              const mostRecent = sortedChats[0];
+
+              setInitialMessages(mostRecent.messages);
+              setUrlId(mostRecent.urlId);
+              useChatStore.getState().setDescription(mostRecent.description);
+              useChatStore.getState().setChatId(mostRecent.id);
+
+              // Update URL to include the chat ID
+              if (mostRecent.urlId) {
+                navigateChat(mostRecent.urlId);
+              } else {
+                navigateChat(mostRecent.id);
+              }
+            }
+            setReady(true);
+          })
+          .catch((error: Error) => {
+            toast.error(error.message);
+            setReady(true);
+          });
+      } else {
+        setReady(true);
       }
     };
     init();

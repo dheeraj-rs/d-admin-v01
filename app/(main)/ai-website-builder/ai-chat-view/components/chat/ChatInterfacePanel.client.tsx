@@ -118,7 +118,11 @@ export const ChatImpl = memo(({ initialMessages, storeMessageHistory }: ChatProp
 
     useEffect(() => {
         setStarted(initialMessages.length > 0);
-    }, []);
+        // Update chatStarted when messages are loaded from persistence
+        if (initialMessages.length > 0 && !chatStarted) {
+            setChatStarted(true);
+        }
+    }, [initialMessages, chatStarted, setStarted]);
 
     useEffect(() => {
         parseMessages(messages, isLoading);

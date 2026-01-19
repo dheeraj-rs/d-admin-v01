@@ -140,7 +140,7 @@ export const EditorPanel = memo(
     };
 
     return (
-      <PanelGroup direction="vertical">
+      <PanelGroup direction="vertical" className="bg-[var(--d-admin-surface-section)]">
         <Panel defaultSize={showTerminal ? DEFAULT_EDITOR_SIZE : 100} minSize={20}>
           <PanelGroup direction="horizontal" style={{ touchAction: 'none' }}>
             <Panel
