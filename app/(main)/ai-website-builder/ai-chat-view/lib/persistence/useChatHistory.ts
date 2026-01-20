@@ -169,7 +169,7 @@ function navigateChat(nextId: string) {
    * without triggering a full router navigation that might re-mount components unnecessarily.
    */
   const url = new URL(window.location.href);
-  url.pathname = `/website-builder/${nextId}`;
+  url.pathname = `/ai-website-builder/${nextId}`;
 
   window.history.replaceState({}, '', url);
 }

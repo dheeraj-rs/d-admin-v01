@@ -1,83 +1,71 @@
 'use client';
 import { Header } from './ai-chat-view/Header';
-import { DragDropInterface } from './components/drag-drop-view/DragDropInterface';
-import { TemplatesInterface } from './components/templates-view/TemplatesInterface';
 import { WorkbenchPanel } from './ai-chat-view/WorkbenchPanel';
-import { DragDropWorkbench } from './components/drag-drop-view/DragDropWorkbench';
-import { TemplatesWorkbench } from './components/templates-view/TemplatesWorkbench';
 import { Panel, PanelGroup, PanelResizeHandle } from 'react-resizable-panels';
 import { useAiBuilderStore } from './store/ai-builder-store';
 import { useIsMobile } from '@/core/hooks/use-mobile';
 import { ChatInterfacePanel } from './ai-chat-view/components/chat/ChatInterfacePanel.client';
 import { HistorySidebar } from './ai-chat-view/components/sidebar/HistorySidebar';
-import LightCircleRayBackground from '@/core/components/not-found/LightCircleRayBackground';
-
 import { useChatStore } from './ai-chat-view/lib/stores/zustand';
+import { useEffect } from 'react';
 
 export default function AiWebsiteBuilderPage() {
-    const { activeMobilePanel, builderView } = useAiBuilderStore();
+    const { activeMobilePanel, setBuilderView } = useAiBuilderStore();
     const isMobile = useIsMobile();
     const chatId = useChatStore(state => state.chatId);
 
-    const InterfaceComponents = {
-        chat: ChatInterfacePanel,
-        'drag-drop': DragDropInterface,
-        templates: TemplatesInterface,
-    };
+    // Ensure we are in chat mode when mounting this page
+    useEffect(() => {
+        setBuilderView('chat');
+    }, [setBuilderView]);
 
-    const WorkbenchComponents = {
-        chat: WorkbenchPanel,
-        'drag-drop': DragDropWorkbench,
-        templates: TemplatesWorkbench,
-    };
+    // Components (Simplified for Chat only)
+    const ActiveInterface = ChatInterfacePanel;
+    const ActiveWorkbench = WorkbenchPanel;
 
-    const ActiveInterface = InterfaceComponents[builderView as keyof typeof InterfaceComponents];
-    const ActiveWorkbench = WorkbenchComponents[builderView as keyof typeof WorkbenchComponents];
-
-    const showInterface = isMobile ? activeMobilePanel === 'chat' : true;
-    const showWorkbench = isMobile ? activeMobilePanel === 'workbench' : true;
+    const showInterface = (isMobile ? activeMobilePanel === 'chat' : true);
+    const showWorkbench = (isMobile ? activeMobilePanel === 'workbench' : true);
 
     return (
         <div className="w-full h-full relative text-[var(--d-admin-text-color)] bg-gradient-to-tl from-[var(--d-admin-surface-ground)] to-[var(--d-admin-surface-section)]">
-            {/* <LightCircleRayBackground /> */}
             <HistorySidebar />
             <div className="flex flex-col h-full w-full relative z-10">
                 <Header />
                 <div className="relative flex-1 w-full h-full overflow-hidden">
-                    <div
-                        className="h-full w-full"
-                    >
+                    <div className="h-full w-full">
                         <div className="flex size-full overscroll-contain">
                             <PanelGroup direction="horizontal" key={isMobile ? 'mobile' : 'desktop'}>
                                 {showInterface && (
                                     <Panel
-                                        defaultSize={isMobile ? 100 : 40}
-                                        minSize={isMobile ? 100 : 25}
-                                        maxSize={isMobile ? 100 : 50}
-                                        className={`${isMobile && activeMobilePanel !== 'chat' ? 'hidden' : ''}`}
+                                        id="interface-panel"
+                                        order={1}
+                                        defaultSize={isMobile ? 100 : 25}
+                                        minSize={isMobile ? 100 : 20}
+                                        className="h-full"
                                     >
-                                        {ActiveInterface && <ActiveInterface />}
+                                        <ActiveInterface />
                                     </Panel>
                                 )}
 
-                                {!isMobile && (
-                                    <PanelResizeHandle className="w-2 bg-transparent hover:bg-transparent relative group flex justify-center items-center" />
+                                {!isMobile && showInterface && (
+                                    <PanelResizeHandle className="w-1 bg-transparent hover:bg-blue-500/50 transition-colors" />
                                 )}
 
                                 {showWorkbench && (
                                     <Panel
-                                        defaultSize={isMobile ? 100 : 60}
-                                        minSize={isMobile ? 100 : 50}
-                                        className={`${isMobile && activeMobilePanel !== 'workbench' ? 'hidden' : ''}`}
+                                        id="workbench-panel"
+                                        order={2}
+                                        defaultSize={isMobile ? 100 : 75}
+                                        minSize={isMobile ? 100 : 30}
+                                        className="h-full"
                                     >
-                                        {ActiveWorkbench && <ActiveWorkbench />}
+                                        <ActiveWorkbench />
                                     </Panel>
                                 )}
                             </PanelGroup>
                         </div>
                     </div>
                 </div>
-
             </div>
         </div>
     );

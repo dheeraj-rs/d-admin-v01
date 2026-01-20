@@ -1,7 +1,68 @@
-import DragDropBuilder from '../ai-website-builder/drag-drop-view/components/DragDropBuilder';
+'use client';
 
+import { useEffect } from 'react';
+import { Header } from '../ai-website-builder/ai-chat-view/Header';
+import { DragDropInterface } from '../ai-website-builder/components/drag-drop-view/DragDropInterface';
+import { DragDropWorkbench } from '../ai-website-builder/components/drag-drop-view/DragDropWorkbench';
+import { MobileDragDropSidebar } from '../ai-website-builder/components/drag-drop-view/MobileDragDropSidebar';
+import { Panel, PanelGroup, PanelResizeHandle } from 'react-resizable-panels';
+import { useAiBuilderStore } from '../ai-website-builder/store/ai-builder-store';
+import { useIsMobile } from '@/core/hooks/use-mobile';
+import { useDragDropStore } from '../ai-website-builder/drag-drop-view/lib/drag-drop-store';
+import { ProjectsGallery } from '../ai-website-builder/drag-drop-view/components/ProjectsGallery';
 export default function DragDropBuilderPage() {
+    const { setBuilderView } = useAiBuilderStore();
+    const isMobile = useIsMobile();
+    const { isPreview, showProjectsGallery } = useDragDropStore();
+
+    useEffect(() => {
+        setBuilderView('drag-drop');
+    }, [setBuilderView]);
+
+    const showInterface = (isMobile ? false : true) && !isPreview;
+
     return (
-        <DragDropBuilder standaloneServer={false} />
+        <div className="w-full h-full relative text-[var(--d-admin-text-color)] bg-gradient-to-tl from-[var(--d-admin-surface-ground)] to-[var(--d-admin-surface-section)]">
+            <div className="flex flex-col h-full w-full relative z-10">
+                <Header />
+                <div className="relative flex-1 w-full h-full overflow-hidden">
+                    {showProjectsGallery && <ProjectsGallery />}
+                    {/* Mobile Sidebar Overlay */}
+                    <MobileDragDropSidebar />
+
+                    <div className="h-full w-full">
+                        <div className="flex size-full overscroll-contain">
+                            <PanelGroup direction="horizontal" key={isMobile ? 'mobile' : 'desktop'}>
+                                {showInterface && (
+                                    <Panel
+                                        id="interface-panel"
+                                        order={1}
+                                        defaultSize={isMobile ? 100 : 25}
+                                        minSize={isMobile ? 100 : 20}
+                                        className="h-full"
+                                    >
+                                        <DragDropInterface />
+                                    </Panel>
+                                )}
+
+                                {!isMobile && showInterface && (
+                                    <PanelResizeHandle className="w-1 bg-transparent hover:bg-blue-500/50 transition-colors" />
+                                )}
+
+                                <Panel
+                                    id="workbench-panel"
+                                    order={2}
+                                    defaultSize={isMobile ? 100 : 75}
+                                    minSize={isMobile ? 100 : 30}
+                                    className="h-full"
+                                >
+                                    <DragDropWorkbench />
+                                </Panel>
+                            </PanelGroup>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     );
 }

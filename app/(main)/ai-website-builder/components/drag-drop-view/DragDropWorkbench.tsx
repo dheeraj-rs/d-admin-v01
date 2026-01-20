@@ -1,14 +1,490 @@
-import { Icon } from '@iconify/react';
+import React, { useEffect, useRef, useState } from 'react';
+import TrashIcon from '@heroicons/react/24/outline/TrashIcon';
+import ArrowDownIcon from '@heroicons/react/24/outline/ArrowDownIcon';
+import ArrowUpIcon from '@heroicons/react/24/outline/ArrowUpIcon';
+import CursorArrowRaysIcon from '@heroicons/react/24/outline/CursorArrowRaysIcon';
+import ArrowSmallUpIcon from '@heroicons/react/24/outline/ArrowSmallUpIcon'; // Check if needed
+
+import { ImageDialog } from '../../drag-drop-view/components/dialogs/ImageDialog';
+import { ButtonDialog } from '../../drag-drop-view/components/dialogs/ButtonDialog';
+import { LinkDialog } from '../../drag-drop-view/components/dialogs/LinkDialog';
+import { SvgDialog } from '../../drag-drop-view/components/dialogs/SvgDialog';
+import { ExportDialog } from '../../drag-drop-view/components/dialogs/ExportDialog';
+import { PublishDialog } from '../../drag-drop-view/components/dialogs/PublishDialog';
+import { SaveProjectModal } from '../../components/dialogs/SaveProjectModal';
+
+import { savePage, loadPage } from '../../drag-drop-view/lib/builderApi';
+import { debounce, isEventOnElement, isElementTopHalf } from '../../drag-drop-view/lib/builderUtils';
+import { Component, ComponentWithCategories } from '../../drag-drop-view/types';
+import { exportAsHTML, exportAsReactProject } from '../../drag-drop-view/lib/dragDropZip';
+import { useDragDropStore } from '../../drag-drop-view/lib/drag-drop-store';
+import { useProjectsStore } from '../../store/projects-store';
+
+import '../../ai-chat-view/styles/builder.css';
 
 export function DragDropWorkbench() {
+    const {
+        components,
+        isPreview,
+        error,
+        pendingAddComponent,
+        selectedElement,
+        showImageDialog,
+        showButtonDialog,
+        showLinkDialog,
+        showSvgDialog,
+        showExportDialog,
+        showPublishDialog,
+
+        setIsPreview,
+        setPendingAddComponent,
+        setSelectedElement,
+
+        setShowImageDialog,
+        setShowButtonDialog,
+        setShowLinkDialog,
+        setShowSvgDialog,
+        setShowExportDialog,
+        setShowPublishDialog,
+        showSaveDialog,
+        setShowSaveDialog
+    } = useDragDropStore();
+    const { currentProjectId, getProject } = useProjectsStore();
+
+    const canvasRef = useRef<HTMLDivElement>(null);
+    const popoverRef = useRef<HTMLDivElement>(null);
+    const moveUpRef = useRef<SVGSVGElement>(null);
+    const moveDownRef = useRef<SVGSVGElement>(null);
+    const deleteRef = useRef<SVGSVGElement>(null);
+    const popoverElementRef = useRef<HTMLDivElement>(null);
+    const optionsRef = useRef<SVGSVGElement>(null);
+
+    const [hoveredComponent, setHoveredComponent] = useState<HTMLDivElement | null>(null);
+    const [hoveredElement, setHoveredElement] = useState<HTMLElement | null>(null);
+    const [isEmptyCanvas, setIsEmptyCanvas] = useState<boolean>(false);
+
+    // Component Control State
+    const [canMoveUp, setCanMoveUp] = useState(false);
+    const [canMoveDown, setCanMoveDown] = useState(false);
+
+    const standaloneServer = false;
+
+    // Auto-save on DOM changes
+    const onDomChange = () => {
+        const config = { attributes: true, childList: true, subtree: true, characterData: true };
+        const observer = new MutationObserver(
+            debounce(() => {
+                const html = canvasRef.current?.innerHTML;
+                if (html) savePage(html, standaloneServer);
+            })
+        );
+        observer.observe(canvasRef.current!, config);
+        return observer;
+    };
+
+    // Initialize: load page
+    // Initialize: Observer
+    useEffect(() => {
+        if (canvasRef.current) {
+            const observer = onDomChange();
+            return () => observer.disconnect();
+        }
+    }, []);
+
+    // Load Content (Project or Draft)
+    useEffect(() => {
+        if (!canvasRef.current) return;
+
+        if (currentProjectId) {
+            const project = getProject(currentProjectId);
+            if (project) {
+                console.log('Loading project:', project.name);
+                canvasRef.current.innerHTML = project.html;
+                // Update local draft to match project
+                savePage(project.html, standaloneServer);
+            }
+        } else {
+            // Load Draft
+            loadPage(standaloneServer).then((html) => {
+                // Double check we are still in draft mode
+                if (canvasRef.current && !useProjectsStore.getState().currentProjectId) {
+                    canvasRef.current.innerHTML = html;
+                }
+            });
+        }
+    }, [currentProjectId, getProject, standaloneServer]);
+
+    // Handle header actions
+    const { headerAction, setHeaderAction } = useDragDropStore();
+
+    useEffect(() => {
+        if (headerAction === 'preparePublish') {
+            if (canvasRef.current) {
+                const html = canvasRef.current.innerHTML;
+                localStorage.setItem('drag-drop-builder-html', html);
+                setShowPublishDialog(true);
+            }
+            setHeaderAction(null);
+        } else if (headerAction === 'save') {
+            setShowSaveDialog(true);
+            setHeaderAction(null);
+        }
+    }, [headerAction, setHeaderAction, setShowPublishDialog, setShowSaveDialog]);
+
+    // Handle pending add component (from Sidebar click)
+    useEffect(() => {
+        if (pendingAddComponent) {
+            addComponentToCanvas(pendingAddComponent);
+            setPendingAddComponent(null);
+        }
+    }, [pendingAddComponent, setPendingAddComponent]);
+
+
+    // Clear all components
+    const clearComponents = async () => {
+        canvasRef.current!.innerHTML = '';
+    };
+
+    // Get all components from canvas
+    const getComponents = (): HTMLDivElement[] => {
+        return Array.from(canvasRef.current?.children ?? []).filter(
+            (c) => c.tagName !== 'SCRIPT'
+        ) as HTMLDivElement[];
+    };
+
+    // Handle component drop
+    const onCanvasDrop = async (e: React.DragEvent<HTMLElement>) => {
+        e.preventDefault();
+
+        const [categoryId, componentId] = e.dataTransfer!.getData('component').split('-');
+        if (!components[categoryId] || !components[categoryId][componentId as unknown as number]) return;
+
+        const component: Component = components[categoryId][componentId as unknown as number];
+        const html = component.source;
+
+        const _components = getComponents();
+        if (_components.length === 0) {
+            canvasRef.current!.innerHTML = html;
+        } else if (hoveredComponent && isElementTopHalf(hoveredComponent!, e)) {
+            hoveredComponent!.insertAdjacentHTML('beforebegin', html);
+        } else if (hoveredComponent && !isElementTopHalf(hoveredComponent!, e)) {
+            hoveredComponent!.insertAdjacentHTML('afterend', html);
+        }
+
+        removeBorders();
+        setHoveredComponent(null);
+        setIsEmptyCanvas(false);
+    };
+
+    // Handle mouse over canvas
+    const onCanvasMouseOver = (e: React.MouseEvent<HTMLElement>) => {
+        if (!popoverRef.current) return;
+
+        const target = e.target as HTMLElement;
+        if (target.tagName === 'A') {
+            setHoveredElement(target);
+            if (popoverElementRef.current) {
+                popoverElementRef.current.style.top = `${target.offsetTop}px`;
+                popoverElementRef.current.style.left = `${target.offsetLeft}px`;
+            }
+        } else if (target.tagName === 'BUTTON') {
+            setHoveredElement(target);
+            if (popoverElementRef.current) {
+                popoverElementRef.current.style.top = `${target.offsetTop}px`;
+                popoverElementRef.current.style.left = `${target.offsetLeft}px`;
+            }
+        }
+
+        // Get hovered component
+        const components = getComponents();
+        const component = components.find((c) => c.matches(':hover'));
+        if (!component) return;
+
+        // Update hovered component
+        setHoveredComponent(component);
+        popoverRef.current.style.top = `${component.offsetTop}px`;
+        popoverRef.current.style.left = `${component.offsetLeft}px`;
+
+        // Update component control state
+        const index = components.indexOf(component);
+        setCanMoveUp(index > 0);
+        setCanMoveDown(index < components.length - 1);
+    };
+
+    // Handle mouse leave canvas
+    const onCanvasMouseLeave = (e: React.MouseEvent<HTMLElement>) => {
+        if (!isEventOnElement(popoverRef.current!, e)) {
+            setHoveredComponent(null);
+        }
+    };
+
+    // Handle mouse out canvas
+    const onCanvasMouseOut = (e: React.MouseEvent<HTMLElement>) => {
+        if (!isEventOnElement(popoverElementRef.current!, e)) {
+            setHoveredElement(null);
+        }
+    };
+
+    // Handle canvas click
+    const onCanvasClickCapture = (e: React.MouseEvent<HTMLElement>) => {
+        if (isPreview) return;
+
+        e.preventDefault();
+        e.stopPropagation();
+
+        const target = e.target as HTMLElement;
+        setSelectedElement(target);
+
+        // Handle element clicks
+        if (target.tagName === 'IMG') {
+            setShowImageDialog(true);
+        } else if (target.tagName === 'path') {
+            setShowSvgDialog(true);
+        } else if (target.tagName === 'svg') {
+            setShowSvgDialog(true);
+        }
+
+        // Handle popover clicks
+        if (isEventOnElement(deleteRef.current, e)) {
+            const clickEvent = new MouseEvent('click', { bubbles: true });
+            deleteRef.current!.dispatchEvent(clickEvent);
+        } else if (isEventOnElement(moveUpRef.current, e)) {
+            const clickEvent = new MouseEvent('click', { bubbles: true });
+            moveUpRef.current!.dispatchEvent(clickEvent);
+        } else if (isEventOnElement(moveDownRef.current, e)) {
+            const clickEvent = new MouseEvent('click', { bubbles: true });
+            moveDownRef.current!.dispatchEvent(clickEvent);
+        }
+    };
+
+    // Component actions
+    const onComponentDelete = () => {
+        if (canvasRef.current && hoveredComponent) {
+            canvasRef.current.removeChild(hoveredComponent);
+            setHoveredComponent(null);
+        }
+    };
+
+    const onComponentMoveUp = () => {
+        if (canvasRef.current && hoveredComponent && hoveredComponent.previousElementSibling) {
+            canvasRef.current.insertBefore(hoveredComponent, hoveredComponent.previousElementSibling);
+            setHoveredComponent(null);
+        }
+    };
+
+    const onComponentMoveDown = () => {
+        if (canvasRef.current && hoveredComponent && hoveredComponent.nextElementSibling) {
+            canvasRef.current.insertBefore(hoveredComponent.nextElementSibling, hoveredComponent);
+            setHoveredComponent(null);
+        }
+    };
+
+    // Handle drag over
+    const onCanvasDragOver = (e: React.MouseEvent<HTMLElement>) => {
+        e.preventDefault();
+
+        // Update empty flag
+        const components = getComponents();
+        const isEmpty = components.length === 0;
+        if (isEmpty !== isEmptyCanvas) setIsEmptyCanvas(isEmpty);
+
+        // Get hovered component
+        if (components.length === 0) return;
+        const componentWithEvent = components.find((c) => isEventOnElement(c, e));
+        const component = componentWithEvent ?? components[components.length - 1];
+
+        if (!component) return;
+
+        // Update border
+        const isTopHalf = isElementTopHalf(component, e);
+        component.style.setProperty(
+            'box-shadow',
+            isTopHalf ? ' 0px 6px 0px -2px cornflowerblue inset' : '0px -6px 0px -2px cornflowerblue inset'
+        );
+
+        // Update hovered component
+        if (!component.isEqualNode(hoveredComponent)) {
+            setHoveredComponent(component);
+        }
+    };
+
+    // Remove borders
+    const removeBorders = () => {
+        const components = getComponents();
+        components.forEach((c: HTMLDivElement) => {
+            c.style.setProperty('box-shadow', '');
+        });
+    };
+
+    // Handle drag leave
+    const onCanvasDragLeave = (e: React.DragEvent<HTMLElement>) => {
+        if (!canvasRef.current?.contains(e.relatedTarget as HTMLElement)) {
+            setHoveredComponent(null);
+            removeBorders();
+        }
+        setIsEmptyCanvas(false);
+    };
+
+    // Add Component to Canvas (Tap to Add)
+    const addComponentToCanvas = (component: Component) => {
+        const html = component.source;
+        if (canvasRef.current) {
+            canvasRef.current.insertAdjacentHTML('beforeend', html);
+            savePage(canvasRef.current.innerHTML, standaloneServer);
+        }
+    };
+
     return (
-        <div className="flex flex-col h-full w-full bg-white/5 items-center justify-center text-[var(--d-admin-text-color)] border border-[var(--d-admin-surface-border)] rounded-tl-xl overflow-hidden m-2 mr-0">
-            <div className="flex flex-col items-center opacity-40">
-                <Icon icon="lucide:box-select" className="size-16 mb-6" />
-                <h2 className="text-2xl font-semibold mb-2">Canvas Area</h2>
-                <p className="text-base text-center max-w-md">
-                    Target droppable zone for your components.
-                </p>
+        <div className="flex flex-col h-full w-full bg-[var(--d-admin-surface-section)] text-[var(--d-admin-text-color)] overflow-hidden">
+
+
+            {/* Error Alert */}
+            {error && (
+                <div className="bg-red-50 border border-red-500 text-red-600 px-4 py-3 rounded relative m-2 mx-4" role="alert">
+                    <strong className="font-bold">Error: </strong>
+                    <span className="block sm:inline">{error}</span>
+                </div>
+            )}
+
+            {/* Canvas Area */}
+            <div className={`flex-1 overflow-y-auto relative ${isPreview ? 'p-0' : 'p-4 pb-20'}`}>
+                <div className="flex justify-center min-h-full">
+                    {/* Dialogs */}
+                    <ImageDialog
+                        isOpen={showImageDialog}
+                        onClose={() => setShowImageDialog(false)}
+                        element={selectedElement as HTMLImageElement}
+                        standaloneServer={standaloneServer}
+                    />
+                    <ButtonDialog
+                        isOpen={showButtonDialog}
+                        onClose={() => setShowButtonDialog(false)}
+                        element={selectedElement as HTMLButtonElement}
+                    />
+                    <LinkDialog
+                        isOpen={showLinkDialog}
+                        onClose={() => setShowLinkDialog(false)}
+                        element={selectedElement as HTMLAnchorElement}
+                    />
+                    <SvgDialog
+                        isOpen={showSvgDialog}
+                        onClose={() => setShowSvgDialog(false)}
+                        element={selectedElement as unknown as SVGElement}
+                    />
+                    <ExportDialog
+                        isOpen={showExportDialog}
+                        onClose={() => setShowExportDialog(false)}
+                        onExportHTML={() => {
+                            if (canvasRef.current) {
+                                exportAsHTML(canvasRef.current.innerHTML);
+                            }
+                        }}
+                        onExportReact={() => {
+                            if (canvasRef.current) {
+                                exportAsReactProject(canvasRef.current.innerHTML);
+                            }
+                        }}
+                    />
+                    <PublishDialog
+                        isOpen={showPublishDialog}
+                        onClose={() => setShowPublishDialog(false)}
+                        onPublishHTML={() => {
+                            localStorage.setItem('drag-drop-builder-format', 'html');
+                            window.location.href = '/ai-website-builder/drag-drop-view/publish';
+                        }}
+                        onPublishReact={() => {
+                            localStorage.setItem('drag-drop-builder-format', 'react');
+                            window.location.href = '/ai-website-builder/drag-drop-view/publish';
+                        }}
+                    />
+                    <SaveProjectModal
+                        isOpen={showSaveDialog}
+                        onClose={() => setShowSaveDialog(false)}
+                        getHtmlContent={() => canvasRef.current?.innerHTML || ''}
+                    />
+
+                    {/* Element Popover */}
+                    {!isPreview && (
+                        <div
+                            ref={popoverElementRef}
+                            className="absolute z-10 bg-gray-800 rounded-md shadow-lg"
+                            style={{ display: hoveredElement ? 'block' : 'none' }}
+                        >
+                            <div className="flex flex-row p-1">
+                                <CursorArrowRaysIcon
+                                    ref={optionsRef}
+                                    onClick={() => {
+                                        setSelectedElement(hoveredElement);
+                                        if (hoveredElement?.tagName === 'BUTTON') {
+                                            setShowButtonDialog(true);
+                                        } else if (hoveredElement?.tagName === 'A') {
+                                            setShowLinkDialog(true);
+                                        }
+                                    }}
+                                    className="h-6 w-6 text-white p-1 cursor-pointer hover:text-blue-400"
+                                />
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Component Popover */}
+                    {!isPreview && (
+                        <div
+                            ref={popoverRef}
+                            onMouseLeave={(e: any) => {
+                                if (!canvasRef.current?.isSameNode(e.target)) {
+                                    setHoveredComponent(null);
+                                }
+                            }}
+                            className="absolute z-10 bg-gray-800 rounded-md shadow-lg"
+                            style={{ display: hoveredComponent ? 'block' : 'none' }}
+                        >
+                            <div className="flex flex-row p-1 gap-1">
+                                {canMoveDown && (
+                                    <ArrowDownIcon
+                                        ref={moveDownRef}
+                                        onClick={onComponentMoveDown}
+                                        className="h-6 w-6 text-white p-1 cursor-pointer hover:text-blue-400"
+                                    />
+                                )}
+                                {canMoveUp && (
+                                    <ArrowUpIcon
+                                        ref={moveUpRef}
+                                        onClick={onComponentMoveUp}
+                                        className="h-6 w-6 text-white p-1 cursor-pointer hover:text-blue-400"
+                                    />
+                                )}
+                                <TrashIcon
+                                    id="delete"
+                                    ref={deleteRef}
+                                    onClick={onComponentDelete}
+                                    className="h-6 w-6 text-white p-1 cursor-pointer hover:text-red-400"
+                                />
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Canvas */}
+                    <div
+                        id="editor"
+                        ref={canvasRef}
+                        className={`bg-white flex-1 ease-animation shadow-sm ${isPreview ? 'min-h-full' : 'min-h-[1024px]'}`}
+                        onMouseOver={onCanvasMouseOver}
+                        onMouseLeave={onCanvasMouseLeave}
+                        onMouseOut={onCanvasMouseOut}
+                        onDrop={onCanvasDrop}
+                        onDragOver={onCanvasDragOver}
+                        onDragLeave={onCanvasDragLeave}
+                        onClickCapture={onCanvasClickCapture}
+                        style={{
+                            boxShadow: isEmptyCanvas ? '0px 6px 0px -2px cornflowerblue inset' : (isPreview ? 'none' : '0 0 10px rgba(0,0,0,0.05)'),
+                            width: isPreview ? '100%' : '100%',
+                            maxWidth: isPreview ? '100%' : '1024px',
+                            outline: 'none',
+                        }}
+                        contentEditable={!isPreview}
+                    />
+                </div>
             </div>
         </div>
     );

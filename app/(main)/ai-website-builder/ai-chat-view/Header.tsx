@@ -5,6 +5,7 @@ import { useIsMobile } from '@/core/hooks/use-mobile';
 import { toast } from 'react-toastify';
 import Link from 'next/link';
 import { useAiBuilderStore } from '../store/ai-builder-store';
+import { useDragDropStore } from '../drag-drop-view/lib/drag-drop-store';
 // ==================================
 import { PortDropdown } from './components/workbench/PortDropdown';
 import { exportProjectAsZip } from './utils/zip';
@@ -18,6 +19,14 @@ export function Header() {
     const { activeMobilePanel, setActiveMobilePanel, isHistoryOpen, setIsHistoryOpen, builderView, setBuilderView } = useAiBuilderStore();
     const [isBuilderMenuOpen, setIsBuilderMenuOpen] = useState(false);
     const isMobile = useIsMobile();
+
+    // Drag Drop Store
+    const {
+        isPreview,
+        setIsPreview,
+        setShowExportDialog,
+        setHeaderAction
+    } = useDragDropStore();
 
     const getBuilderLabel = (view: typeof builderView) => {
         switch (view) {
@@ -130,13 +139,15 @@ export function Header() {
                 >
                     <Icon icon="ph:caret-left" className="size-5" />
                 </button>
-                <button
-                    className={`flex items-center justify-center font-medium shrink-0 min-w-0 max-w-full rounded-md focus-visible:outline-2 disabled:op-50 relative disabled:cursor-not-allowed gap-1 h-9 focus-visible:outline-[var(--d-admin-blue-600)] bg-transparent enabled:hover:bg-[var(--d-admin-surface-hover)] text-[var(--d-admin-text-color)] text-sm px-2 -mr-px ${isHistoryOpen ? 'bg-[var(--d-admin-surface-hover)]' : ''}`}
-                    type="button"
-                    onClick={() => { setIsHistoryOpen(!isHistoryOpen); useChatStore.getState().setShowHistory(!showHistory); }}
-                >
-                    <Icon icon="ph:clock-counter-clockwise" className="size-5" />
-                </button>
+                {builderView !== 'drag-drop' && (
+                    <button
+                        className={`flex items-center justify-center font-medium shrink-0 min-w-0 max-w-full rounded-md focus-visible:outline-2 disabled:op-50 relative disabled:cursor-not-allowed gap-1 h-9 focus-visible:outline-[var(--d-admin-blue-600)] bg-transparent enabled:hover:bg-[var(--d-admin-surface-hover)] text-[var(--d-admin-text-color)] text-sm px-2 -mr-px ${isHistoryOpen ? 'bg-[var(--d-admin-surface-hover)]' : ''}`}
+                        type="button"
+                        onClick={() => { setIsHistoryOpen(!isHistoryOpen); useChatStore.getState().setShowHistory(!showHistory); }}
+                    >
+                        <Icon icon="ph:clock-counter-clockwise" className="size-5" />
+                    </button>
+                )}
                 <span className="text-[var(--d-admin-text-color)] opacity-[.12] text-xl antialiased mx-1">/</span>
                 <button className={`flex-1 md:flex-none flex items-center justify-center font-medium min-w-0 rounded-md focus-visible:outline-2 disabled:op-50 relative disabled:cursor-not-allowed gap-1 h-9 focus-visible:outline-[var(--d-admin-blue-600)] bg-transparent enabled:hover:bg-[var(--d-admin-surface-hover)] text-[var(--d-admin-text-color)] text-sm px-2 -mr-px ${isMobile && activeMobilePanel === 'workbench' ? 'hidden' : 'flex'}`} type="button">
                     <span className="truncate max-w-full md:max-w-md lg:max-w-lg">{chatStarted ? (
@@ -146,47 +157,10 @@ export function Header() {
                     ) : 'New Project'}</span>
                 </button>
                 <div className="relative ml-2 shrink-0 hidden md:block">
-                    <button
-                        className="flex items-center justify-center font-medium max-w-full rounded-md gap-1.5 h-8 bg-transparent text-[var(--d-admin-text-color)] text-xs px-2.5 transition-all duration-300 group shrink min-w-0 hover:bg-[var(--d-admin-surface-hover)]"
-                        type="button"
-                        onClick={() => setIsBuilderMenuOpen(!isBuilderMenuOpen)}
-                    >
-                        <Icon icon={getBuilderIcon(builderView)} className="size-3.5 text-[var(--d-admin-text-color-secondary)] group-hover:text-[var(--d-admin-primary-color)] transition-colors" />
+                    <div className="flex items-center justify-center font-medium max-w-full rounded-md gap-1.5 h-8 bg-transparent text-[var(--d-admin-text-color)] text-xs px-2.5">
+                        <Icon icon={getBuilderIcon(builderView)} className="size-3.5 text-[var(--d-admin-text-color-secondary)]" />
                         <span className="mt-px truncate hidden sm:block max-w-[80px] md:max-w-xs">{getBuilderLabel(builderView)}</span>
-                        <Icon icon="lucide:chevron-down" className={`size-3 ml-0.5 opacity-60 transition-transform duration-200 ${isBuilderMenuOpen ? 'rotate-180' : ''}`} />
-                    </button>
-
-                    {isBuilderMenuOpen && (
-                        <div className="absolute top-full left-0 mt-1 w-56 bg-[var(--d-admin-surface-section)] border border-[var(--d-admin-surface-border)] rounded-lg shadow-xl overflow-hidden z-50 animate-in fade-in zoom-in-95 duration-100 flex flex-col p-1">
-                            <button
-                                onClick={() => { setBuilderView('chat'); setIsBuilderMenuOpen(false); }}
-                                className={`flex items-center gap-2 px-2 py-1.5 text-xs rounded-md w-full text-left transition-colors ${builderView === 'chat' ? 'bg-[var(--d-admin-surface-hover)] text-[var(--d-admin-text-color)]' : 'text-[var(--d-admin-text-color-secondary)] hover:text-[var(--d-admin-text-color)] hover:bg-[var(--d-admin-surface-hover)]'}`}
-                            >
-                                <Icon icon="lucide:sparkles" className="size-3.5" />
-                                <span>AI Chat</span>
-                                {builderView === 'chat' && <Icon icon="ph:check" className="ml-auto size-3" />}
-                            </button>
-                            <button
-                                onClick={() => { setBuilderView('drag-drop'); setIsBuilderMenuOpen(false); }}
-                                className={`flex items-center gap-2 px-2 py-1.5 text-xs rounded-md w-full text-left transition-colors ${builderView === 'drag-drop' ? 'bg-[var(--d-admin-surface-hover)] text-[var(--d-admin-text-color)]' : 'text-[var(--d-admin-text-color-secondary)] hover:text-[var(--d-admin-text-color)] hover:bg-[var(--d-admin-surface-hover)]'}`}
-                            >
-                                <Icon icon="lucide:hand" className="size-3.5" />
-                                <span>Drag & Drop Snippet</span>
-                                {builderView === 'drag-drop' && <Icon icon="ph:check" className="ml-auto size-3" />}
-                            </button>
-                            <button
-                                onClick={() => { setBuilderView('templates'); setIsBuilderMenuOpen(false); }}
-                                className={`flex items-center gap-2 px-2 py-1.5 text-xs rounded-md w-full text-left transition-colors ${builderView === 'templates' ? 'bg-[var(--d-admin-surface-hover)] text-[var(--d-admin-text-color)]' : 'text-[var(--d-admin-text-color-secondary)] hover:text-[var(--d-admin-text-color)] hover:bg-[var(--d-admin-surface-hover)]'}`}
-                            >
-                                <Icon icon="lucide:layout-template" className="size-3.5" />
-                                <span>Templates</span>
-                                {builderView === 'templates' && <Icon icon="ph:check" className="ml-auto size-3" />}
-                            </button>
-                        </div>
-                    )}
-                    {isBuilderMenuOpen && (
-                        <div className="fixed inset-0 z-40" onClick={() => setIsBuilderMenuOpen(false)}></div>
-                    )}
+                    </div>
                 </div>
 
             </div>
@@ -220,7 +194,7 @@ export function Header() {
                     )}
 
 
-                    {(!isMobile || activeMobilePanel === 'workbench') && (
+                    {(!isMobile || activeMobilePanel === 'workbench') && builderView !== 'drag-drop' && (
                         <div className=" flex items-center gap-2">
                             <div className="flex items-center shrink-0 overflow-hidden rounded-lg p-0.5 border border-[var(--d-admin-surface-border)] h-8">
                                 <button
@@ -322,22 +296,98 @@ export function Header() {
                         </div>
                     </div>
 
+
                     {/* Desktop Actions */}
                     <div className="ml-auto hidden md:flex gap-3">
-                        <button className="items-center justify-center gap-2 font-medium min-w-0 max-w-full rounded-md focus-visible:outline-2 disabled:op-50 relative disabled:cursor-not-allowed focus-visible:outline-[var(--d-admin-blue-600)] bg-[var(--d-admin-surface-section)] border border-[var(--d-admin-surface-border)] text-[var(--d-admin-text-color)] hover:bg-[var(--d-admin-surface-hover)] transition-colors flex gap-1.7 shrink-0 h-8 text-sm px-3" type="button" onClick={() => {
-                            const files = useFilesStore.getState().files;
-                            exportProjectAsZip(files);
-                        }}
-                            title="Export as ZIP">                    <Icon icon="ph:download-duotone" className="text-lg" />
-                            <span>Export</span></button>
+                        {/* Drag & Drop Actions */}
+                        {builderView === 'drag-drop' && (
+                            <>
+                                <button
+                                    className="items-center justify-center gap-2 font-medium min-w-0 max-w-full rounded-md focus-visible:outline-2 disabled:op-50 relative disabled:cursor-not-allowed focus-visible:outline-[var(--d-admin-blue-600)] bg-[var(--d-admin-surface-section)] border border-[var(--d-admin-surface-border)] text-[var(--d-admin-text-color)] hover:bg-[var(--d-admin-surface-hover)] transition-colors flex gap-1.7 shrink-0 h-8 text-sm px-3"
+                                    onClick={() => useDragDropStore.getState().setShowProjectsGallery(true)}
+                                    title="Projects"
+                                >
+                                    <Icon icon="lucide:folder-open" className="text-lg" />
+                                    <span>Projects</span>
+                                </button>
 
-                        <button
-                            className="items-center justify-center gap-2 font-medium min-w-0 max-w-full rounded-md focus-visible:outline-2 disabled:op-50 relative disabled:cursor-not-allowed focus-visible:outline-[var(--d-admin-blue-600)] bg-[var(--d-admin-surface-section)] border border-[var(--d-admin-surface-border)] text-[var(--d-admin-text-color)] hover:bg-[var(--d-admin-surface-hover)] transition-colors flex gap-1.7 shrink-0 h-8 text-sm px-3"
-                            title="Deploy to Vercel"
-                            onClick={() => setIsDeployModalOpen(true)}
-                        >                    <Icon icon="ph:rocket-launch-duotone" className="text-lg" />
-                            <span>Publish</span>
-                        </button>
+                                <button
+                                    className="items-center justify-center gap-2 font-medium min-w-0 max-w-full rounded-md focus-visible:outline-2 disabled:op-50 relative disabled:cursor-not-allowed focus-visible:outline-[var(--d-admin-blue-600)] bg-[var(--d-admin-surface-section)] border border-[var(--d-admin-surface-border)] text-[var(--d-admin-text-color)] hover:bg-[var(--d-admin-surface-hover)] transition-colors flex gap-1.7 shrink-0 h-8 text-sm px-3"
+                                    onClick={() => setHeaderAction('save')}
+                                    title="Save Project"
+                                >
+                                    <Icon icon="lucide:save" className="text-lg" />
+                                    <span>Save</span>
+                                </button>
+
+                                {!isPreview ? (
+                                    <button
+                                        className="items-center justify-center gap-2 font-medium min-w-0 max-w-full rounded-md focus-visible:outline-2 disabled:op-50 relative disabled:cursor-not-allowed focus-visible:outline-[var(--d-admin-blue-600)] bg-[var(--d-admin-surface-section)] border border-[var(--d-admin-surface-border)] text-[var(--d-admin-text-color)] hover:bg-[var(--d-admin-surface-hover)] transition-colors flex gap-1.7 shrink-0 h-8 text-sm px-3"
+                                        onClick={() => setIsPreview(true)}
+                                    >
+                                        <Icon icon="lucide:eye" className="text-lg" />
+                                        <span>Preview</span>
+                                    </button>
+                                ) : (
+                                    <button
+                                        className="items-center justify-center gap-2 font-medium min-w-0 max-w-full rounded-md focus-visible:outline-2 disabled:op-50 relative disabled:cursor-not-allowed focus-visible:outline-[var(--d-admin-blue-600)] bg-[var(--d-admin-blue-600)] border border-[var(--d-admin-blue-600)] text-white hover:bg-[var(--d-admin-blue-700)] transition-colors flex gap-1.7 shrink-0 h-8 text-sm px-3"
+                                        onClick={() => setIsPreview(false)}
+                                    >
+                                        <Icon icon="lucide:pencil" className="text-lg" />
+                                        <span>Editor</span>
+                                    </button>
+                                )}
+
+                                <button
+                                    className="items-center justify-center gap-2 font-medium min-w-0 max-w-full rounded-md focus-visible:outline-2 disabled:op-50 relative disabled:cursor-not-allowed focus-visible:outline-[var(--d-admin-blue-600)] bg-[var(--d-admin-surface-section)] border border-[var(--d-admin-surface-border)] text-[var(--d-admin-text-color)] hover:bg-[var(--d-admin-surface-hover)] transition-colors flex gap-1.7 shrink-0 h-8 text-sm px-3"
+                                    onClick={() => setShowExportDialog(true)}
+                                    title="Export"
+                                >
+                                    <Icon icon="ph:download-duotone" className="text-lg" />
+                                    <span>Export</span>
+                                </button>
+
+                                <button
+                                    className="items-center justify-center gap-2 font-medium min-w-0 max-w-full rounded-md focus-visible:outline-2 disabled:op-50 relative disabled:cursor-not-allowed focus-visible:outline-[var(--d-admin-blue-600)] bg-[var(--d-admin-surface-section)] border border-[var(--d-admin-surface-border)] text-[var(--d-admin-text-color)] hover:bg-[var(--d-admin-surface-hover)] transition-colors flex gap-1.7 shrink-0 h-8 text-sm px-3"
+                                    title="Publish"
+                                    onClick={() => setHeaderAction('preparePublish')}
+                                >
+                                    <Icon icon="ph:rocket-launch-duotone" className="text-lg" />
+                                    <span>Publish</span>
+                                </button>
+                            </>
+                        )}
+
+                        {/* Mobile Add Component Button */}
+                        {builderView === 'drag-drop' && isMobile && (
+                            <button
+                                className="items-center justify-center gap-2 font-medium min-w-0 max-w-full rounded-md focus-visible:outline-2 disabled:op-50 relative disabled:cursor-not-allowed focus-visible:outline-[var(--d-admin-blue-600)] bg-[var(--d-admin-blue-600)] border border-[var(--d-admin-blue-600)] text-white hover:bg-[var(--d-admin-blue-700)] transition-colors flex gap-1.7 shrink-0 h-8 text-sm px-3 ml-auto"
+                                onClick={() => useDragDropStore.getState().setMobileSidebar(true)}
+                            >
+                                <Icon icon="lucide:plus" className="text-lg" />
+                                <span className="hidden sm:inline">Add</span>
+                            </button>
+                        )}
+
+                        {/* Chat / Default Actions */}
+                        {builderView !== 'drag-drop' && (
+                            <>
+                                <button className="items-center justify-center gap-2 font-medium min-w-0 max-w-full rounded-md focus-visible:outline-2 disabled:op-50 relative disabled:cursor-not-allowed focus-visible:outline-[var(--d-admin-blue-600)] bg-[var(--d-admin-surface-section)] border border-[var(--d-admin-surface-border)] text-[var(--d-admin-text-color)] hover:bg-[var(--d-admin-surface-hover)] transition-colors flex gap-1.7 shrink-0 h-8 text-sm px-3" type="button" onClick={() => {
+                                    const files = useFilesStore.getState().files;
+                                    exportProjectAsZip(files);
+                                }}
+                                    title="Export as ZIP">                    <Icon icon="ph:download-duotone" className="text-lg" />
+                                    <span>Export</span></button>
+
+                                <button
+                                    className="items-center justify-center gap-2 font-medium min-w-0 max-w-full rounded-md focus-visible:outline-2 disabled:op-50 relative disabled:cursor-not-allowed focus-visible:outline-[var(--d-admin-blue-600)] bg-[var(--d-admin-surface-section)] border border-[var(--d-admin-surface-border)] text-[var(--d-admin-text-color)] hover:bg-[var(--d-admin-surface-hover)] transition-colors flex gap-1.7 shrink-0 h-8 text-sm px-3"
+                                    title="Deploy to Vercel"
+                                    onClick={() => setIsDeployModalOpen(true)}
+                                >                    <Icon icon="ph:rocket-launch-duotone" className="text-lg" />
+                                    <span>Publish</span>
+                                </button>
+                            </>
+                        )}
                     </div>
 
                     {/* Mobile More Menu */}
@@ -409,13 +459,15 @@ export function Header() {
                     </div>
                 </div>
             </div>
-            {isDeployModalOpen && (
-                <DeploymentModal
-                    isOpen={isDeployModalOpen}
-                    onClose={() => setIsDeployModalOpen(false)}
-                    chatId={chatId}
-                />
-            )}
-        </header>
+            {
+                isDeployModalOpen && (
+                    <DeploymentModal
+                        isOpen={isDeployModalOpen}
+                        onClose={() => setIsDeployModalOpen(false)}
+                        chatId={chatId}
+                    />
+                )
+            }
+        </header >
     );
 }
