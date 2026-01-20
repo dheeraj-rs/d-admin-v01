@@ -162,7 +162,7 @@ export function ProjectsGallery() {
 
                                             {/* Hover Overlay */}
                                             <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-center justify-center gap-3 backdrop-blur-[2px]">
-                                                <button className="px-5 py-2 bg-[var(--d-admin-surface-ground)] text-[var(--d-admin-text-color)] text-xs font-bold uppercase tracking-wider rounded-full hover:bg-gray-200 transition-transform hover:scale-105 active:scale-95 shadow-xl">
+                                                <button className="px-5 py-2 bg-[var(--d-admin-surface-ground)] text-[var(--d-admin-text-color)] text-xs font-bold uppercase tracking-wider rounded-full hover:bg-[var(--d-admin-surface-ground)]/50 transition-transform hover:scale-105 active:scale-95 shadow-xl">
                                                     Open Editor
                                                 </button>
                                             </div>

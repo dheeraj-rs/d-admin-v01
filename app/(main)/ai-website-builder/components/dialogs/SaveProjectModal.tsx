@@ -12,8 +12,18 @@ interface SaveProjectModalProps {
 }
 
 export function SaveProjectModal({ isOpen, onClose, getHtmlContent }: SaveProjectModalProps) {
-    const [name, setName] = useState('');
-    const { saveProject, setCurrentProject } = useProjectsStore();
+    const { saveProject, setCurrentProject, currentProjectId, getProject } = useProjectsStore();
+    const existingProject = currentProjectId ? getProject(currentProjectId) : null;
+    const [name, setName] = useState(existingProject?.name || '');
+
+    // Update name whenever modal opens or project changes
+    React.useEffect(() => {
+        if (isOpen && existingProject) {
+            setName(existingProject.name);
+        } else if (isOpen && !existingProject) {
+            setName('');
+        }
+    }, [isOpen, existingProject]);
 
     const generateId = () => {
         return Date.now().toString(36) + Math.random().toString(36).substr(2);
@@ -26,25 +36,25 @@ export function SaveProjectModal({ isOpen, onClose, getHtmlContent }: SaveProjec
         }
 
         const html = getHtmlContent();
-        const id = generateId();
+        // Use existing ID if updating, otherwise generate new
+        const id = existingProject ? existingProject.id : generateId();
 
-        let thumbnail = '';
+        let thumbnail = existingProject?.thumbnail || '';
         try {
             const editor = document.getElementById('editor');
             if (editor) {
                 // Determine scale based on content width to avoid huge images
                 // Using 0.5 scale for thumbnail quality vs size balance
-                const canvas = await import('html2canvas').then(mod => mod.default(editor, {
-                    scale: 0.25,
-                    useCORS: true,
-                    logging: false,
-                    backgroundColor: null, // Transparent background if possible, or theme bg
-                    // Only capture visible part if it's too tall, or full scroll?
-                    // Usually we want the top part as preview
-                    height: Math.min(editor.scrollHeight, 1200),
-                    windowHeight: 1200
-                }));
-                thumbnail = canvas.toDataURL('image/jpeg', 0.7);
+                // html-to-image handles modern CSS (like lab colors) better than html2canvas
+                const { toJpeg } = await import('html-to-image');
+
+                // We need to ensure fonts and images are loaded, but toJpeg handles most of it.
+                // Setting a white background if transparent
+                thumbnail = await toJpeg(editor, {
+                    quality: 0.95,
+                    pixelRatio: 0.6, // Higher resolution for better clarity
+                    backgroundColor: '#1a1a1a',
+                });
             }
         } catch (error) {
             console.error('Failed to generate thumbnail:', error);
@@ -59,10 +69,13 @@ export function SaveProjectModal({ isOpen, onClose, getHtmlContent }: SaveProjec
             category: 'custom'
         });
 
-        setCurrentProject(id);
-        toast.success('Project saved successfully!');
+        if (!existingProject) {
+            setCurrentProject(id);
+        }
+
+        toast.success(`Project ${existingProject ? 'updated' : 'saved'} successfully!`);
         onClose();
-        setName('');
+        if (!existingProject) setName('');
     };
 
     return (
@@ -80,10 +93,10 @@ export function SaveProjectModal({ isOpen, onClose, getHtmlContent }: SaveProjec
                     <div className="flex flex-col gap-4">
                         <div>
                             <DialogPrimitive.Title className="text-lg font-semibold text-[var(--d-admin-text-color)]">
-                                Save Project
+                                {existingProject ? 'Update Project' : 'Save Project'}
                             </DialogPrimitive.Title>
                             <DialogPrimitive.Description className="text-sm text-[var(--d-admin-text-color-secondary)] mt-1">
-                                Give your project a name to save it to your gallery.
+                                {existingProject ? 'Update your existing project changes.' : 'Give your project a name to save it to your gallery.'}
                             </DialogPrimitive.Description>
                         </div>
 
@@ -112,7 +125,7 @@ export function SaveProjectModal({ isOpen, onClose, getHtmlContent }: SaveProjec
                                 className="px-3 py-2 text-sm font-semibold text-white bg-[var(--d-admin-primary-color)] hover:bg-[var(--d-admin-primary-color-hover)] rounded-md shadow-sm transition-colors"
                                 onClick={handleSave}
                             >
-                                Save
+                                {existingProject ? 'Update' : 'Save'}
                             </button>
                         </div>
 
