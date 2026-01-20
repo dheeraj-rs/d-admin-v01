@@ -146,10 +146,18 @@ export function ProjectsGallery() {
                                             {/* Decorative Pattern */}
                                             <div className="absolute inset-0 opacity-20 bg-[radial-gradient(#4b5563_1px,transparent_1px)] [background-size:16px_16px]" />
 
-                                            <div className="absolute inset-0 flex items-center justify-center">
-                                                <div className="size-16 rounded-xl bg-gradient-to-br from-violet-500 to-fuchsia-500 shadow-lg flex items-center justify-center text-white text-2xl font-bold">
-                                                    {project.name.charAt(0).toUpperCase()}
-                                                </div>
+                                            <div className="absolute inset-0 flex items-center justify-center bg-[var(--d-admin-surface-ground)]">
+                                                {project.thumbnail ? (
+                                                    <img
+                                                        src={project.thumbnail}
+                                                        alt={project.name}
+                                                        className="w-full h-full object-cover object-top opacity-90 group-hover:opacity-100 transition-opacity"
+                                                    />
+                                                ) : (
+                                                    <div className="size-16 rounded-xl bg-gradient-to-br from-violet-500 to-fuchsia-500 shadow-lg flex items-center justify-center text-white text-2xl font-bold">
+                                                        {project.name.charAt(0).toUpperCase()}
+                                                    </div>
+                                                )}
                                             </div>
 
                                             {/* Hover Overlay */}

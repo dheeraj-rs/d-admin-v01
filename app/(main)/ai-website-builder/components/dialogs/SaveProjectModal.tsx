@@ -19,7 +19,7 @@ export function SaveProjectModal({ isOpen, onClose, getHtmlContent }: SaveProjec
         return Date.now().toString(36) + Math.random().toString(36).substr(2);
     };
 
-    const handleSave = () => {
+    const handleSave = async () => {
         if (!name.trim()) {
             toast.error('Please enter a project name');
             return;
@@ -28,10 +28,34 @@ export function SaveProjectModal({ isOpen, onClose, getHtmlContent }: SaveProjec
         const html = getHtmlContent();
         const id = generateId();
 
+        let thumbnail = '';
+        try {
+            const editor = document.getElementById('editor');
+            if (editor) {
+                // Determine scale based on content width to avoid huge images
+                // Using 0.5 scale for thumbnail quality vs size balance
+                const canvas = await import('html2canvas').then(mod => mod.default(editor, {
+                    scale: 0.25,
+                    useCORS: true,
+                    logging: false,
+                    backgroundColor: null, // Transparent background if possible, or theme bg
+                    // Only capture visible part if it's too tall, or full scroll?
+                    // Usually we want the top part as preview
+                    height: Math.min(editor.scrollHeight, 1200),
+                    windowHeight: 1200
+                }));
+                thumbnail = canvas.toDataURL('image/jpeg', 0.7);
+            }
+        } catch (error) {
+            console.error('Failed to generate thumbnail:', error);
+            // Non-blocking error
+        }
+
         saveProject({
             id,
             name,
             html,
+            thumbnail,
             category: 'custom'
         });
 
