@@ -1,10 +1,10 @@
 import React from 'react';
-import { XMarkIcon } from '@heroicons/react/24/outline';
+import { XMarkIcon, Bars3BottomLeftIcon } from '@heroicons/react/24/outline';
 import { useDragDropStore } from '../../drag-drop-view/lib/drag-drop-store';
 import { DragDropSidebarContent } from './DragDropSidebarContent';
 
 export function MobileDragDropSidebar() {
-    const { showMobileSidebar, setMobileSidebar } = useDragDropStore();
+    const { showMobileSidebar, setMobileSidebar, showReorderModal, setShowReorderModal } = useDragDropStore();
     const [height, setHeight] = React.useState('45vh');
     const [isResizing, setIsResizing] = React.useState(false);
     const startY = React.useRef(0);
@@ -55,12 +55,27 @@ export function MobileDragDropSidebar() {
 
             <div className="flex items-center justify-between px-6 py-2 border-b border-[var(--d-admin-surface-border)]/50">
                 <span className="font-semibold text-[var(--d-admin-text-color)] text-lg">Add Element</span>
-                <button
-                    onClick={() => setMobileSidebar(false)}
-                    className="p-2 rounded-full text-[var(--d-admin-text-color-secondary)] hover:bg-[var(--d-admin-surface-hover)] hover:text-[var(--d-admin-text-color)] transition-colors"
-                >
-                    <XMarkIcon className="h-6 w-6" />
-                </button>
+                <div className="flex items-center gap-2">
+                    <button
+                        onClick={() => {
+                            setShowReorderModal(true);
+                            setMobileSidebar(false);
+                        }}
+                        className={`p-2 rounded-full transition-colors ${showReorderModal
+                            ? 'bg-[var(--d-admin-primary-color)] text-white'
+                            : 'text-[var(--d-admin-text-color-secondary)] hover:bg-[var(--d-admin-surface-hover)] hover:text-[var(--d-admin-text-color)]'
+                            }`}
+                        title="Reorder Components"
+                    >
+                        <Bars3BottomLeftIcon className="h-6 w-6" />
+                    </button>
+                    <button
+                        onClick={() => setMobileSidebar(false)}
+                        className="p-2 rounded-full text-[var(--d-admin-text-color-secondary)] hover:bg-[var(--d-admin-surface-hover)] hover:text-[var(--d-admin-text-color)] transition-colors"
+                    >
+                        <XMarkIcon className="h-6 w-6" />
+                    </button>
+                </div>
             </div>
             <div className="flex-1 overflow-y-auto overflow-x-hidden p-2 pb-8">
                 <DragDropSidebarContent />

@@ -13,6 +13,7 @@ import { ExportDialog } from '../../drag-drop-view/components/dialogs/ExportDial
 import { PublishDialog } from '../../drag-drop-view/components/dialogs/PublishDialog';
 import { SaveProjectModal } from '../../components/dialogs/SaveProjectModal';
 import { DragDropPlaceholder } from './DragDropPlaceholder';
+import { ReorderModal } from './ReorderModal';
 
 import { savePage, loadPage } from '../../drag-drop-view/lib/builderApi';
 import { debounce, isEventOnElement, isElementTopHalf } from '../../drag-drop-view/lib/builderUtils';
@@ -28,6 +29,7 @@ export function DragDropWorkbench() {
     const {
         components,
         isPreview,
+        showReorderModal,
         error,
         pendingAddComponent,
         selectedElement,
@@ -39,6 +41,7 @@ export function DragDropWorkbench() {
         showPublishDialog,
 
         setIsPreview,
+        setShowReorderModal,
         setPendingAddComponent,
         setSelectedElement,
 
@@ -70,6 +73,7 @@ export function DragDropWorkbench() {
     // Component Control State
     const [canMoveUp, setCanMoveUp] = useState(false);
     const [canMoveDown, setCanMoveDown] = useState(false);
+
 
     const standaloneServer = false;
 
@@ -220,13 +224,27 @@ export function DragDropWorkbench() {
         const component: Component = components[categoryId][componentId as unknown as number];
         const html = component.source;
 
+        // Create a temporary container to parse and modify the HTML
+        const tempDiv = document.createElement('div');
+        tempDiv.innerHTML = html;
+
+        // Add data attribute to the first child element for identification
+        const firstChild = tempDiv.firstElementChild as HTMLElement;
+        if (firstChild) {
+            // Format as "BANNER 1", "CTA 2", etc.
+            const componentName = `${categoryId.toUpperCase()} ${parseInt(componentId) + 1}`;
+            firstChild.setAttribute('data-component-name', componentName);
+        }
+
+        const modifiedHtml = tempDiv.innerHTML;
+
         const _components = getComponents();
         if (_components.length === 0) {
-            canvasRef.current!.innerHTML = html;
+            canvasRef.current!.innerHTML = modifiedHtml;
         } else if (hoveredComponent && isElementTopHalf(hoveredComponent!, e)) {
-            hoveredComponent!.insertAdjacentHTML('beforebegin', html);
+            hoveredComponent!.insertAdjacentHTML('beforebegin', modifiedHtml);
         } else if (hoveredComponent && !isElementTopHalf(hoveredComponent!, e)) {
-            hoveredComponent!.insertAdjacentHTML('afterend', html);
+            hoveredComponent!.insertAdjacentHTML('afterend', modifiedHtml);
         }
 
         removeBorders();
@@ -386,10 +404,40 @@ export function DragDropWorkbench() {
     // Add Component to Canvas (Tap to Add)
     const addComponentToCanvas = (component: Component) => {
         const html = component.source;
+
+        // Create a temporary container to parse and modify the HTML
+        const tempDiv = document.createElement('div');
+        tempDiv.innerHTML = html;
+
+        // Add data attribute to the first child element for identification
+        const firstChild = tempDiv.firstElementChild as HTMLElement;
+        if (firstChild && component.folder) {
+            // Extract category and number from folder (e.g., "banner1" -> "BANNER 1")
+            const folderName = component.folder.replace(/[0-9]/g, ''); // Remove numbers
+            const folderNumber = component.folder.match(/\d+/)?.[0] || ''; // Extract number
+            const componentName = `${folderName.toUpperCase()} ${folderNumber}`;
+            firstChild.setAttribute('data-component-name', componentName.trim());
+        }
+
+        const modifiedHtml = tempDiv.innerHTML;
+
         if (canvasRef.current) {
-            canvasRef.current.insertAdjacentHTML('beforeend', html);
+            canvasRef.current.insertAdjacentHTML('beforeend', modifiedHtml);
             savePage(canvasRef.current.innerHTML, standaloneServer);
         }
+    };
+
+    // Apply reorder from modal
+    const handleApplyReorder = (newOrder: HTMLDivElement[]) => {
+        if (!canvasRef.current) return;
+
+        // Clear canvas
+        canvasRef.current.innerHTML = '';
+
+        // Append elements in new order
+        newOrder.forEach(element => {
+            canvasRef.current!.appendChild(element);
+        });
     };
 
     return (
@@ -535,14 +583,22 @@ export function DragDropWorkbench() {
                         onDragLeave={onCanvasDragLeave}
                         onClickCapture={onCanvasClickCapture}
                         style={{
-                            boxShadow: isEmptyCanvas ? '0 0 0 2px var(--d-admin-primary-color) inset' : (isPreview ? 'none' : '0 0 40px -10px rgba(0,0,0,0.1)'),
+                            // boxShadow: isEmptyCanvas ? '0 0 0 2px var(--d-admin-primary-color) inset' : (isPreview ? 'none' : '0 0 40px -10px rgba(0,0,0,0.1)'),
                             width: isPreview ? '100%' : '100%',
                             maxWidth: isPreview ? '100%' : '1024px',
                             outline: 'none',
                         }}
-                        contentEditable={!isPreview}
+                        contentEditable={!isPreview && hasContent}
                     />
                     {!hasContent && !isPreview && <DragDropPlaceholder />}
+
+                    {/* Reorder Modal */}
+                    <ReorderModal
+                        isOpen={showReorderModal}
+                        onClose={() => setShowReorderModal(false)}
+                        onApply={handleApplyReorder}
+                        components={getComponents()}
+                    />
                 </div>
             </div>
         </div>

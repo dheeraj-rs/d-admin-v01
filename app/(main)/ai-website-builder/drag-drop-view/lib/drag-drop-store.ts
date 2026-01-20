@@ -20,6 +20,7 @@ interface DragDropState {
     // View state
     isPreview: boolean;
     showMobileSidebar: boolean;
+    showReorderModal: boolean;
 
     // Actions
     toggleMobileSidebar: () => void;
@@ -44,6 +45,7 @@ interface DragDropState {
     setComponents: (components: ComponentWithCategories) => void;
     setError: (error: string | null) => void;
     setIsPreview: (v: boolean) => void;
+    setShowReorderModal: (v: boolean) => void;
 
     setPendingAddComponent: (c: Component | null) => void;
     setHeaderAction: (action: 'preparePublish' | 'save' | null) => void;
@@ -71,6 +73,7 @@ export const useDragDropStore = create<DragDropState>((set, get) => ({
     error: null,
 
     isPreview: false,
+    showReorderModal: false,
 
     pendingAddComponent: null,
     headerAction: null,
@@ -89,6 +92,7 @@ export const useDragDropStore = create<DragDropState>((set, get) => ({
     setComponents: (components) => set({ components }),
     setError: (error) => set({ error }),
     setIsPreview: (v) => set({ isPreview: v }),
+    setShowReorderModal: (v) => set({ showReorderModal: v }),
 
     setPendingAddComponent: (c) => set({ pendingAddComponent: c }),
     setHeaderAction: (action) => set({ headerAction: action }),
@@ -113,11 +117,12 @@ export const useDragDropStore = create<DragDropState>((set, get) => ({
         showPublishDialog: false,
         showSaveDialog: false,
         showProjectsGallery: false,
+        showReorderModal: false,
     }),
 
     loadThemeComponents: async (index: number, standaloneServer?: boolean) => {
         try {
-            const componentsList = await loadTheme(THEMES[index].folder, standaloneServer);
+            const componentsList = await loadTheme(THEMES[index].folder, standaloneServer ?? false);
 
             if (!Array.isArray(componentsList)) {
                 set({ error: JSON.stringify(componentsList, null, 2) });
