@@ -149,31 +149,51 @@ export function DragDropWorkbench() {
         }
     }, [pendingAddComponent, setPendingAddComponent]);
 
-    // Fix mobile touch scrolling on images
+    // Fix mobile touch scrolling while preserving contentEditable
     useEffect(() => {
         if (!isMobile || !canvasRef.current) return;
 
+        const canvas = canvasRef.current;
+        let touchStartY = 0;
+        let isScrolling = false;
+
         const handleTouchStart = (e: TouchEvent) => {
-            const target = e.target as HTMLElement;
-            if (target.tagName === 'IMG') {
-                // Allow scrolling, prevent image selection/drag
-                e.stopPropagation();
+            touchStartY = e.touches[0].clientY;
+            isScrolling = false;
+        };
+
+        const handleTouchMove = (e: TouchEvent) => {
+            const touchMoveY = e.touches[0].clientY;
+            const deltaY = Math.abs(touchMoveY - touchStartY);
+
+            // If moved more than 10px, consider it scrolling
+            if (deltaY > 10) {
+                isScrolling = true;
+                // Temporarily disable text selection during scroll
+                canvas.style.userSelect = 'none';
+                canvas.style.webkitUserSelect = 'none';
             }
         };
 
-        const canvas = canvasRef.current;
-        canvas.addEventListener('touchstart', handleTouchStart, { passive: true });
+        const handleTouchEnd = () => {
+            // Re-enable text selection after scroll ends
+            if (isScrolling) {
+                setTimeout(() => {
+                    canvas.style.userSelect = '';
+                    canvas.style.webkitUserSelect = '';
+                }, 50);
+            }
+            isScrolling = false;
+        };
 
-        // Make all images non-editable on mobile
-        const images = canvas.querySelectorAll('img');
-        images.forEach(img => {
-            img.setAttribute('contenteditable', 'false');
-            img.style.userSelect = 'none';
-            img.style.webkitUserSelect = 'none';
-        });
+        canvas.addEventListener('touchstart', handleTouchStart, { passive: true });
+        canvas.addEventListener('touchmove', handleTouchMove, { passive: true });
+        canvas.addEventListener('touchend', handleTouchEnd, { passive: true });
 
         return () => {
             canvas.removeEventListener('touchstart', handleTouchStart);
+            canvas.removeEventListener('touchmove', handleTouchMove);
+            canvas.removeEventListener('touchend', handleTouchEnd);
         };
     }, [isMobile, hasContent]);
 
