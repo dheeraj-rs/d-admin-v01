@@ -38,7 +38,7 @@ export function Category({ themeIndex, category, components, standaloneServer, o
                     {components.map((c: Component, i: number) => (
                         <img
                             key={i}
-                            className="cursor-pointer mb-2"
+                            className="cursor-pointer mb-2 w-full h-auto object-cover rounded border border-transparent hover:border-[var(--d-admin-primary-color)] transition-all"
                             src={getImageUrl(standaloneServer, `/builder-elements/${THEMES[themeIndex].folder}/${c.folder}/preview.png`)}
                             draggable="true"
                             onClick={() => onComponentClick(c)}

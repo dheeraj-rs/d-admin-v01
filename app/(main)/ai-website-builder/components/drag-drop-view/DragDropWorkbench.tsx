@@ -12,6 +12,7 @@ import { SvgDialog } from '../../drag-drop-view/components/dialogs/SvgDialog';
 import { ExportDialog } from '../../drag-drop-view/components/dialogs/ExportDialog';
 import { PublishDialog } from '../../drag-drop-view/components/dialogs/PublishDialog';
 import { SaveProjectModal } from '../../components/dialogs/SaveProjectModal';
+import { DragDropPlaceholder } from './DragDropPlaceholder';
 
 import { savePage, loadPage } from '../../drag-drop-view/lib/builderApi';
 import { debounce, isEventOnElement, isElementTopHalf } from '../../drag-drop-view/lib/builderUtils';
@@ -61,7 +62,8 @@ export function DragDropWorkbench() {
 
     const [hoveredComponent, setHoveredComponent] = useState<HTMLDivElement | null>(null);
     const [hoveredElement, setHoveredElement] = useState<HTMLElement | null>(null);
-    const [isEmptyCanvas, setIsEmptyCanvas] = useState<boolean>(false);
+    const [isEmptyCanvas, setIsEmptyCanvas] = useState<boolean>(true);
+    const [hasContent, setHasContent] = useState(false);
 
     // Component Control State
     const [canMoveUp, setCanMoveUp] = useState(false);
@@ -76,6 +78,8 @@ export function DragDropWorkbench() {
             debounce(() => {
                 const html = canvasRef.current?.innerHTML;
                 if (html) savePage(html, standaloneServer);
+                setHasContent(!!html && html.trim().length > 0);
+                setIsEmptyCanvas(!html || html.trim().length === 0);
             })
         );
         observer.observe(canvasRef.current!, config);
@@ -102,6 +106,8 @@ export function DragDropWorkbench() {
                 canvasRef.current.innerHTML = project.html;
                 // Update local draft to match project
                 savePage(project.html, standaloneServer);
+                setHasContent(!!project.html && project.html.trim().length > 0);
+                setIsEmptyCanvas(!project.html || project.html.trim().length === 0);
             }
         } else {
             // Load Draft
@@ -109,6 +115,8 @@ export function DragDropWorkbench() {
                 // Double check we are still in draft mode
                 if (canvasRef.current && !useProjectsStore.getState().currentProjectId) {
                     canvasRef.current.innerHTML = html;
+                    setHasContent(!!html && html.trim().length > 0);
+                    setIsEmptyCanvas(!html || html.trim().length === 0);
                 }
             });
         }
@@ -299,7 +307,7 @@ export function DragDropWorkbench() {
         const isTopHalf = isElementTopHalf(component, e);
         component.style.setProperty(
             'box-shadow',
-            isTopHalf ? ' 0px 6px 0px -2px cornflowerblue inset' : '0px -6px 0px -2px cornflowerblue inset'
+            isTopHalf ? ' 0px 6px 0px -2px var(--d-admin-primary-color) inset' : '0px -6px 0px -2px var(--d-admin-primary-color) inset'
         );
 
         // Update hovered component
@@ -468,7 +476,7 @@ export function DragDropWorkbench() {
                     <div
                         id="editor"
                         ref={canvasRef}
-                        className={`bg-white flex-1 ease-animation shadow-sm ${isPreview ? 'min-h-full' : 'min-h-[1024px]'}`}
+                        className={`transition-all duration-300 flex-1 ease-animation ${isPreview ? 'min-h-full' : 'min-h-[1024px]'} bg-transparent ${!hasContent && !isPreview ? 'bg-[radial-gradient(circle_at_center,_var(--d-admin-surface-border)_1px,_transparent_1px)] [background-size:24px_24px] [background-position:center]' : ''}`}
                         onMouseOver={onCanvasMouseOver}
                         onMouseLeave={onCanvasMouseLeave}
                         onMouseOut={onCanvasMouseOut}
@@ -477,13 +485,14 @@ export function DragDropWorkbench() {
                         onDragLeave={onCanvasDragLeave}
                         onClickCapture={onCanvasClickCapture}
                         style={{
-                            boxShadow: isEmptyCanvas ? '0px 6px 0px -2px cornflowerblue inset' : (isPreview ? 'none' : '0 0 10px rgba(0,0,0,0.05)'),
+                            boxShadow: isEmptyCanvas ? '0 0 0 2px var(--d-admin-primary-color) inset' : (isPreview ? 'none' : '0 0 40px -10px rgba(0,0,0,0.1)'),
                             width: isPreview ? '100%' : '100%',
                             maxWidth: isPreview ? '100%' : '1024px',
                             outline: 'none',
                         }}
                         contentEditable={!isPreview}
                     />
+                    {!hasContent && !isPreview && <DragDropPlaceholder />}
                 </div>
             </div>
         </div>

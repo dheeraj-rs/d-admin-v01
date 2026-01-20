@@ -158,7 +158,7 @@ export default function DeploymentModal({ isOpen, onClose, chatId }: DeploymentM
                                         }`}
                                 >
                                     <span
-                                        className={`inline-block h-4 w-4 bg-white transform rounded-full transition-transform ${showAdvanced ? 'translate-x-6' : 'translate-x-1'
+                                        className={`inline-block h-4 w-4 bg-[var(--d-admin-surface-ground)] transform rounded-full transition-transform ${showAdvanced ? 'translate-x-6' : 'translate-x-1'
                                             }`}
                                     />
                                 </button>
@@ -237,7 +237,7 @@ export default function DeploymentModal({ isOpen, onClose, chatId }: DeploymentM
                                         }`}
                                 >
                                     {currentStep > step.id && <CheckCircle2 className="h-4 w-4 text-white" />}
-                                    {currentStep === step.id && <div className="w-2 h-2 bg-white rounded-full animate-pulse" />}
+                                    {currentStep === step.id && <div className="w-2 h-2 bg-[var(--d-admin-surface-ground)] rounded-full animate-pulse" />}
                                 </div>
                                 <span className={`text-sm ${currentStep >= step.id ? 'text-primary font-medium' : 'text-text-secondary'}`}>
                                     {step.label}
