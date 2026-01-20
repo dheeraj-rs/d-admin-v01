@@ -21,6 +21,7 @@ import { exportAsHTML, exportAsReactProject } from '../../drag-drop-view/lib/dra
 import { useDragDropStore } from '../../drag-drop-view/lib/drag-drop-store';
 import { useProjectsStore } from '../../store/projects-store';
 
+import { useIsMobile } from '@/core/hooks/use-mobile';
 import '../../ai-chat-view/styles/builder.css';
 
 export function DragDropWorkbench() {
@@ -51,6 +52,7 @@ export function DragDropWorkbench() {
         setShowSaveDialog
     } = useDragDropStore();
     const { currentProjectId, getProject } = useProjectsStore();
+    const isMobile = useIsMobile();
 
     const canvasRef = useRef<HTMLDivElement>(null);
     const popoverRef = useRef<HTMLDivElement>(null);
@@ -146,6 +148,34 @@ export function DragDropWorkbench() {
             setPendingAddComponent(null);
         }
     }, [pendingAddComponent, setPendingAddComponent]);
+
+    // Fix mobile touch scrolling on images
+    useEffect(() => {
+        if (!isMobile || !canvasRef.current) return;
+
+        const handleTouchStart = (e: TouchEvent) => {
+            const target = e.target as HTMLElement;
+            if (target.tagName === 'IMG') {
+                // Allow scrolling, prevent image selection/drag
+                e.stopPropagation();
+            }
+        };
+
+        const canvas = canvasRef.current;
+        canvas.addEventListener('touchstart', handleTouchStart, { passive: true });
+
+        // Make all images non-editable on mobile
+        const images = canvas.querySelectorAll('img');
+        images.forEach(img => {
+            img.setAttribute('contenteditable', 'false');
+            img.style.userSelect = 'none';
+            img.style.webkitUserSelect = 'none';
+        });
+
+        return () => {
+            canvas.removeEventListener('touchstart', handleTouchStart);
+        };
+    }, [isMobile, hasContent]);
 
 
     // Clear all components
@@ -476,7 +506,7 @@ export function DragDropWorkbench() {
                     <div
                         id="editor"
                         ref={canvasRef}
-                        className={`transition-all duration-300 flex-1 ease-animation ${isPreview ? 'min-h-full' : 'min-h-[1024px]'} bg-transparent ${!hasContent && !isPreview ? 'bg-[radial-gradient(circle_at_center,_var(--d-admin-surface-border)_1px,_transparent_1px)] [background-size:24px_24px] [background-position:center]' : ''}`}
+                        className={`transition-all duration-300 flex-1 ease-animation ${isPreview ? 'min-h-full' : 'min-h-[1024px]'} bg-transparent ${isMobile ? '[&_img]:[-webkit-user-drag:none] [&_img]:select-none touch-pan-y' : ''} ${!hasContent && !isPreview ? 'bg-[radial-gradient(circle_at_center,_var(--d-admin-surface-border)_1px,_transparent_1px)] [background-size:24px_24px] [background-position:center]' : ''}`}
                         onMouseOver={onCanvasMouseOver}
                         onMouseLeave={onCanvasMouseLeave}
                         onMouseOut={onCanvasMouseOut}
