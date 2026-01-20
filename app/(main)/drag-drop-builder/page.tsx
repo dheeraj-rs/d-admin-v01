@@ -10,8 +10,6 @@ import { useAiBuilderStore } from '../ai-website-builder/store/ai-builder-store'
 import { useIsMobile } from '@/core/hooks/use-mobile';
 import { useDragDropStore } from '../ai-website-builder/drag-drop-view/lib/drag-drop-store';
 import { ProjectsGallery } from '../ai-website-builder/drag-drop-view/components/ProjectsGallery';
-import { polyfill } from "mobile-drag-drop";
-import { scrollBehaviourDragImageTranslateOverride } from "mobile-drag-drop/scroll-behaviour";
 
 export default function DragDropBuilderPage() {
     const { setBuilderView } = useAiBuilderStore();
@@ -19,16 +17,6 @@ export default function DragDropBuilderPage() {
     const { isPreview, showProjectsGallery } = useDragDropStore();
 
     useEffect(() => {
-        // Initialize mobile drag and drop polyfill
-        polyfill({
-            dragImageCenterOnTouch: true,
-            // Force drag image to follow finger exactly
-            dragImageTranslateOverride: scrollBehaviourDragImageTranslateOverride
-        });
-
-        // Fix for iOS scrolling while dragging
-        document.addEventListener("touchmove", function (e) { }, { passive: false });
-
         setBuilderView('drag-drop');
     }, [setBuilderView]);
 
@@ -47,7 +35,7 @@ export default function DragDropBuilderPage() {
                     {isMobile && !isPreview && (
                         <button
                             onClick={() => useDragDropStore.getState().setMobileSidebar(true)}
-                            className="fixed bottom-24 right-5 z-40 size-14 rounded-full bg-[var(--d-admin-primary-color)] text-white shadow-lg flex items-center justify-center hover:scale-105 active:scale-95 transition-all"
+                            className="fixed bottom-14 right-5 z-40 size-14 rounded-full bg-[var(--d-admin-primary-color)] text-white shadow-lg flex items-center justify-center hover:scale-105 active:scale-95 transition-all"
                             aria-label="Add Component"
                         >
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-8 h-8">

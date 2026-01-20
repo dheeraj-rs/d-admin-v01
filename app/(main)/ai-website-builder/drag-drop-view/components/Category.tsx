@@ -15,8 +15,11 @@ interface CategoryProps {
     onDragEnd: () => void;
 }
 
+import { useIsMobile } from '@/core/hooks/use-mobile';
+
 export function Category({ themeIndex, category, components, standaloneServer, onComponentClick, onDragStart, onDragEnd }: CategoryProps) {
     const [show, setShow] = useState(false);
+    const isMobile = useIsMobile();
 
     return (
         <div id={category.toLowerCase()}>
@@ -38,9 +41,9 @@ export function Category({ themeIndex, category, components, standaloneServer, o
                     {components.map((c: Component, i: number) => (
                         <img
                             key={i}
-                            className="cursor-pointer mb-2 w-full h-auto object-cover rounded border border-transparent hover:border-[var(--d-admin-primary-color)] transition-all"
+                            className={`cursor-pointer mb-2 w-full h-auto object-cover rounded border border-transparent hover:border-[var(--d-admin-primary-color)] transition-all ${isMobile ? 'active:scale-95 active:opacity-80' : ''}`}
                             src={getImageUrl(standaloneServer, `/builder-elements/${THEMES[themeIndex].folder}/${c.folder}/preview.png`)}
-                            draggable="true"
+                            draggable={!isMobile}
                             onClick={() => onComponentClick(c)}
                             onDragStart={(e) => {
                                 e.dataTransfer.setData('component', `${category}-${i}`);
