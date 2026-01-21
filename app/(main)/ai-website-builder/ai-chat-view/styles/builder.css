@@ -273,6 +273,5 @@
 
 [data-resize-handle][data-resize-handle-state='hover']:after,
 [data-resize-handle][data-resize-handle-state='drag']:after {
-    background-color: rgba(59, 130, 246, 0.5);
-    /* blue-500/50 */
+    background-color: transparent;
 }

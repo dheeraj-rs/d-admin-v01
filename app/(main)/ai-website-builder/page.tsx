@@ -48,7 +48,7 @@ export default function AiWebsiteBuilderPage() {
                                 )}
 
                                 {!isMobile && showInterface && (
-                                    <PanelResizeHandle className="w-1 bg-transparent hover:bg-blue-500/50 transition-colors" />
+                                    <PanelResizeHandle className="w-1 bg-transparent hover:bg-transparent transition-colors" />
                                 )}
 
                                 {showWorkbench && (
