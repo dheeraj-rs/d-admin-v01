@@ -3,7 +3,7 @@ import * as DialogPrimitive from '@radix-ui/react-dialog';
 import XMarkIcon from '@heroicons/react/24/outline/XMarkIcon';
 import { useProjectsStore } from '../../store/projects-store';
 import { toast } from 'react-toastify';
-import { classMixin } from '../../drag-drop-view/lib/classMixin';
+import { classMixin } from '../../../drag-drop-builder/drag-drop-view/lib/classMixin';
 
 interface SaveProjectModalProps {
     isOpen: boolean;

@@ -5,7 +5,7 @@ import { useIsMobile } from '@/core/hooks/use-mobile';
 import { toast } from 'react-toastify';
 import Link from 'next/link';
 import { useAiBuilderStore } from '../store/ai-builder-store';
-import { useDragDropStore } from '../drag-drop-view/lib/drag-drop-store';
+import { useDragDropStore } from '../../drag-drop-builder/drag-drop-view/lib/drag-drop-store';
 // ==================================
 import { PortDropdown } from './components/workbench/PortDropdown';
 import { exportProjectAsZip } from './utils/zip';

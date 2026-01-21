@@ -61,6 +61,18 @@ export async function GET(request: NextRequest) {
       deploymentUrl = `https://${statusData.alias[0]}`;
     }
 
+    // IMPORTANT: Filter out any localhost URLs - should never show development URLs
+    if (deploymentUrl.includes('localhost') || deploymentUrl.includes('127.0.0.1')) {
+      // If somehow we got a localhost URL, fall back to the statusData.url
+      deploymentUrl = `https://${statusData.url}`;
+
+      // If that's also localhost (shouldn't happen), construct from project name
+      if (deploymentUrl.includes('localhost') || deploymentUrl.includes('127.0.0.1')) {
+        console.error('Deployment URL contains localhost, this should not happen');
+        deploymentUrl = ''; // Return empty to trigger error handling
+      }
+    }
+
     return NextResponse.json({
       success: true,
       status: statusData.readyState || statusData.state, // Vercel uses 'readyState'

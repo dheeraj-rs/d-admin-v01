@@ -1,6 +1,6 @@
 import React from 'react';
 import { XMarkIcon, Bars3BottomLeftIcon } from '@heroicons/react/24/outline';
-import { useDragDropStore } from '../../drag-drop-view/lib/drag-drop-store';
+import { useDragDropStore } from '../../../drag-drop-builder/drag-drop-view/lib/drag-drop-store';
 import { DragDropSidebarContent } from './DragDropSidebarContent';
 
 export function MobileDragDropSidebar() {

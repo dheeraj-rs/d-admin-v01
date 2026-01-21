@@ -5,21 +5,21 @@ import ArrowUpIcon from '@heroicons/react/24/outline/ArrowUpIcon';
 import CursorArrowRaysIcon from '@heroicons/react/24/outline/CursorArrowRaysIcon';
 import ArrowSmallUpIcon from '@heroicons/react/24/outline/ArrowSmallUpIcon'; // Check if needed
 
-import { ImageDialog } from '../../drag-drop-view/components/dialogs/ImageDialog';
-import { ButtonDialog } from '../../drag-drop-view/components/dialogs/ButtonDialog';
-import { LinkDialog } from '../../drag-drop-view/components/dialogs/LinkDialog';
-import { SvgDialog } from '../../drag-drop-view/components/dialogs/SvgDialog';
-import { ExportDialog } from '../../drag-drop-view/components/dialogs/ExportDialog';
-import { PublishDialog } from '../../drag-drop-view/components/dialogs/PublishDialog';
+import { ImageDialog } from '../../../drag-drop-builder/drag-drop-view/components/dialogs/ImageDialog';
+import { ButtonDialog } from '../../../drag-drop-builder/drag-drop-view/components/dialogs/ButtonDialog';
+import { LinkDialog } from '../../../drag-drop-builder/drag-drop-view/components/dialogs/LinkDialog';
+import { SvgDialog } from '../../../drag-drop-builder/drag-drop-view/components/dialogs/SvgDialog';
+import { ExportDialog } from '../../../drag-drop-builder/drag-drop-view/components/dialogs/ExportDialog';
+import { PublishDialog } from '../../../drag-drop-builder/drag-drop-view/components/dialogs/PublishDialog';
 import { SaveProjectModal } from '../../components/dialogs/SaveProjectModal';
 import { DragDropPlaceholder } from './DragDropPlaceholder';
 import { ReorderModal } from './ReorderModal';
 
-import { savePage, loadPage } from '../../drag-drop-view/lib/builderApi';
-import { debounce, isEventOnElement, isElementTopHalf } from '../../drag-drop-view/lib/builderUtils';
-import { Component, ComponentWithCategories } from '../../drag-drop-view/types';
-import { exportAsHTML, exportAsReactProject } from '../../drag-drop-view/lib/dragDropZip';
-import { useDragDropStore } from '../../drag-drop-view/lib/drag-drop-store';
+import { savePage, loadPage } from '../../../drag-drop-builder/drag-drop-view/lib/builderApi';
+import { debounce, isEventOnElement, isElementTopHalf } from '../../../drag-drop-builder/drag-drop-view/lib/builderUtils';
+import { Component, ComponentWithCategories } from '../../../drag-drop-builder/drag-drop-view/types';
+import { exportAsHTML, exportAsReactProject } from '../../../drag-drop-builder/drag-drop-view/lib/dragDropZip';
+import { useDragDropStore } from '../../../drag-drop-builder/drag-drop-view/lib/drag-drop-store';
 import { useProjectsStore } from '../../store/projects-store';
 
 import { useIsMobile } from '@/core/hooks/use-mobile';

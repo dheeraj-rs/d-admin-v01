@@ -1,4 +1,4 @@
-import { useDragDropStore } from '../../drag-drop-view/lib/drag-drop-store';
+import { useDragDropStore } from '../../../drag-drop-builder/drag-drop-view/lib/drag-drop-store';
 import { DragDropSidebarContent } from './DragDropSidebarContent';
 
 export function DragDropInterface() {

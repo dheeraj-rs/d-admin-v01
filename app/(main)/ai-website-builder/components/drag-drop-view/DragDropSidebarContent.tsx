@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import ChevronDownIcon from '@heroicons/react/24/outline/ChevronDownIcon';
-import { useDragDropStore, THEMES } from '../../drag-drop-view/lib/drag-drop-store';
-import { Category } from '../../drag-drop-view/components/Category';
-import { Select } from '../../drag-drop-view/components/Select';
+import { useDragDropStore, THEMES } from '../../../drag-drop-builder/drag-drop-view/lib/drag-drop-store';
+import { Category } from '../../../drag-drop-builder/drag-drop-view/components/Category';
+import { Select } from '../../../drag-drop-builder/drag-drop-view/components/Select';
 
 export function DragDropSidebarContent() {
     const {

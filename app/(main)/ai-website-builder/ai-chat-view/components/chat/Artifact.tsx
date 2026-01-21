@@ -130,12 +130,12 @@ function ShellCodeBlock({ classsName, code }: ShellCodeBlockProps) {
     }, [code]);
 
     if (!html) {
-        return <div className={classNames('text-xs font-mono opacity-50', classsName)}>{code}</div>;
+        return <div className={classNames('text-xs font-mono opacity-50 whitespace-pre-wrap', classsName)}>{code}</div>;
     }
 
     return (
         <div
-            className={classNames('text-xs', classsName)}
+            className={classNames('text-xs whitespace-pre-wrap overflow-x-auto', classsName)}
             dangerouslySetInnerHTML={{
                 __html: html,
             }}
@@ -238,13 +238,6 @@ const ActionItem = memo(({ action, index, isLast }: ActionItemProps) => {
             </div>
             {type === 'shell' && (
                 <>
-                    <ShellCodeBlock
-                        classsName={classNames('mt-1', {
-                            'mb-3.5': !isLast && status !== 'failed',
-                        })}
-                        code={content}
-                    />
-
                     {/* Shell Output Display */}
                     {(output || status === 'running' || status === 'failed') && (
                         <div className="mt-2 mb-3.5">
@@ -253,7 +246,7 @@ const ActionItem = memo(({ action, index, isLast }: ActionItemProps) => {
                                 className="flex items-center gap-1 text-xs text-[var(--d-admin-text-color-secondary)] hover:text-[var(--d-admin-text-color)] transition-colors mb-2"
                             >
                                 <Icon icon={isOpen ? 'ph:caret-down-bold' : 'ph:caret-right-bold'} />
-                                {status === 'running' ? 'Installing...' : 'Terminal Output'}
+                                {status === 'running' ? `Running ${content}` : 'Terminal Output'}
                             </button>
 
                             {isOpen && (

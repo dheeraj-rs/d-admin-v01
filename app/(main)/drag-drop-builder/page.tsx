@@ -8,8 +8,8 @@ import { MobileDragDropSidebar } from '../ai-website-builder/components/drag-dro
 import { Panel, PanelGroup, PanelResizeHandle } from 'react-resizable-panels';
 import { useAiBuilderStore } from '../ai-website-builder/store/ai-builder-store';
 import { useIsMobile } from '@/core/hooks/use-mobile';
-import { useDragDropStore } from '../ai-website-builder/drag-drop-view/lib/drag-drop-store';
-import { ProjectsGallery } from '../ai-website-builder/drag-drop-view/components/ProjectsGallery';
+import { useDragDropStore } from './drag-drop-view/lib/drag-drop-store';
+import { ProjectsGallery } from './drag-drop-view/components/ProjectsGallery';
 
 export default function DragDropBuilderPage() {
     const { setBuilderView } = useAiBuilderStore();
