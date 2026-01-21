@@ -77,6 +77,10 @@ export async function GET(request: NextRequest) {
       success: true,
       status: statusData.readyState || statusData.state, // Vercel uses 'readyState'
       url: deploymentUrl,
+      error: (statusData.readyState === 'ERROR' || statusData.state === 'ERROR') ? {
+        message: statusData.error?.message || 'Deployment failed',
+        logs: statusData.buildLogs || statusData.error?.logs || JSON.stringify(statusData.error || {}, null, 2)
+      } : undefined,
     });
   } catch (error: any) {
     console.error('Status check error:', error);

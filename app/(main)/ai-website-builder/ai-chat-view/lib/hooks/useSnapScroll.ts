@@ -15,6 +15,7 @@ export function useSnapScroll() {
 
           scrollNodeRef.current.scrollTo({
             top: scrollTarget,
+            behavior: 'smooth',
           });
         }
       });

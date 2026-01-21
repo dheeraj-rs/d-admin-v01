@@ -1,5 +1,6 @@
 @use './chat/BaseChat.scss';
 @use './builder';
+
 // Localized override for Mobile History Panel visibility
 // Forces the panel to appear on top (z-index 9999) when active on mobile
 // And forces positioning to ensure it's not off-screen
@@ -14,4 +15,21 @@
   position: fixed !important;
   height: 100% !important;
   width: 300px !important; // Ensure standard width
+}
+
+// Add subtle pulse animation for streaming messages
+@keyframes pulse-subtle {
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.85;
+  }
+}
+
+.animate-pulse-subtle {
+  animation: pulse-subtle 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }

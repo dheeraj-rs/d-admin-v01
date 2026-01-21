@@ -28,6 +28,11 @@ export default function PublishView() {
     const [currentStep, setCurrentStep] = useState(0);
     const [progress, setProgress] = useState(0);
 
+    // AI Fix State
+    const [errorLogs, setErrorLogs] = useState('');
+    const [isFixing, setIsFixing] = useState(false);
+    const [suggestedFixes, setSuggestedFixes] = useState<string[]>([]);
+
     // Load HTML content and generate project name on mount
     useEffect(() => {
         const uniqueSuffix = Math.random().toString(36).substring(2, 7);
@@ -115,7 +120,8 @@ export default function PublishView() {
                     } else if (data.status === 'ERROR' || data.status === 'CANCELED') {
                         clearInterval(pollInterval);
                         setDeploymentStatus('error');
-                        setErrorMessage('Deployment failed or was canceled by Vercel.');
+                        setErrorMessage(data.error?.message || 'Deployment failed or was canceled by Vercel.');
+                        setErrorLogs(data.error?.logs || JSON.stringify(data.error || {}, null, 2));
                         setIsDeploying(false);
                     }
                 }
@@ -194,7 +200,51 @@ ${processedHtml}
             console.error('Deployment error:', error);
             setDeploymentStatus('error');
             setErrorMessage(error.message || 'An error occurred during deployment');
+            setErrorLogs(error.stack || error.toString());
             setIsDeploying(false);
+        }
+    };
+
+    const handleAIFix = async () => {
+        setIsFixing(true);
+        setSuggestedFixes([]);
+
+        try {
+            const response = await fetch('/api/fix-deployment', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    errorLogs,
+                    htmlContent,
+                    projectName,
+                }),
+            });
+
+            const result = await response.json();
+
+            if (response.ok && result.success) {
+                setSuggestedFixes(result.fixes || []);
+
+                // Apply the fixed HTML
+                if (result.fixedHtml) {
+                    setHtmlContent(result.fixedHtml);
+                    localStorage.setItem('drag-drop-builder-html', result.fixedHtml);
+                }
+
+                // Auto-retry deployment with fixes after a short delay
+                setTimeout(async () => {
+                    setIsFixing(false);
+                    await handleDeploy();
+                }, 1500);
+            } else {
+                throw new Error(result.error || 'Failed to fix deployment');
+            }
+        } catch (error: any) {
+            console.error('AI fix error:', error);
+            setErrorMessage(`AI Fix Failed: ${error.message}`);
+            setIsFixing(false);
         }
     };
 
@@ -474,6 +524,7 @@ ${processedHtml}
 
                     {deploymentStatus === 'error' && (
                         <div className="py-8">
+                            {/* Error Header */}
                             <div className="text-center mb-8">
                                 <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-(--d-admin-red-50) mb-4">
                                     <XCircle className="h-8 w-8 text-(--d-admin-red-600)" />
@@ -482,28 +533,77 @@ ${processedHtml}
                                 <p className="text-(--d-admin-text-color-secondary)">We encountered an error while deploying your page.</p>
                             </div>
 
+                            {/* Error Message */}
                             {errorMessage && (
-                                <div className="bg-(--d-admin-red-50) border border-(--d-admin-red-500) rounded-lg p-4 mb-6">
-                                    <p className="text-(--d-admin-red-600) text-sm">{errorMessage}</p>
+                                <div className="bg-(--d-admin-red-50) border border-(--d-admin-red-200) rounded-lg p-4 mb-6">
+                                    <p className="text-(--d-admin-red-600) text-sm font-medium">{errorMessage}</p>
                                 </div>
                             )}
 
-                            <div className="flex gap-4">
+                            {/* Error Logs (Expandable) */}
+                            {errorLogs && (
+                                <details className="bg-(--d-admin-surface-ground) border border-(--d-admin-surface-border) rounded-lg p-4 mb-6">
+                                    <summary className="cursor-pointer text-sm font-medium text-(--d-admin-text-color) hover:text-(--d-admin-blue-600) transition-colors">
+                                        📋 View Error Logs
+                                    </summary>
+                                    <pre className="mt-3 text-xs text-(--d-admin-text-color-secondary) overflow-x-auto whitespace-pre-wrap bg-(--d-admin-surface-section) p-3 rounded border border-(--d-admin-surface-border) max-h-64 overflow-y-auto">
+                                        {errorLogs}
+                                    </pre>
+                                </details>
+                            )}
+
+                            {/* AI Suggested Fixes */}
+                            {suggestedFixes.length > 0 && (
+                                <div className="bg-(--d-admin-blue-50) border border-(--d-admin-blue-200) rounded-lg p-4 mb-6">
+                                    <h3 className="text-sm font-medium text-(--d-admin-blue-900) mb-2 flex items-center gap-2">
+                                        <span>✨</span> AI Suggested Fixes:
+                                    </h3>
+                                    <ul className="list-disc list-inside text-sm text-(--d-admin-blue-700) space-y-1">
+                                        {suggestedFixes.map((fix, index) => (
+                                            <li key={index}>{fix}</li>
+                                        ))}
+                                    </ul>
+                                </div>
+                            )}
+
+                            {/* Action Buttons */}
+                            <div className="flex flex-col sm:flex-row gap-3">
                                 <button
-                                    onClick={() => {
-                                        setDeploymentStatus('idle');
-                                        setErrorMessage('');
-                                    }}
-                                    className="flex-1 px-4 py-3 bg-(--d-admin-red-600) text-(--d-admin-text-color) rounded-md font-medium hover:bg-(--d-admin-red-500) transition-colors"
+                                    onClick={handleAIFix}
+                                    disabled={isFixing}
+                                    className="flex-1 px-4 py-3 bg-(--d-admin-blue-600) text-white rounded-md font-medium hover:bg-(--d-admin-blue-700) disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2"
                                 >
-                                    Try Again
+                                    {isFixing ? (
+                                        <>
+                                            <Loader2 className="h-5 w-5 animate-spin" />
+                                            Analyzing & Fixing...
+                                        </>
+                                    ) : (
+                                        <>
+                                            <span>✨</span>
+                                            Fix with AI
+                                        </>
+                                    )}
                                 </button>
+
+                                <button
+                                    onClick={() => handleDeploy()}
+                                    disabled={isFixing}
+                                    className="flex-1 px-4 py-3 bg-(--d-admin-orange-600) text-white rounded-md font-medium hover:bg-(--d-admin-orange-700) disabled:opacity-50 transition-colors flex items-center justify-center gap-2"
+                                >
+                                    <Rocket className="h-5 w-5" />
+                                    Retry Deployment
+                                </button>
+
                                 <button
                                     onClick={() => {
                                         setDeploymentStatus('idle');
                                         setErrorMessage('');
+                                        setErrorLogs('');
+                                        setSuggestedFixes([]);
                                     }}
-                                    className="flex-1 px-4 py-3 bg-(--d-admin-surface-ground) border border-(--d-admin-surface-border) text-(--d-admin-text-color) rounded-md font-medium hover:bg-(--d-admin-surface-hover) transition-colors"
+                                    disabled={isFixing}
+                                    className="flex-1 px-4 py-3 bg-(--d-admin-surface-ground) border border-(--d-admin-surface-border) text-(--d-admin-text-color) rounded-md font-medium hover:bg-(--d-admin-surface-hover) disabled:opacity-50 transition-colors"
                                 >
                                     Back to Configuration
                                 </button>
