@@ -77,17 +77,29 @@ export function Header() {
         const currentPreview = previews[activePreviewIndex];
         if (!currentPreview) return;
 
-        // Extract just the path from the full WebContainer URL
+        // Extract just the path from the full URL
         if (url.startsWith(currentPreview.baseUrl)) {
             const path = url.slice(currentPreview.baseUrl.length) || '/';
             console.log('[Header] URL:', url);
             console.log('[Header] Base URL:', currentPreview.baseUrl);
             console.log('[Header] Extracted path:', path);
             setDisplayUrl(path);
+        } else if (url.includes('://')) {
+            // If it's a full URL (possibly old WebContainer URL), extract the path
+            try {
+                const urlObj = new URL(url);
+                const path = urlObj.pathname + urlObj.search + urlObj.hash;
+                console.log('[Header] Full URL detected, showing path:', path);
+                setDisplayUrl(path);
+            } catch (e) {
+                // Fallback to just showing the URL as-is
+                console.log('[Header] Invalid URL, showing as-is:', url);
+                setDisplayUrl(url);
+            }
         } else {
-            // Fallback for external URLs
-            console.log('[Header] External URL:', url);
-            setDisplayUrl(url);
+            // Fallback for relative paths
+            console.log('[Header] Relative path:', url);
+            setDisplayUrl(url.startsWith('/') ? url : '/' + url);
         }
     }, [url, activePreviewIndex, previews]);
 
@@ -253,27 +265,24 @@ export function Header() {
 
                                             let targetUrl = displayUrl.trim();
 
-                                            // If user types a path (starts with /), use it directly
+                                            // If user types a path (starts with /), construct full URL
                                             if (targetUrl.startsWith('/')) {
                                                 targetUrl = `${activePreview.baseUrl}${targetUrl}`;
                                             }
-                                            // If user types just a page name (e.g., 'home'), prepend /
+                                            // If user types just a page name without /, prepend /
                                             else if (!targetUrl.includes('://') && !targetUrl.startsWith('/')) {
                                                 targetUrl = `${activePreview.baseUrl}/${targetUrl}`;
                                             }
-                                            // If user types localhost URL, convert it
-                                            else if (targetUrl.includes('localhost') || targetUrl.includes('127.0.0.1')) {
-                                                const localhostPattern = new RegExp(`^https?:\\/\\/(?:localhost|127\\.0\\.0\\.1):${activePreview.port}`);
-                                                targetUrl = targetUrl.replace(localhostPattern, activePreview.baseUrl);
-                                            }
-                                            // Otherwise assume it's already a full URL
+                                            // If it's already a full URL, use it as-is
                                             else if (!targetUrl.startsWith(activePreview.baseUrl)) {
+                                                // If it doesn't start with the base URL, assume it's a path
                                                 targetUrl = `${activePreview.baseUrl}${targetUrl.startsWith('/') ? '' : '/'}${targetUrl}`;
                                             }
 
-
                                             console.log('[Header] Navigating to:', targetUrl);
-                                            // Always navigate - let the website handle 404s
+                                            console.log('[Header] Base URL:', activePreview.baseUrl);
+
+                                            // Update both URL and iframe URL to trigger navigation
                                             usePreviewStore.getState().setUrl(targetUrl);
                                             usePreviewStore.getState().setIframeUrl(targetUrl);
                                         }

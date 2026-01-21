@@ -113,7 +113,7 @@ export const FileTree = memo(
     };
 
     return (
-      <div className={classNames('text-sm', className)}>
+      <div className={classNames('text-sm overflow-y-auto', className)}>
         {filteredFileList.length === 0 ? (
           <div className="h-full flex flex-col items-center justify-center text-center p-4 text-text-secondary select-none">
             <div className="opacity-40 mb-4 scale-75">

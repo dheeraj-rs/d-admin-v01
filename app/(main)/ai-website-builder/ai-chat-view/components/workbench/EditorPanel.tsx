@@ -18,7 +18,7 @@ import type { FileMap } from '../../lib/stores/files';
 import { workbenchStore } from '../../lib/stores/workbench';
 import { useTerminalStore, useThemeStore } from '../../lib/stores/zustand';
 import { classNames } from '../../utils/classNames';
-import { WORK_DIR, PANEL_SIZES, MAX_TERMINALS, EDITOR_SETTINGS } from '../../utils/constants';
+import { WORK_DIR, PANEL_SIZES, MAX_TERMINALS, EDITOR_SETTINGS, IGNORE_PATTERNS } from '../../utils/constants';
 import { renderLogger } from '../../utils/logger';
 import { isMobile } from '../../utils/mobile';
 import { FileBreadcrumb } from './FileBreadcrumb';
@@ -164,6 +164,7 @@ export const EditorPanel = memo(
                   rootFolder={WORK_DIR}
                   selectedFile={selectedFile}
                   onFileSelect={onFileSelect}
+                  hiddenFiles={IGNORE_PATTERNS.map(pattern => new RegExp(pattern.replace(/\*\*/g, '.*').replace(/\*/g, '[^/]*')))}
                 />
               </div>
             </Panel>

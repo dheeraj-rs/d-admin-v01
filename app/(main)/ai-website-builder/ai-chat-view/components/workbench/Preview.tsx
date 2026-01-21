@@ -6,16 +6,53 @@ export const Preview = memo(() => {
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const iframeUrl = usePreviewStore(state => state.iframeUrl);
   const refreshTrigger = usePreviewStore(state => state.refreshTrigger);
+  const previews = usePreviewStore(state => state.previews);
+  const activePreviewIndex = usePreviewStore(state => state.activePreviewIndex);
   const [isSecureContext, setIsSecureContext] = useState(true);
 
   useEffect(() => {
     setIsSecureContext(window.crossOriginIsolated);
   }, []);
 
-
   useEffect(() => {
     console.log('[Preview] iframeUrl changed to:', iframeUrl);
   }, [iframeUrl]);
+
+  // Listen for route changes from the iframe via postMessage
+  useEffect(() => {
+    const handleMessage = (event: MessageEvent) => {
+      // Verify the message is from our preview iframe
+      const activePreview = previews[activePreviewIndex];
+      if (!activePreview) return;
+
+      // Check if message origin matches the preview URL
+      try {
+        const previewOrigin = new URL(activePreview.baseUrl).origin;
+        if (event.origin !== previewOrigin) return;
+      } catch (e) {
+        return;
+      }
+
+      // Handle route change messages
+      if (event.data && event.data.type === 'ROUTE_CHANGE') {
+        const newPath = event.data.path;
+        console.log('[Preview] Received route change:', newPath);
+
+        // Construct full URL with the new path
+        const newUrl = `${activePreview.baseUrl}${newPath}`;
+
+        // Update the URL in the store
+        usePreviewStore.getState().setUrl(newUrl);
+      }
+    };
+
+    window.addEventListener('message', handleMessage);
+
+    return () => {
+      window.removeEventListener('message', handleMessage);
+    };
+  }, [previews, activePreviewIndex]);
+
   if (!isSecureContext) {
     return (
       <div className="w-full h-full flex flex-col items-center justify-center bg-surface-0 p-6 text-center">

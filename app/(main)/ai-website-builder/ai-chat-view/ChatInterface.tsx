@@ -105,12 +105,10 @@ export const ChatInterface = React.forwardRef<HTMLDivElement, BaseChatProps>(
         };
         // ============
 
-        const scrollContainerRef = useRef<HTMLDivElement>(null);
-
         return (
             <div className="flex flex-col flex-grow relative z-9 overflow-hidden w-full h-full" ref={ref}>
-                <div className="flex flex-col h-full" ref={scrollRef}>
-                    <div className="overflow-y-auto w-full h-full relative scroll-smooth" ref={scrollContainerRef}>
+                <div className="flex flex-col h-full">
+                    <div className="overflow-y-auto w-full h-full relative scroll-smooth" ref={scrollRef}>
                         {chatStarted ? (
                             <ClientOnly>
                                 {() => {

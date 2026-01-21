@@ -22,8 +22,8 @@ export const Messages = React.forwardRef<HTMLDivElement, MessagesProps>((props: 
             const inputArea = document.querySelector('[data-chat-input]') as HTMLElement;
             if (inputArea) {
                 const height = inputArea.getBoundingClientRect().height;
-                // Add input height + 80px extra space for comfortable viewing
-                setBottomPadding(`${height + 80}px`);
+                // Add input height + 20px for comfortable viewing (reduced from 80px)
+                setBottomPadding(`${height}px`);
             }
         };
 

@@ -473,12 +473,60 @@ export class ActionRunner {
     }
 
     try {
-      await webcontainer.fs.writeFile(action.filePath, action.content);
+      let fileContent = action.content;
+
+      // Auto-inject route tracker into React App files
+      if (action.filePath.match(/src\/(App|app)\.(jsx|tsx)$/i) &&
+        action.content.includes('react-router') &&
+        !action.content.includes('ROUTE_CHANGE')) {
+
+        logger.info('Injecting route tracker into', action.filePath);
+
+        // Inject route tracking code
+        const routeTrackerCode = `
+// Auto-injected route tracker for URL sync
+import { useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
+
+function RouteTracker() {
+  const location = useLocation();
+  
+  useEffect(() => {
+    if (window.parent !== window) {
+      window.parent.postMessage({
+        type: 'ROUTE_CHANGE',
+        path: location.pathname + location.search + location.hash
+      }, '*');
+    }
+  }, [location]);
+  
+  return null;
+}
+`;
+
+        // Find the App component and inject RouteTracker
+        if (fileContent.includes('<BrowserRouter>') || fileContent.includes('<Router>')) {
+          // Inject the RouteTracker component definition before the App component
+          const appComponentMatch = fileContent.match(/(function|const)\s+App/);
+          if (appComponentMatch) {
+            const insertPosition = appComponentMatch.index || 0;
+            fileContent = fileContent.slice(0, insertPosition) + routeTrackerCode + '\n' + fileContent.slice(insertPosition);
+          }
+
+          // Inject <RouteTracker /> inside the Router
+          fileContent = fileContent.replace(
+            /(<BrowserRouter>|<Router>)/,
+            '$1\n      <RouteTracker />'
+          );
+        }
+      }
+
+      await webcontainer.fs.writeFile(action.filePath, fileContent);
       console.timeEnd(`[ActionRunner] Write file: ${action.filePath}`);
       logger.debug(`File written ${action.filePath}`);
       useFilesStore.getState().setFile(action.filePath, {
         type: 'file',
-        content: action.content,
+        content: fileContent,
         isBinary: false,
       });
     } catch (error) {
