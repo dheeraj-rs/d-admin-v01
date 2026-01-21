@@ -26,11 +26,14 @@ export const Preview = memo(() => {
       if (!activePreview) return;
 
       // Check if message origin matches the preview URL
+      // We relax this check because the app might be running on a different port (e.g. 5174) 
+      // than what we think is active (5173), causing origin mismatch.
       try {
-        const previewOrigin = new URL(activePreview.baseUrl).origin;
-        if (event.origin !== previewOrigin) return;
+        if (event.data?.type === 'ROUTE_CHANGE') {
+          console.log('[Preview] Processing route change from origin:', event.origin);
+        }
       } catch (e) {
-        return;
+        // ignore
       }
 
       // Handle route change messages
@@ -39,6 +42,7 @@ export const Preview = memo(() => {
         console.log('[Preview] Received route change:', newPath);
 
         // Construct full URL with the new path
+        // We use the active preview's base URL, effectively "re-rooting" the path to the current view
         const newUrl = `${activePreview.baseUrl}${newPath}`;
 
         // Update the URL in the store

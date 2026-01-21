@@ -507,17 +507,37 @@ function RouteTracker() {
         // Find the App component and inject RouteTracker
         if (fileContent.includes('<BrowserRouter>') || fileContent.includes('<Router>')) {
           // Inject the RouteTracker component definition before the App component
-          const appComponentMatch = fileContent.match(/(function|const)\s+App/);
-          if (appComponentMatch) {
-            const insertPosition = appComponentMatch.index || 0;
+          // Matches: function App, const App, export default function App, export function App
+          const appComponentMatch = fileContent.match(/(?:function|const|class)\s+App|export\s+(?:default\s+)?(?:function|class)\s+App/);
+
+          if (appComponentMatch && appComponentMatch.index !== undefined) {
+            // Insert before the match
+            const insertPosition = appComponentMatch.index;
             fileContent = fileContent.slice(0, insertPosition) + routeTrackerCode + '\n' + fileContent.slice(insertPosition);
+            logger.info('[ActionRunner] ✅ Injected RouteTracker component definition');
+          } else {
+            // Fallback: Insert at the end of imports (look for last import)
+            const lastImportMatch = fileContent.match(/import\s+.*;\n(?![^]*import)/);
+            if (lastImportMatch && lastImportMatch.index !== undefined) {
+              const insertPosition = lastImportMatch.index + lastImportMatch[0].length;
+              fileContent = fileContent.slice(0, insertPosition) + '\n' + routeTrackerCode + '\n' + fileContent.slice(insertPosition);
+              logger.info('[ActionRunner] ✅ Injected RouteTracker after imports (fallback)');
+            }
           }
 
           // Inject <RouteTracker /> inside the Router
-          fileContent = fileContent.replace(
-            /(<BrowserRouter>|<Router>)/,
-            '$1\n      <RouteTracker />'
-          );
+          if (fileContent.includes('<BrowserRouter>')) {
+            fileContent = fileContent.replace(
+              /(<BrowserRouter>)/,
+              '$1\n      <RouteTracker />'
+            );
+          } else if (fileContent.includes('<Router>')) {
+            // Match <Router> with optional props
+            fileContent = fileContent.replace(
+              /(<Router[^>]*>)/,
+              '$1\n      <RouteTracker />'
+            );
+          }
         }
       }
 
