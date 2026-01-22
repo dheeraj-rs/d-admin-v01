@@ -10,6 +10,7 @@ import { useDragDropStore } from '../../drag-drop-builder/drag-drop-view/lib/dra
 import { PortDropdown } from './components/workbench/PortDropdown';
 import { exportProjectAsZip } from './utils/zip';
 import { useChatStore, useWorkbenchStore, usePreviewStore, useFilesStore } from './lib/stores/zustand';
+import { workbenchStore } from './lib/stores/workbench';
 import { useParams } from 'next/navigation';
 import DeploymentModal from './publish/DeploymentModal';
 
@@ -168,11 +169,18 @@ export function Header() {
                         </span>
                     ) : 'New Project'}</span>
                 </button>
-                <div className="relative ml-2 shrink-0 hidden md:block">
-                    <div className="flex items-center justify-center font-medium max-w-full rounded-md gap-1.5 h-8 bg-transparent text-[var(--d-admin-text-color)] text-xs px-2.5">
+                <div className="relative ml-2 shrink-0 items-center gap-2">
+                    <Link
+                        href="/ai-website-builder"
+                        onClick={() => {
+                            workbenchStore.reset();
+                        }}
+                        className="flex items-center justify-center font-medium shrink-0 min-w-0 rounded-md focus-visible:outline-2 gap-1.5 h-8 bg-[var(--d-admin-surface-section)] hover:bg-[var(--d-admin-surface-hover)] border border-[var(--d-admin-surface-border)] text-[var(--d-admin-text-color)] text-xs px-3 transition-colors"
+                        title="Start New Chat"
+                    >
                         <Icon icon={getBuilderIcon(builderView)} className="size-3.5 text-[var(--d-admin-text-color-secondary)]" />
-                        <span className="mt-px truncate hidden sm:block max-w-[80px] md:max-w-xs">{getBuilderLabel(builderView)}</span>
-                    </div>
+                        <span>New Chat</span>
+                    </Link>
                 </div>
 
             </div>
@@ -412,33 +420,9 @@ export function Header() {
                             <>
                                 <div className="fixed inset-0 z-40" onClick={() => setIsMoreMenuOpen(false)}></div>
                                 <div className="absolute top-full right-0 mt-2 w-56 bg-[var(--d-admin-surface-section)] border border-[var(--d-admin-surface-border)] rounded-lg shadow-xl overflow-hidden z-50 animate-in fade-in zoom-in-95 duration-100 flex flex-col p-1">
-                                    <div className="px-2 py-1.5 text-xs font-medium text-[var(--d-admin-text-color-secondary)] uppercase">Builder View</div>
-                                    <button
-                                        onClick={() => { setBuilderView('chat'); setIsMoreMenuOpen(false); }}
-                                        className={`flex items-center gap-2 px-2 py-1.5 text-xs rounded-md w-full text-left transition-colors ${builderView === 'chat' ? 'bg-[var(--d-admin-surface-hover)] text-[var(--d-admin-text-color)]' : 'text-[var(--d-admin-text-color-secondary)] hover:text-[var(--d-admin-text-color)] hover:bg-[var(--d-admin-surface-hover)]'}`}
-                                    >
-                                        <Icon icon="lucide:sparkles" className="size-3.5" />
-                                        <span>AI Chat</span>
-                                        {builderView === 'chat' && <Icon icon="ph:check" className="ml-auto size-3" />}
-                                    </button>
-                                    <button
-                                        onClick={() => { setBuilderView('drag-drop'); setIsMoreMenuOpen(false); }}
-                                        className={`flex items-center gap-2 px-2 py-1.5 text-xs rounded-md w-full text-left transition-colors ${builderView === 'drag-drop' ? 'bg-[var(--d-admin-surface-hover)] text-[var(--d-admin-text-color)]' : 'text-[var(--d-admin-text-color-secondary)] hover:text-[var(--d-admin-text-color)] hover:bg-[var(--d-admin-surface-hover)]'}`}
-                                    >
-                                        <Icon icon="lucide:hand" className="size-3.5" />
-                                        <span>Drag & Drop Snippet</span>
-                                        {builderView === 'drag-drop' && <Icon icon="ph:check" className="ml-auto size-3" />}
-                                    </button>
-                                    <button
-                                        onClick={() => { setBuilderView('templates'); setIsMoreMenuOpen(false); }}
-                                        className={`flex items-center gap-2 px-2 py-1.5 text-xs rounded-md w-full text-left transition-colors ${builderView === 'templates' ? 'bg-[var(--d-admin-surface-hover)] text-[var(--d-admin-text-color)]' : 'text-[var(--d-admin-text-color-secondary)] hover:text-[var(--d-admin-text-color)] hover:bg-[var(--d-admin-surface-hover)]'}`}
-                                    >
-                                        <Icon icon="lucide:layout-template" className="size-3.5" />
-                                        <span>Templates</span>
-                                        {builderView === 'templates' && <Icon icon="ph:check" className="ml-auto size-3" />}
-                                    </button>
 
-                                    <div className="h-px bg-[var(--d-admin-surface-border)] my-1"></div>
+
+
                                     <div className="px-2 py-1.5 text-xs font-medium text-[var(--d-admin-text-color-secondary)] uppercase">Actions</div>
 
                                     <button
