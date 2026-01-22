@@ -96,7 +96,7 @@ export function HistorySidebar({ onSelect }: MenuProps) {
                 </div>
                 <div className="p-4">
                     <Link
-                        href="/ai-website-builder?new=true"
+                        href="/ai-website-builder"
                         onClick={() => {
                             workbenchStore.reset();
                             setIsHistoryOpen(false);

@@ -43,7 +43,6 @@ export function useChatHistory() {
   const params = useParams();
   const searchParams = useSearchParams();
   const mixedId = params?.id as string | undefined;
-  const isNewChat = searchParams?.get('new') === 'true';
 
   const [initialMessages, setInitialMessages] = useState<Message[]>([]);
   const [ready, setReady] = useState<boolean>(false);
@@ -80,36 +79,8 @@ export function useChatHistory() {
             toast.error(error.message);
             setReady(true);
           });
-      } else if (!isNewChat) {
-        // No ID in URL and not explicitly a new chat - load most recent chat
-        getAll(dbInstance)
-          .then((allChats) => {
-            if (allChats && allChats.length > 0) {
-              // Sort by timestamp to get most recent
-              const sortedChats = allChats.sort((a: ChatHistoryItem, b: ChatHistoryItem) =>
-                new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
-              );
-              const mostRecent = sortedChats[0];
-
-              setInitialMessages(mostRecent.messages);
-              setUrlId(mostRecent.urlId);
-              useChatStore.getState().setDescription(mostRecent.description);
-              useChatStore.getState().setChatId(mostRecent.id);
-
-              // Update URL to include the chat ID
-              if (mostRecent.urlId) {
-                navigateChat(mostRecent.urlId);
-              } else {
-                navigateChat(mostRecent.id);
-              }
-            }
-            setReady(true);
-          })
-          .catch((error: Error) => {
-            toast.error(error.message);
-            setReady(true);
-          });
       } else {
+        // No ID in URL - always start new chat (empty)
         setInitialMessages([]);
         setUrlId(undefined);
         useChatStore.getState().setDescription(undefined);
@@ -130,13 +101,6 @@ export function useChatHistory() {
       }
 
       const { firstArtifact } = workbenchStore;
-
-      if (!urlId && firstArtifact?.id) {
-        const urlId = await getUrlId(dbInstance, firstArtifact.id);
-
-        navigateChat(urlId);
-        setUrlId(urlId);
-      }
 
       if (!useChatStore.getState().description && firstArtifact?.title) {
         useChatStore.getState().setDescription(firstArtifact?.title);

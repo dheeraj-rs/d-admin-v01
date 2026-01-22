@@ -50,7 +50,7 @@ export function HistoryItem({ item, onDelete, onSelect }: HistoryItemProps) {
       </span>
       <div className="flex-1 min-w-0">
         <Link
-          href={`/ai-website-builder/${item.urlId}`}
+          href={`/ai-website-builder/${item.id}`}
           className="flex w-full relative truncate block"
           onClick={() => {
             onSelect?.();
