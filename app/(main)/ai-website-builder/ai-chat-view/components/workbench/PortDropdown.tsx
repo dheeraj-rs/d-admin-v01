@@ -25,8 +25,15 @@ export const PortDropdown = memo(
 
 
     // sort previews, preserving original index
-    const sortedPreviews = previews
+    const allReadyPreviews = previews
       .map((previewInfo, index) => ({ ...previewInfo, index }))
+      .filter((preview) => preview.ready);
+
+    const maxPort = Math.max(...allReadyPreviews.map(p => p.port));
+    const activePort = previews[activePreviewIndex]?.port;
+
+    const sortedPreviews = allReadyPreviews
+      .filter(p => p.port === maxPort || p.port === activePort)
       .sort((a, b) => a.port - b.port);
 
     return (

@@ -574,7 +574,7 @@ export function DragDropWorkbench() {
                     <div
                         id="editor"
                         ref={canvasRef}
-                        className={`transition-all duration-300 flex-1 ease-animation ${isPreview ? 'min-h-full' : 'min-h-[1024px]'} bg-transparent ${isMobile ? '[&_img]:[-webkit-user-drag:none] [&_img]:select-none touch-pan-y' : ''} ${!hasContent && !isPreview ? 'bg-[radial-gradient(circle_at_center,_var(--d-admin-surface-border)_1px,_transparent_1px)] [background-size:24px_24px] [background-position:center]' : ''}`}
+                        className={`transition-all duration-300 flex-1 ease-animation ${isPreview ? 'min-h-full' : 'min-h-[1024px]'} bg-transparent ${isMobile ? '[&_img]:[-webkit-user-drag:none] [&_img]:select-none touch-pan-y' : ''} ${!hasContent && !isPreview ? 'bg-[radial-gradient(circle_at_center,_var(--d-admin-surface-border)_1px,_transparent_1px)] [background-size:24px_24px] [background-position:center]' : ''} [&_img]:cursor-pointer`}
                         onMouseOver={onCanvasMouseOver}
                         onMouseLeave={onCanvasMouseLeave}
                         onMouseOut={onCanvasMouseOut}
