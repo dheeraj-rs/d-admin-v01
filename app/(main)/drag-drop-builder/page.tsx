@@ -72,16 +72,19 @@ export default function DragDropBuilderPage() {
                     <DragDropInterface />
                   </Panel>
                 )}
-
-                {!isMobile && showInterface && (
-                  <PanelResizeHandle className="w-1 bg-transparent transition-colors hover:bg-blue-500/50" />
-                )}
-
+                {!isMobile && showInterface &&
+                <PanelResizeHandle
+                  className="group relative"
+                  style={{ touchAction: 'none' }}
+                >
+                  <div className="absolute inset-0 z-10 flex w-2 items-center justify-center" />
+                </PanelResizeHandle>
+                }
                 <Panel
                   id="workbench-panel"
                   order={2}
                   defaultSize={isMobile ? 100 : 75}
-                  minSize={isMobile ? 100 : 30}
+                  minSize={isMobile ? 100 : 50}
                   className="h-full"
                 >
                   <DragDropWorkbench />

@@ -7,7 +7,7 @@ export function DragDropInterface() {
   if (isPreview) return null;
 
   return (
-    <div className="h-full w-full overflow-hidden border-r border-[var(--d-admin-surface-border)]">
+    <div className="h-full w-full overflow-hidden border-r border-t border-[var(--d-admin-surface-border)]">
       <DragDropSidebarContent />
     </div>
   );
