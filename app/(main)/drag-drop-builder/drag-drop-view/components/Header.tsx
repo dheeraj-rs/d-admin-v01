@@ -5,7 +5,9 @@ import { useIsMobile } from '@/core/hooks/use-mobile';
 import { toast } from 'react-toastify';
 import Link from 'next/link';
 import { useAiBuilderStore } from '../../../ai-website-builder/store/ai-builder-store';
+import { useProjectsStore } from '../../../ai-website-builder/store/projects-store';
 import { useDragDropStore } from '../lib/drag-drop-store';
+import { savePage } from '../lib/builderApi';
 // ==================================
 import { PortDropdown } from '../../../ai-website-builder/ai-chat-view/components/workbench/PortDropdown';
 import { exportProjectAsZip } from '../../../ai-website-builder/ai-chat-view/utils/zip';
@@ -41,7 +43,11 @@ export function Header() {
         setHeaderAction,
         showProjectsGallery,
         setShowProjectsGallery,
+        triggerClearCanvas,
     } = useDragDropStore();
+
+    const { currentProjectId, getProject, setCurrentProject } = useProjectsStore();
+    const currentProjectName = currentProjectId ? getProject(currentProjectId)?.name : null;
 
     const getBuilderLabel = (view: typeof builderView) => {
         switch (view) {
@@ -194,7 +200,7 @@ export function Header() {
                         onClick={() => {
                             setShowProjectsGallery(!showProjectsGallery);
                         }}
-                        title="Projects History"
+                        title="Projects"
                     >
                         <Icon icon="ph:clock-counter-clockwise" className="size-5" />
                     </button>
@@ -211,67 +217,55 @@ export function Header() {
                             <span className="text-primary flex-1 truncate text-center">
                                 {chatDescription}
                             </span>
+                        ) : builderView === 'drag-drop' && currentProjectName ? (
+                            <span className="text-primary flex-1 truncate text-center">
+                                {currentProjectName}
+                            </span>
                         ) : (
                             'New Project'
                         )}
                     </span>
                 </button>
                 <div className="relative ml-2 shrink-0 items-center gap-2">
-                    <Link
-                        href="/ai-website-builder"
-                        onClick={() => {
-                            workbenchStore.reset();
-                        }}
-                        className="flex items-center justify-center font-medium shrink-0 min-w-0 rounded-md focus-visible:outline-2 gap-1.5 h-8 bg-[var(--d-admin-surface-section)] hover:bg-[var(--d-admin-surface-hover)] border border-[var(--d-admin-surface-border)] text-[var(--d-admin-text-color)] text-xs px-3 transition-colors"
-                        title="Start New Chat"
-                    >
-                        <Icon
-                            icon={getBuilderIcon(builderView)}
-                            className="size-3.5 text-[var(--d-admin-text-color-secondary)]"
-                        />
-                        <span>New Chat</span>
-                    </Link>
+                <div className="relative ml-2 shrink-0 items-center gap-2">
+                    {builderView === 'drag-drop' ? (
+                        <button
+                            onClick={() => {
+                                savePage('', false); // Clear the draft
+                                setCurrentProject(null);
+                                triggerClearCanvas();
+                            }}
+                            className="flex items-center justify-center font-medium shrink-0 min-w-0 rounded-md focus-visible:outline-2 gap-1.5 h-8 bg-[var(--d-admin-surface-section)] hover:bg-[var(--d-admin-surface-hover)] border border-[var(--d-admin-surface-border)] text-[var(--d-admin-text-color)] text-xs px-3 transition-colors"
+                            title="Start New Project"
+                        >
+                            <Icon
+                                icon="lucide:plus"
+                                className="size-3.5 text-[var(--d-admin-text-color-secondary)]"
+                            />
+                            <span>New Project</span>
+                        </button>
+                    ) : (
+                        <Link
+                            href="/ai-website-builder"
+                            onClick={() => {
+                                workbenchStore.reset();
+                            }}
+                            className="flex items-center justify-center font-medium shrink-0 min-w-0 rounded-md focus-visible:outline-2 gap-1.5 h-8 bg-[var(--d-admin-surface-section)] hover:bg-[var(--d-admin-surface-hover)] border border-[var(--d-admin-surface-border)] text-[var(--d-admin-text-color)] text-xs px-3 transition-colors"
+                            title="Start New Chat"
+                        >
+                            <Icon
+                                icon={getBuilderIcon(builderView)}
+                                className="size-3.5 text-[var(--d-admin-text-color-secondary)]"
+                            />
+                            <span>New Chat</span>
+                        </Link>
+                    )}
+                </div>
                 </div>
             </div>
 
             <div className="pointer-events-auto ml-auto flex w-auto shrink-0 items-center gap-2 md:w-full md:max-w-[59.5%]">
                 <div className="relative flex min-h-[var(--panel-header-height)] w-auto items-center justify-end gap-2 py-2 pl-0 md:w-full">
-                    {/* Mobile Panel Switcher */}
-                    {isMobile && (
-                        <div className="mr-0 flex items-center gap-2">
-                            <div className="flex shrink-0 flex-wrap items-center overflow-hidden rounded-xl border border-[var(--d-admin-surface-border)] p-1">
-                                <button
-                                    onClick={() => setActiveMobilePanel('chat')}
-                                    className={`relative rounded-full bg-transparent px-2.5 py-1 text-sm ${activeMobilePanel === 'chat' ? 'text-[var(--d-admin-text-color)]' : 'text-[var(--d-admin-text-color-secondary)] hover:text-[var(--d-admin-text-color)]'}`}
-                                >
-                                    <span className="relative z-10 flex items-center font-medium">
-                                        <Icon icon="lucide:message-square" className="size-4" />
-                                    </span>
-                                    {activeMobilePanel === 'chat' && (
-                                        <span
-                                            className="absolute inset-0 z-0 rounded-lg bg-[var(--d-admin-surface-hover)]"
-                                            style={{ opacity: 1 }}
-                                        ></span>
-                                    )}
-                                </button>
-                                <button
-                                    onClick={() => setActiveMobilePanel('workbench')}
-                                    className={`relative rounded-full bg-transparent px-2.5 py-1 text-sm ${activeMobilePanel === 'workbench' ? 'text-[var(--d-admin-text-color)]' : 'text-[var(--d-admin-text-color-secondary)] hover:text-[var(--d-admin-text-color)]'}`}
-                                >
-                                    <span className="relative z-10 flex items-center font-medium">
-                                        <Icon icon="lucide:layout-template" className="size-4" />
-                                    </span>
-                                    {activeMobilePanel === 'workbench' && (
-                                        <span
-                                            className="absolute inset-0 z-0 rounded-lg bg-[var(--d-admin-surface-hover)]"
-                                            style={{ opacity: 1 }}
-                                        ></span>
-                                    )}
-                                </button>
-                            </div>
-                        </div>
-                    )}
-
                     {(!isMobile || activeMobilePanel === 'workbench') &&
                         builderView !== 'drag-drop' && (
                             <div className="flex items-center gap-2">
@@ -400,16 +394,7 @@ export function Header() {
                         {/* Drag & Drop Actions */}
                         {builderView === 'drag-drop' && (
                             <>
-                                <button
-                                    className="items-center justify-center gap-2 font-medium min-w-0 max-w-full rounded-md focus-visible:outline-2 disabled:op-50 relative disabled:cursor-not-allowed focus-visible:outline-[var(--d-admin-blue-600)] bg-[var(--d-admin-surface-section)] border border-[var(--d-admin-surface-border)] text-[var(--d-admin-text-color)] hover:bg-[var(--d-admin-surface-hover)] transition-colors flex gap-1.7 shrink-0 h-8 text-sm px-3"
-                                    onClick={() =>
-                                        useDragDropStore.getState().setShowProjectsGallery(true)
-                                    }
-                                    title="Projects"
-                                >
-                                    <Icon icon="lucide:folder-open" className="text-lg" />
-                                    <span>Projects</span>
-                                </button>
+                               
 
                                 <button
                                     className="items-center justify-center gap-2 font-medium min-w-0 max-w-full rounded-md focus-visible:outline-2 disabled:op-50 relative disabled:cursor-not-allowed focus-visible:outline-[var(--d-admin-blue-600)] bg-[var(--d-admin-surface-section)] border border-[var(--d-admin-surface-border)] text-[var(--d-admin-text-color)] hover:bg-[var(--d-admin-surface-hover)] transition-colors flex gap-1.7 shrink-0 h-8 text-sm px-3"
@@ -521,27 +506,77 @@ export function Header() {
                                         Actions
                                     </div>
 
-                                    <button
-                                        onClick={() => {
-                                            const files = useFilesStore.getState().files;
-                                            exportProjectAsZip(files);
-                                            setIsMoreMenuOpen(false);
-                                        }}
-                                        className="flex w-full items-center gap-2 rounded-md px-3 py-2 text-left text-sm text-[var(--d-admin-text-color)] transition-colors hover:bg-[var(--d-admin-surface-hover)]"
-                                    >
-                                        <Icon icon="ph:download-duotone" className="size-4" />
-                                        <span>Export as ZIP</span>
-                                    </button>
-                                    <button
-                                        onClick={() => {
-                                            setIsMoreMenuOpen(false);
-                                            setIsDeployModalOpen(true);
-                                        }}
-                                        className="flex w-full items-center gap-2 rounded-md px-3 py-2 text-left text-sm text-[var(--d-admin-text-color)] transition-colors hover:bg-[var(--d-admin-surface-hover)]"
-                                    >
-                                        <Icon icon="ph:rocket-launch-duotone" className="size-4" />
-                                        <span>Publish</span>
-                                    </button>
+                                    {builderView === 'drag-drop' ? (
+                                        <>
+                                            <button
+                                                onClick={() => {
+                                                    setHeaderAction('save');
+                                                    setIsMoreMenuOpen(false);
+                                                }}
+                                                className="flex w-full items-center gap-2 rounded-md px-3 py-2 text-left text-sm text-[var(--d-admin-text-color)] transition-colors hover:bg-[var(--d-admin-surface-hover)]"
+                                            >
+                                                <Icon icon="lucide:save" className="size-4" />
+                                                <span>Save Project</span>
+                                            </button>
+                                            
+                                            <button
+                                                onClick={() => {
+                                                    setIsPreview(!isPreview);
+                                                    setIsMoreMenuOpen(false);
+                                                }}
+                                                className="flex w-full items-center gap-2 rounded-md px-3 py-2 text-left text-sm text-[var(--d-admin-text-color)] transition-colors hover:bg-[var(--d-admin-surface-hover)]"
+                                            >
+                                                <Icon icon={!isPreview ? "lucide:eye" : "lucide:pencil"} className="size-4" />
+                                                <span>{!isPreview ? "Preview" : "Back to Editor"}</span>
+                                            </button>
+
+                                            <button
+                                                onClick={() => {
+                                                    setShowExportDialog(true);
+                                                    setIsMoreMenuOpen(false);
+                                                }}
+                                                className="flex w-full items-center gap-2 rounded-md px-3 py-2 text-left text-sm text-[var(--d-admin-text-color)] transition-colors hover:bg-[var(--d-admin-surface-hover)]"
+                                            >
+                                                <Icon icon="ph:download-duotone" className="size-4" />
+                                                <span>Export</span>
+                                            </button>
+
+                                            <button
+                                                onClick={() => {
+                                                    setHeaderAction('preparePublish');
+                                                    setIsMoreMenuOpen(false);
+                                                }}
+                                                className="flex w-full items-center gap-2 rounded-md px-3 py-2 text-left text-sm text-[var(--d-admin-text-color)] transition-colors hover:bg-[var(--d-admin-surface-hover)]"
+                                            >
+                                                <Icon icon="ph:rocket-launch-duotone" className="size-4" />
+                                                <span>Publish</span>
+                                            </button>
+                                        </>
+                                    ) : (
+                                        <>
+                                            <button
+                                                onClick={() => {
+                                                    const files = useFilesStore.getState().files;
+                                                    exportProjectAsZip(files);
+                                                    setIsMoreMenuOpen(false);
+                                                }}
+                                                className="flex w-full items-center gap-2 rounded-md px-3 py-2 text-left text-sm text-[var(--d-admin-text-color)] transition-colors hover:bg-[var(--d-admin-surface-hover)]"
+                                            >
+                                                <Icon icon="ph:download-duotone" className="size-4" />
+                                                <span>Export as ZIP</span>
+                                            </button>
+                                            <button
+                                                onClick={() => {
+                                                    setIsMoreMenuOpen(false);
+                                                    setIsDeployModalOpen(true);
+                                                }}
+                                                className="flex w-full items-center gap-2 rounded-md px-3 py-2 text-left text-sm text-[var(--d-admin-text-color)] transition-colors hover:bg-[var(--d-admin-surface-hover)]"
+                                            >
+                                                <Icon icon="ph:rocket-launch-duotone" className="size-4" />
+                                                <span>Publish</span>
+                                            </button>
+                                        </>
+                                    )}
                                 </div>
                             </>
                         )}

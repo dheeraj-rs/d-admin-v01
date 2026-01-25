@@ -35,30 +35,70 @@ export function ProjectsGallery() {
   };
 
   return (
-    <div className="animate-in fade-in fixed inset-0 top-[var(--header-height)] z-50 flex flex-col bg-[var(--d-admin-surface-ground)] duration-300">
-      <div className="mx-auto flex w-full max-w-[1400px] flex-1 flex-col px-4 py-4">
-
+    <div className="animate-in fade-in fixed inset-0 top-[var(--header-height)] z-50 flex flex-col bg-[var(--d-admin-surface-ground)] duration-300 overflow-hidden">
+      <div className="mx-auto flex h-full w-full max-w-[1400px] flex-col px-4 py-4">
 
         <Tabs.Root
           value={activeTab}
           onValueChange={setActiveTab}
-          className="flex flex-1 flex-col"
+          className="flex h-full flex-col min-h-0"
         >
-          <div className="mb-6 flex items-center justify-between border-b border-[var(--d-admin-surface-border)] pb-1">
-            <Tabs.List className="flex items-center gap-8">
+          <div className="mb-4 flex flex-col shrink-0 border-b border-[var(--d-admin-surface-border)] pb-1 sm:mb-6 sm:flex-row sm:items-center sm:justify-between">
+            {/* Mobile: Single Row Layout [Back] [Tabs] [+] */}
+            <div className="flex items-center gap-2 sm:hidden">
+              <button
+                onClick={() => setShowProjectsGallery(false)}
+                className="flex size-8 shrink-0 items-center justify-center rounded-full bg-[var(--d-admin-surface-section)] text-[var(--d-admin-text-color-secondary)] transition-colors hover:bg-[var(--d-admin-surface-hover)] hover:text-[var(--d-admin-text-color)]"
+              >
+                <Icon icon="lucide:arrow-left" className="size-4" />
+              </button>
+
+              <Tabs.List className="flex flex-1 items-center justify-center gap-4 overflow-x-auto no-scrollbar">
+                <Tabs.Trigger
+                  value="projects"
+                  className="group relative pb-3 text-sm font-medium text-[var(--d-admin-text-color-secondary)] transition-colors outline-none whitespace-nowrap hover:text-[var(--d-admin-text-color)] data-[state=active]:text-[var(--d-admin-text-color)]"
+                >
+                  <span className="flex items-center gap-2">
+                    <Icon icon="lucide:folder-open" className="size-4" />
+                    Saved Projects
+                  </span>
+                  <div className="absolute bottom-0 left-0 h-[2px] w-full scale-x-0 bg-[var(--d-admin-primary)] transition-transform duration-300 group-data-[state=active]:scale-x-100" />
+                </Tabs.Trigger>
+                <Tabs.Trigger
+                  value="templates"
+                  className="group relative pb-3 text-sm font-medium text-[var(--d-admin-text-color-secondary)] transition-colors outline-none whitespace-nowrap hover:text-[var(--d-admin-text-color)] data-[state=active]:text-[var(--d-admin-text-color)]"
+                >
+                  <span className="flex items-center gap-2">
+                    <Icon icon="lucide:layout-template" className="size-4" />
+                    Templates
+                  </span>
+                  <div className="absolute bottom-0 left-0 h-[2px] w-full scale-x-0 bg-[var(--d-admin-primary)] transition-transform duration-300 group-data-[state=active]:scale-x-100" />
+                </Tabs.Trigger>
+              </Tabs.List>
+
+              <button
+                onClick={handleCreateNew}
+                className="flex size-8 shrink-0 items-center justify-center rounded-full bg-[var(--d-admin-surface-section)] text-[var(--d-admin-text-color-secondary)] shadow-sm transition-colors hover:bg-[var(--d-admin-surface-hover)] hover:text-[var(--d-admin-text-color)]"
+              >
+                <Icon icon="lucide:plus" className="size-4" />
+              </button>
+            </div>
+
+            {/* Desktop: Standard Layout */}
+            <Tabs.List className="hidden items-center gap-8 sm:flex">
               <Tabs.Trigger
                 value="projects"
-                className="group relative pb-4 text-sm font-medium text-[var(--d-admin-text-color-secondary)] transition-colors outline-none hover:text-[var(--d-admin-text-color)] data-[state=active]:text-[var(--d-admin-text-color)]"
+                className="group relative pb-4 text-sm font-medium text-[var(--d-admin-text-color-secondary)] transition-colors outline-none whitespace-nowrap hover:text-[var(--d-admin-text-color)] data-[state=active]:text-[var(--d-admin-text-color)]"
               >
                 <span className="flex items-center gap-2">
                   <Icon icon="lucide:folder-open" className="size-4" />
-                  My Projects
+                  Saved Projects
                 </span>
                 <div className="absolute bottom-0 left-0 h-[2px] w-full scale-x-0 bg-[var(--d-admin-primary)] transition-transform duration-300 group-data-[state=active]:scale-x-100" />
               </Tabs.Trigger>
               <Tabs.Trigger
                 value="templates"
-                className="group relative pb-4 text-sm font-medium text-[var(--d-admin-text-color-secondary)] transition-colors outline-none hover:text-[var(--d-admin-text-color)] data-[state=active]:text-[var(--d-admin-text-color)]"
+                className="group relative pb-4 text-sm font-medium text-[var(--d-admin-text-color-secondary)] transition-colors outline-none whitespace-nowrap hover:text-[var(--d-admin-text-color)] data-[state=active]:text-[var(--d-admin-text-color)]"
               >
                 <span className="flex items-center gap-2">
                   <Icon icon="lucide:layout-template" className="size-4" />
@@ -70,7 +110,7 @@ export function ProjectsGallery() {
 
             <button
               onClick={() => setShowProjectsGallery(false)}
-              className="mb-2 flex items-center gap-2 px-3 py-1.5 text-xs font-medium text-[var(--d-admin-text-color-secondary)] transition-colors hover:text-[var(--d-admin-text-color)]"
+              className="hidden mb-0 items-center gap-2 px-3 py-1.5 text-xs font-medium text-[var(--d-admin-text-color-secondary)] transition-colors hover:text-[var(--d-admin-text-color)] sm:flex"
             >
               <Icon icon="lucide:arrow-left" className="size-3" />
               <span>Back to Editor</span>
@@ -80,7 +120,7 @@ export function ProjectsGallery() {
           {/* Projects Content */}
           <Tabs.Content
             value="projects"
-            className="animate-in fade-in slide-in-from-bottom-4 flex-1 duration-500 outline-none"
+            className="animate-in fade-in slide-in-from-bottom-4 flex-1 overflow-y-auto duration-500 outline-none pr-1"
           >
             {projects.length === 0 ? (
               <div className="mx-auto flex h-[50vh] max-w-2xl flex-col items-center justify-center rounded-2xl border-2 border-dashed border-[var(--d-admin-surface-border)] bg-[var(--d-admin-surface-section)]/50">
@@ -107,10 +147,10 @@ export function ProjectsGallery() {
               </div>
             ) : (
               <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-                {/* New Project Card */}
+                {/* New Project Card - HIDDEN ON MOBILE */}
                 <div
                   onClick={handleCreateNew}
-                  className="group relative flex aspect-[4/3] cursor-pointer flex-col items-center justify-center gap-4 rounded-2xl border-2 border-dashed border-[var(--d-admin-surface-border)] bg-[var(--d-admin-surface-section)]/30 transition-all duration-300 hover:border-[var(--d-admin-primary)] hover:bg-[var(--d-admin-surface-hover)]"
+                  className="hidden sm:flex group relative aspect-[4/3] cursor-pointer flex-col items-center justify-center gap-4 rounded-2xl border-2 border-dashed border-[var(--d-admin-surface-border)] bg-[var(--d-admin-surface-section)]/30 transition-all duration-300 hover:border-[var(--d-admin-primary)] hover:bg-[var(--d-admin-surface-hover)]"
                 >
                   <div className="flex size-12 items-center justify-center rounded-full bg-[var(--d-admin-surface-ground)] transition-colors group-hover:bg-[var(--d-admin-primary)]/10">
                     <Icon
@@ -198,7 +238,7 @@ export function ProjectsGallery() {
           {/* Templates Content */}
           <Tabs.Content
             value="templates"
-            className="animate-in fade-in slide-in-from-bottom-4 flex-1 duration-500 outline-none"
+            className="animate-in fade-in slide-in-from-bottom-4 flex-1 overflow-y-auto duration-500 outline-none pr-1"
           >
             <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
               {/* Static Template: Project Kickoff */}
