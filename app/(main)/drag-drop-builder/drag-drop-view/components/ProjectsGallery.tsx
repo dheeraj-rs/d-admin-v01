@@ -2,8 +2,8 @@
 
 import React, { useState } from 'react';
 import { Icon } from '@iconify/react';
-import { useProjectsStore } from '../../../ai-website-builder/store/projects-store';
-import { useAiBuilderStore } from '../../../ai-website-builder/store/ai-builder-store';
+import { useProjectsStore } from '../../store/projects-store';
+import { useAiBuilderStore } from '../../store/ai-builder-store';
 import { useDragDropStore } from '../lib/drag-drop-store';
 import { savePage } from '../lib/builderApi';
 import * as Tabs from '@radix-ui/react-tabs';

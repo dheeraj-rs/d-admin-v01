@@ -2,11 +2,11 @@
 
 import { useEffect } from 'react';
 import { Header } from './drag-drop-view/components/Header';
-import { DragDropInterface } from '../ai-website-builder/components/drag-drop-view/DragDropInterface';
-import { DragDropWorkbench } from '../ai-website-builder/components/drag-drop-view/DragDropWorkbench';
-import { MobileDragDropSidebar } from '../ai-website-builder/components/drag-drop-view/MobileDragDropSidebar';
+import { DragDropInterface } from './drag-drop-view/components/DragDropInterface';
+import { DragDropWorkbench } from './drag-drop-view/components/DragDropWorkbench';
+import { MobileDragDropSidebar } from './drag-drop-view/components/MobileDragDropSidebar';
 import { Panel, PanelGroup, PanelResizeHandle } from 'react-resizable-panels';
-import { useAiBuilderStore } from '../ai-website-builder/store/ai-builder-store';
+import { useAiBuilderStore } from './store/ai-builder-store';
 import { useIsMobile } from '@/core/hooks/use-mobile';
 import { useDragDropStore } from './drag-drop-view/lib/drag-drop-store';
 import { ProjectsGallery } from './drag-drop-view/components/ProjectsGallery';

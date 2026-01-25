@@ -11,31 +11,32 @@ import { LinkDialog } from '../../../drag-drop-builder/drag-drop-view/components
 import { SvgDialog } from '../../../drag-drop-builder/drag-drop-view/components/dialogs/SvgDialog';
 import { ExportDialog } from '../../../drag-drop-builder/drag-drop-view/components/dialogs/ExportDialog';
 import { PublishDialog } from '../../../drag-drop-builder/drag-drop-view/components/dialogs/PublishDialog';
-import { SaveProjectModal } from '../../components/dialogs/SaveProjectModal';
+import { SaveProjectModal } from './dialogs/SaveProjectModal';
 import { ReorderModal } from './ReorderModal';
 
 import {
   savePage,
   loadPage,
-} from '../../../drag-drop-builder/drag-drop-view/lib/builderApi';
+} from '../lib/builderApi';
 import {
   debounce,
   isEventOnElement,
   isElementTopHalf,
-} from '../../../drag-drop-builder/drag-drop-view/lib/builderUtils';
+} from '../lib/builderUtils';
 import {
   Component,
   ComponentWithCategories,
-} from '../../../drag-drop-builder/drag-drop-view/types';
+} from '../types';
 import {
   exportAsHTML,
   exportAsReactProject,
-} from '../../../drag-drop-builder/drag-drop-view/lib/dragDropZip';
-import { useDragDropStore } from '../../../drag-drop-builder/drag-drop-view/lib/drag-drop-store';
+} from '../lib/dragDropZip';
+import { useDragDropStore } from '../lib/drag-drop-store';
 import { useProjectsStore } from '../../store/projects-store';
 
 import { useIsMobile } from '@/core/hooks/use-mobile';
-import '../../ai-chat-view/styles/builder.css';
+import '../styles/builder.css';
+
 
 export function DragDropWorkbench() {
   const {
@@ -511,7 +512,7 @@ export function DragDropWorkbench() {
 
       {/* Canvas Area */}
       <div
-        className={`relative flex-1 overflow-y-auto ${isPreview ? 'p-0' : 'p-4 pb-20'}`}
+        className={`relative flex-1 overflow-y-auto ${isPreview ? 'p-0' : 'p-4'}`}
       >
         <div className="flex min-h-full justify-center">
           {/* Dialogs */}
@@ -556,12 +557,12 @@ export function DragDropWorkbench() {
             onPublishHTML={() => {
               localStorage.setItem('drag-drop-builder-format', 'html');
               window.location.href =
-                '/ai-website-builder/drag-drop-view/publish';
+                '/drag-drop-builder/drag-drop-view/publish';
             }}
             onPublishReact={() => {
               localStorage.setItem('drag-drop-builder-format', 'react');
               window.location.href =
-                '/ai-website-builder/drag-drop-view/publish';
+                '/drag-drop-builder/drag-drop-view/publish';
             }}
           />
           <SaveProjectModal
