@@ -27,7 +27,7 @@ interface DragDropState {
   setMobileSidebar: (v: boolean) => void;
 
   pendingAddComponent: Component | null;
-  headerAction: 'preparePublish' | 'save' | null;
+  headerAction: 'preparePublish' | 'save' | 'addNewPath' | 'refreshPreview' | null;
   clearCanvasTrigger: number;
 
   // Selection & Dialogs
@@ -49,7 +49,7 @@ interface DragDropState {
   setShowReorderModal: (v: boolean) => void;
 
   setPendingAddComponent: (c: Component | null) => void;
-  setHeaderAction: (action: 'preparePublish' | 'save' | null) => void;
+  setHeaderAction: (action: 'preparePublish' | 'save' | 'addNewPath' | 'refreshPreview' | null) => void;
   triggerClearCanvas: () => void;
 
   setSelectedElement: (el: HTMLElement | null) => void;

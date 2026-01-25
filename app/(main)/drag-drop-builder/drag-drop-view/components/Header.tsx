@@ -69,6 +69,9 @@ export function Header() {
                         )}
                     </span>
                 </button>
+                
+               
+                
                 <div className="relative ml-2 shrink-0 items-center gap-2">
                     <button
                         onClick={() => {
@@ -90,6 +93,49 @@ export function Header() {
 
             <div className="pointer-events-auto ml-auto flex w-auto shrink-0 items-center gap-2 md:w-full md:max-w-[59.5%]">
                 <div className="relative flex min-h-[var(--panel-header-height)] w-auto items-center justify-end gap-2 py-2 pl-0 md:w-full">
+
+                     {/* Path Input Box with Integrated Actions */}
+                <div className="relative flex-1 max-w-2xl hidden md:flex items-center">
+                    <div className="relative w-full flex items-center h-8 rounded-md bg-[var(--d-admin-surface-section)] border border-[var(--d-admin-surface-border)] focus-within:ring-2 focus-within:ring-[var(--d-admin-blue-600)] focus-within:border-transparent transition-all">
+                        {/* New Path Button - Inside Left */}
+                        <button
+                            onClick={() => setHeaderAction('addNewPath')}
+                            className="flex items-center justify-center shrink-0 h-full px-2 hover:bg-[var(--d-admin-surface-hover)] rounded-l-md transition-colors border-r border-[var(--d-admin-surface-border)]"
+                            title="Add New Path"
+                        >
+                            <Icon
+                                icon="lucide:plus"
+                                className="size-4 text-[var(--d-admin-text-color-secondary)]"
+                            />
+                        </button>
+
+                        {/* Path Icon */}
+                        <Icon 
+                            icon="ph:path" 
+                            className="ml-2 size-4 text-[var(--d-admin-text-color-secondary)] shrink-0" 
+                        />
+
+                        {/* Path Input */}
+                        <input
+                            type="text"
+                            placeholder="/index"
+                            defaultValue="/index"
+                            className="flex-1 h-full px-2 text-sm bg-transparent text-[var(--d-admin-text-color)] placeholder:text-[var(--d-admin-text-color-secondary)] focus:outline-none"
+                        />
+
+                        {/* Refresh Button - Inside Right */}
+                        <button
+                            onClick={() => setHeaderAction('refreshPreview')}
+                            className="flex items-center justify-center shrink-0 h-full px-2 hover:bg-[var(--d-admin-surface-hover)] rounded-r-md transition-colors border-l border-[var(--d-admin-surface-border)]"
+                            title="Refresh Preview"
+                        >
+                            <Icon
+                                icon="lucide:refresh-cw"
+                                className="size-4 text-[var(--d-admin-text-color-secondary)]"
+                            />
+                        </button>
+                    </div>
+                </div>
                     
                     {/* Desktop Actions */}
                     <div className="ml-auto hidden gap-3 md:flex">
