@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { Icon } from '@iconify/react';
 import { useIsMobile } from '@/core/hooks/use-mobile';
@@ -170,6 +170,7 @@ export function Header() {
     );
 
     const [isMoreMenuOpen, setIsMoreMenuOpen] = useState(false);
+    const inputRef = useRef<HTMLInputElement>(null);
 
     return (
         <header className="flex h-[var(--header-height)] w-full shrink-0 items-center pr-3 pl-2 select-none">
@@ -330,12 +331,19 @@ export function Header() {
                                     </div>
                                 )}
                                 {!activePreview && (
-                                    <Icon
-                                        icon="ph:lock-key-duotone"
-                                        className="mr-2 text-gray-400"
-                                    />
+                                    <button
+                                        className="mr-2 flex h-6 w-6 items-center justify-center rounded-sm text-gray-400 hover:bg-[var(--d-admin-surface-hover)] hover:text-[var(--d-admin-text-color)]"
+                                        onClick={() => {
+                                            setDisplayUrl('/');
+                                            inputRef.current?.focus();
+                                        }}
+                                        title="New Path"
+                                    >
+                                        <Icon icon="lucide:plus" className="size-4" />
+                                    </button>
                                 )}
                                 <input
+                                    ref={inputRef}
                                     className="text-color hidden w-full bg-transparent text-sm outline-none md:block"
                                     type="text"
                                     value={displayUrl}
