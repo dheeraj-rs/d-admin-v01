@@ -41,35 +41,8 @@ export function ImageDialog({ isOpen, onClose, element, standaloneServer }: Imag
     const onSave = async () => {
         if (!element) return;
 
-        const imgElement = element;
-        if (url === urlText) {
-            // eslint-disable-next-line
-            imgElement.src = url;
-        } else {
-            try {
-                const formData = new FormData();
-                formData.append('file-0', file!);
-                const baseUrl = getBaseUrl(standaloneServer);
-                const uploadUrl = standaloneServer
-                    ? `${baseUrl}/data?path=${location.pathname}`
-                    : `${baseUrl}?type=data&path=${location.pathname}`;
-
-                const res = await fetch(uploadUrl, { method: 'POST', body: formData });
-
-                if (!res.ok) {
-                    throw new Error(`Upload failed with status: ${res.status}`);
-                }
-
-                const urls = await res.json();
-                if (urls && urls.length > 0) {
-                    // eslint-disable-next-line
-                    imgElement.src = urls[0];
-                }
-            } catch (error) {
-                console.error('Image upload failed:', error);
-                alert('Failed to upload image. Please try again.');
-            }
-        }
+        // eslint-disable-next-line
+        element.src = url;
 
         onClose();
     };
