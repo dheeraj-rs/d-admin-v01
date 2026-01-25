@@ -12,7 +12,6 @@ import { SvgDialog } from '../../../drag-drop-builder/drag-drop-view/components/
 import { ExportDialog } from '../../../drag-drop-builder/drag-drop-view/components/dialogs/ExportDialog';
 import { PublishDialog } from '../../../drag-drop-builder/drag-drop-view/components/dialogs/PublishDialog';
 import { SaveProjectModal } from '../../components/dialogs/SaveProjectModal';
-import { DragDropPlaceholder } from './DragDropPlaceholder';
 import { ReorderModal } from './ReorderModal';
 
 import {
@@ -66,6 +65,7 @@ export function DragDropWorkbench() {
     setShowPublishDialog,
     showSaveDialog,
     setShowSaveDialog,
+    clearCanvasTrigger,
   } = useDragDropStore();
   const { currentProjectId, getProject } = useProjectsStore();
   const isMobile = useIsMobile();
@@ -120,6 +120,17 @@ export function DragDropWorkbench() {
       return () => observer.disconnect();
     }
   }, []);
+
+  // Handle Clear Canvas Trigger
+  useEffect(() => {
+    if (canvasRef.current) {
+      canvasRef.current.innerHTML = '';
+      setHasContent(false);
+      setIsEmptyCanvas(true);
+      // Double ensure we cleared the draft in storage
+      savePage('', standaloneServer);
+    }
+  }, [clearCanvasTrigger]);
 
   // Load Content (Project or Draft)
   useEffect(() => {
@@ -640,7 +651,7 @@ export function DragDropWorkbench() {
             }}
             contentEditable={!isPreview && hasContent}
           />
-          {!hasContent && !isPreview && <DragDropPlaceholder />}
+
 
           {/* Reorder Modal */}
           <ReorderModal

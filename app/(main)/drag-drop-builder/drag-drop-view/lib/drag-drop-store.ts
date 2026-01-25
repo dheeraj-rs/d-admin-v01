@@ -28,6 +28,7 @@ interface DragDropState {
 
   pendingAddComponent: Component | null;
   headerAction: 'preparePublish' | 'save' | null;
+  clearCanvasTrigger: number;
 
   // Selection & Dialogs
   selectedElement: HTMLElement | null;
@@ -49,6 +50,7 @@ interface DragDropState {
 
   setPendingAddComponent: (c: Component | null) => void;
   setHeaderAction: (action: 'preparePublish' | 'save' | null) => void;
+  triggerClearCanvas: () => void;
 
   setSelectedElement: (el: HTMLElement | null) => void;
 
@@ -80,6 +82,7 @@ export const useDragDropStore = create<DragDropState>((set, get) => ({
 
   pendingAddComponent: null,
   headerAction: null,
+  clearCanvasTrigger: 0,
 
   selectedElement: null,
   showImageDialog: false,
@@ -99,6 +102,8 @@ export const useDragDropStore = create<DragDropState>((set, get) => ({
 
   setPendingAddComponent: (c) => set({ pendingAddComponent: c }),
   setHeaderAction: (action) => set({ headerAction: action }),
+  triggerClearCanvas: () =>
+    set((state) => ({ clearCanvasTrigger: state.clearCanvasTrigger + 1 })),
 
   setSelectedElement: (el) => set({ selectedElement: el }),
 

@@ -34,8 +34,14 @@ export function Header() {
     const isMobile = useIsMobile();
 
     // Drag Drop Store
-    const { isPreview, setIsPreview, setShowExportDialog, setHeaderAction } =
-        useDragDropStore();
+    const {
+        isPreview,
+        setIsPreview,
+        setShowExportDialog,
+        setHeaderAction,
+        showProjectsGallery,
+        setShowProjectsGallery,
+    } = useDragDropStore();
 
     const getBuilderLabel = (view: typeof builderView) => {
         switch (view) {
@@ -177,6 +183,18 @@ export function Header() {
                             setIsHistoryOpen(!isHistoryOpen);
                             useChatStore.getState().setShowHistory(!showHistory);
                         }}
+                    >
+                        <Icon icon="ph:clock-counter-clockwise" className="size-5" />
+                    </button>
+                )}
+                {builderView === 'drag-drop' && (
+                    <button
+                        className={`flex items-center justify-center font-medium shrink-0 min-w-0 max-w-full rounded-md focus-visible:outline-2 disabled:op-50 relative disabled:cursor-not-allowed gap-1 h-9 focus-visible:outline-[var(--d-admin-blue-600)] bg-transparent enabled:hover:bg-[var(--d-admin-surface-hover)] text-[var(--d-admin-text-color)] text-sm px-2 -mr-px ${showProjectsGallery ? 'bg-[var(--d-admin-surface-hover)]' : ''}`}
+                        type="button"
+                        onClick={() => {
+                            setShowProjectsGallery(!showProjectsGallery);
+                        }}
+                        title="Projects History"
                     >
                         <Icon icon="ph:clock-counter-clockwise" className="size-5" />
                     </button>

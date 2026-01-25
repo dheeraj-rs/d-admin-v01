@@ -5,11 +5,12 @@ import { Icon } from '@iconify/react';
 import { useProjectsStore } from '../../../ai-website-builder/store/projects-store';
 import { useAiBuilderStore } from '../../../ai-website-builder/store/ai-builder-store';
 import { useDragDropStore } from '../lib/drag-drop-store';
+import { savePage } from '../lib/builderApi';
 import * as Tabs from '@radix-ui/react-tabs';
 
 export function ProjectsGallery() {
   const { projects, setCurrentProject, deleteProject } = useProjectsStore();
-  const { setShowProjectsGallery } = useDragDropStore();
+  const { setShowProjectsGallery, triggerClearCanvas } = useDragDropStore();
 
   // Manage active tab state locally to control animations/styles
   const [activeTab, setActiveTab] = useState('projects');
@@ -27,48 +28,23 @@ export function ProjectsGallery() {
   };
 
   const handleCreateNew = () => {
+    savePage('', false); // Clear the draft
     setCurrentProject(null);
     setShowProjectsGallery(false);
+    triggerClearCanvas();
   };
 
   return (
-    <div className="animate-in fade-in fixed inset-0 top-[var(--header-height)] z-50 flex flex-col bg-black/80 backdrop-blur-xl duration-300">
-      {/* Background Gradients for Atmosphere */}
-      <div className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
-        <div className="absolute top-[-10%] left-[-10%] h-[40%] w-[40%] rounded-full bg-violet-600/20 mix-blend-screen blur-[120px]" />
-        <div className="absolute right-[-10%] bottom-[-10%] h-[40%] w-[40%] rounded-full bg-blue-600/20 mix-blend-screen blur-[120px]" />
-      </div>
+    <div className="animate-in fade-in fixed inset-0 top-[var(--header-height)] z-50 flex flex-col bg-[var(--d-admin-surface-ground)] duration-300">
+      <div className="mx-auto flex w-full max-w-[1400px] flex-1 flex-col px-4 py-4">
 
-      <div className="mx-auto flex w-full max-w-[1400px] flex-1 flex-col px-8 py-10">
-        {/* Header Section */}
-        <div className="mb-10 flex items-end justify-between">
-          <div className="flex flex-col gap-2">
-            <div className="flex items-center gap-2 text-xs font-medium tracking-wide text-violet-400 uppercase">
-              <Icon icon="lucide:sparkles" className="size-3" />
-              <span>Creative Workspace</span>
-            </div>
-            <h1 className="text-4xl font-bold tracking-tight text-[var(--d-admin-text-color)]">
-              Welcome back
-            </h1>
-          </div>
-
-          <button
-            onClick={() => setShowProjectsGallery(false)}
-            className="group flex items-center gap-2 rounded-full border border-[var(--d-admin-surface-border)] bg-[var(--d-admin-surface-ground)]/5 px-4 py-2 text-sm text-gray-400 transition-all hover:border-[var(--d-admin-surface-border)]/20 hover:bg-white/10 hover:text-white"
-          >
-            <span>Close Gallery</span>
-            <div className="rounded-full bg-[var(--d-admin-surface-section)] p-1 transition-colors group-hover:bg-[var(--d-admin-surface-hover)]">
-              <Icon icon="lucide:x" className="size-3" />
-            </div>
-          </button>
-        </div>
 
         <Tabs.Root
           value={activeTab}
           onValueChange={setActiveTab}
           className="flex flex-1 flex-col"
         >
-          <div className="mb-8 flex items-center justify-between border-b border-white/10 pb-1">
+          <div className="mb-6 flex items-center justify-between border-b border-[var(--d-admin-surface-border)] pb-1">
             <Tabs.List className="flex items-center gap-8">
               <Tabs.Trigger
                 value="projects"
@@ -78,7 +54,7 @@ export function ProjectsGallery() {
                   <Icon icon="lucide:folder-open" className="size-4" />
                   My Projects
                 </span>
-                <div className="absolute bottom-0 left-0 h-[2px] w-full scale-x-0 bg-gradient-to-r from-violet-500 to-blue-500 transition-transform duration-300 group-data-[state=active]:scale-x-100" />
+                <div className="absolute bottom-0 left-0 h-[2px] w-full scale-x-0 bg-[var(--d-admin-primary)] transition-transform duration-300 group-data-[state=active]:scale-x-100" />
               </Tabs.Trigger>
               <Tabs.Trigger
                 value="templates"
@@ -88,19 +64,17 @@ export function ProjectsGallery() {
                   <Icon icon="lucide:layout-template" className="size-4" />
                   Templates gallery
                 </span>
-                <div className="absolute bottom-0 left-0 h-[2px] w-full scale-x-0 bg-gradient-to-r from-pink-500 to-rose-500 transition-transform duration-300 group-data-[state=active]:scale-x-100" />
+                <div className="absolute bottom-0 left-0 h-[2px] w-full scale-x-0 bg-[var(--d-admin-primary)] transition-transform duration-300 group-data-[state=active]:scale-x-100" />
               </Tabs.Trigger>
             </Tabs.List>
 
-            <div className="pb-2">
-              <button
-                onClick={handleCreateNew}
-                className="flex items-center gap-2 rounded-lg bg-[var(--d-admin-surface-ground)] px-5 py-2.5 text-sm font-bold text-[var(--d-admin-text-color)] shadow-[0_0_20px_-5px_rgba(255,255,255,0.3)] transition-all hover:bg-gray-100 active:scale-95"
-              >
-                <Icon icon="lucide:plus" className="size-4" />
-                Create New
-              </button>
-            </div>
+            <button
+              onClick={() => setShowProjectsGallery(false)}
+              className="mb-2 flex items-center gap-2 px-3 py-1.5 text-xs font-medium text-[var(--d-admin-text-color-secondary)] transition-colors hover:text-[var(--d-admin-text-color)]"
+            >
+              <Icon icon="lucide:arrow-left" className="size-3" />
+              <span>Back to Editor</span>
+            </button>
           </div>
 
           {/* Projects Content */}
@@ -109,23 +83,23 @@ export function ProjectsGallery() {
             className="animate-in fade-in slide-in-from-bottom-4 flex-1 duration-500 outline-none"
           >
             {projects.length === 0 ? (
-              <div className="mx-auto flex h-[50vh] max-w-2xl flex-col items-center justify-center rounded-2xl border-2 border-dashed border-[var(--d-admin-surface-border)] bg-[var(--d-admin-surface-ground)]/5">
-                <div className="mb-6 flex size-16 items-center justify-center rounded-2xl bg-gradient-to-tr from-violet-500/20 to-blue-500/20">
+              <div className="mx-auto flex h-[50vh] max-w-2xl flex-col items-center justify-center rounded-2xl border-2 border-dashed border-[var(--d-admin-surface-border)] bg-[var(--d-admin-surface-section)]/50">
+                <div className="mb-6 flex size-16 items-center justify-center rounded-2xl bg-[var(--d-admin-surface-hover)]">
                   <Icon
                     icon="lucide:package-open"
-                    className="size-8 text-violet-400"
+                    className="size-8 text-[var(--d-admin-text-color-secondary)]"
                   />
                 </div>
                 <h3 className="mb-2 text-xl font-semibold text-[var(--d-admin-text-color)]">
                   No projects yet
                 </h3>
-                <p className="mb-8 max-w-sm text-center text-[var(--d-admin-text-color)]">
+                <p className="mb-8 max-w-sm text-center text-[var(--d-admin-text-color-secondary)]">
                   Start fresh with a blank canvas or choose a template to
                   kickstart your next big idea.
                 </p>
                 <button
                   onClick={handleCreateNew}
-                  className="flex items-center gap-2 rounded-lg bg-violet-600 px-6 py-3 font-medium text-white transition-colors hover:bg-violet-500"
+                  className="flex items-center gap-2 rounded-lg bg-[var(--d-admin-primary)] px-6 py-3 font-medium text-white transition-colors hover:bg-[var(--d-admin-primary)]/90"
                 >
                   <Icon icon="lucide:plus" />
                   Start New Project
@@ -136,15 +110,15 @@ export function ProjectsGallery() {
                 {/* New Project Card */}
                 <div
                   onClick={handleCreateNew}
-                  className="group relative flex aspect-[4/3] cursor-pointer flex-col items-center justify-center gap-4 rounded-2xl border-2 border-dashed border-[var(--d-admin-surface-border)] transition-all duration-300 hover:border-violet-500/50 hover:bg-violet-500/5"
+                  className="group relative flex aspect-[4/3] cursor-pointer flex-col items-center justify-center gap-4 rounded-2xl border-2 border-dashed border-[var(--d-admin-surface-border)] bg-[var(--d-admin-surface-section)]/30 transition-all duration-300 hover:border-[var(--d-admin-primary)] hover:bg-[var(--d-admin-surface-hover)]"
                 >
-                  <div className="flex size-12 items-center justify-center rounded-full bg-[var(--d-admin-surface-ground)]/5 transition-colors group-hover:bg-violet-500/20">
+                  <div className="flex size-12 items-center justify-center rounded-full bg-[var(--d-admin-surface-ground)] transition-colors group-hover:bg-[var(--d-admin-primary)]/10">
                     <Icon
                       icon="lucide:plus"
-                      className="size-6 text-[var(--d-admin-text-color)] transition-colors group-hover:text-violet-400"
+                      className="size-6 text-[var(--d-admin-text-color)] transition-colors group-hover:text-[var(--d-admin-primary)]"
                     />
                   </div>
-                  <span className="text-sm font-medium text-[var(--d-admin-text-color)] transition-colors group-hover:text-violet-300">
+                  <span className="text-sm font-medium text-[var(--d-admin-text-color)] transition-colors group-hover:text-[var(--d-admin-primary)]">
                     New Blank Project
                   </span>
                 </div>
@@ -153,14 +127,14 @@ export function ProjectsGallery() {
                   <div
                     key={project.id}
                     onClick={() => handleOpenProject(project.id)}
-                    className="group relative flex cursor-pointer flex-col overflow-hidden rounded-2xl border border-[var(--d-admin-surface-border)] bg-[var(--d-admin-surface-card)] backdrop-blur-sm transition-all duration-300 hover:-translate-y-1 hover:border-violet-500/50 hover:shadow-[0_0_30px_-10px_rgba(139,92,246,0.3)]"
+                    className="group relative flex cursor-pointer flex-col overflow-hidden rounded-2xl border border-[var(--d-admin-surface-border)] bg-[var(--d-admin-surface-card)] transition-all duration-300 hover:-translate-y-1 hover:border-[var(--d-admin-surface-border-hover)] hover:shadow-lg"
                   >
                     {/* Preview Area */}
-                    <div className="relative aspect-[16/9] w-full overflow-hidden border-b border-white/5 bg-gradient-to-br from-gray-800 to-gray-900 transition-colors group-hover:border-violet-500/20">
+                    <div className="relative aspect-[16/9] w-full overflow-hidden border-b border-[var(--d-admin-surface-border)] bg-[var(--d-admin-surface-ground)]">
                       {/* Decorative Pattern */}
-                      <div className="absolute inset-0 bg-[radial-gradient(#4b5563_1px,transparent_1px)] [background-size:16px_16px] opacity-20" />
+                      <div className="absolute inset-0 bg-[radial-gradient(var(--d-admin-surface-border)_1px,transparent_1px)] [background-size:16px_16px] opacity-50" />
 
-                      <div className="absolute inset-0 flex items-center justify-center bg-[var(--d-admin-surface-ground)]">
+                      <div className="absolute inset-0 flex items-center justify-center">
                         {project.thumbnail ? (
                           <img
                             src={project.thumbnail}
@@ -168,41 +142,51 @@ export function ProjectsGallery() {
                             className="h-full w-full object-cover object-top opacity-90 transition-opacity group-hover:opacity-100"
                           />
                         ) : (
-                          <div className="flex size-16 items-center justify-center rounded-xl bg-gradient-to-br from-violet-500 to-fuchsia-500 text-2xl font-bold text-white shadow-lg">
+                          <div className="flex size-16 items-center justify-center rounded-xl bg-[var(--d-admin-surface-section)] text-2xl font-bold text-[var(--d-admin-text-color)] shadow-sm">
                             {project.name.charAt(0).toUpperCase()}
                           </div>
                         )}
                       </div>
 
                       {/* Hover Overlay */}
-                      <div className="absolute inset-0 flex items-center justify-center gap-3 bg-black/60 opacity-0 backdrop-blur-[2px] transition-all duration-300 group-hover:opacity-100">
-                        <button className="rounded-full bg-[var(--d-admin-surface-ground)] px-5 py-2 text-xs font-bold tracking-wider text-[var(--d-admin-text-color)] uppercase shadow-xl transition-transform hover:scale-105 hover:bg-[var(--d-admin-surface-ground)]/50 active:scale-95">
-                          Open Editor
-                        </button>
-                      </div>
-
-                      <div className="absolute top-3 right-3 z-10 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
-                        <button
-                          className="rounded-lg border border-red-500/50 bg-red-500/20 p-2 text-red-200 transition-all hover:bg-red-500 hover:text-white"
-                          onClick={(e) => handleDeleteProject(e, project.id)}
-                          title="Delete Project"
-                        >
-                          <Icon icon="lucide:trash-2" className="size-4" />
+                      <div className="absolute inset-0 flex items-center justify-center gap-3 bg-black/40 opacity-0 backdrop-blur-[2px] transition-all duration-300 group-hover:opacity-100">
+                        <button className="flex items-center gap-2 rounded-full bg-[var(--d-admin-surface-ground)] px-5 py-2 text-xs font-bold tracking-wider text-[var(--d-admin-text-color)] uppercase shadow-xl transition-transform hover:scale-105 hover:bg-[var(--d-admin-surface-hover)] active:scale-95">
+                          <Icon icon="lucide:eye" className="size-3.5" />
+                          Preview
                         </button>
                       </div>
                     </div>
 
                     {/* Info Area */}
-                    <div className="flex flex-1 flex-col justify-between bg-[var(--d-admin-surface-ground)]/5 p-4 transition-colors group-hover:bg-white/[0.07]">
-                      <div>
-                        <h3 className="truncate pr-4 text-lg font-medium text-[var(--d-admin-text-color)]">
+                    <div className="flex items-center justify-between bg-[var(--d-admin-surface-section)] p-3 transition-colors group-hover:bg-[var(--d-admin-surface-hover)]">
+                      <div className="min-w-0 pr-2">
+                        <h3 className="truncate text-sm font-medium text-[var(--d-admin-text-color)]">
                           {project.name}
                         </h3>
-                        <p className="mt-1 flex items-center gap-1.5 text-xs text-[var(--d-admin-text-color)]">
-                          <Icon icon="lucide:clock" className="size-3" />
-                          Edited{' '}
+                        <p className="mt-0.5 flex items-center gap-1.5 text-[10px] text-[var(--d-admin-text-color-secondary)]">
+                          <Icon icon="lucide:clock" className="size-2.5" />
                           {new Date(project.updatedAt).toLocaleDateString()}
                         </p>
+                      </div>
+                      
+                      <div className="flex items-center gap-1 opacity-0 transition-opacity duration-200 group-hover:opacity-100">
+                        <button
+                          className="rounded-md p-1.5 text-[var(--d-admin-text-color-secondary)] hover:bg-[var(--d-admin-surface-ground)] hover:text-[var(--d-admin-text-color)]"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            // Handle Edit Name (TODO)
+                          }}
+                          title="Rename"
+                        >
+                          <Icon icon="lucide:pencil" className="size-3.5" />
+                        </button>
+                        <button
+                          className="rounded-md p-1.5 text-[var(--d-admin-text-color-secondary)] hover:bg-red-500/10 hover:text-red-500"
+                          onClick={(e) => handleDeleteProject(e, project.id)}
+                          title="Delete Project"
+                        >
+                          <Icon icon="lucide:trash-2" className="size-3.5" />
+                        </button>
                       </div>
                     </div>
                   </div>
@@ -218,96 +202,94 @@ export function ProjectsGallery() {
           >
             <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
               {/* Static Template: Project Kickoff */}
-              <div className="group relative flex cursor-pointer flex-col overflow-hidden rounded-2xl border border-[var(--d-admin-surface-border)] bg-[var(--d-admin-surface-card)] backdrop-blur-sm transition-all duration-300 hover:-translate-y-1 hover:border-pink-500/50 hover:shadow-[0_0_30px_-10px_rgba(236,72,153,0.3)]">
-                <div className="relative aspect-[16/9] overflow-hidden border-b border-white/5 bg-gradient-to-br from-indigo-900 to-purple-900">
-                  <div className="absolute inset-0 animate-[pulse_8s_ease-in-out_infinite] bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-30" />
+              <div className="group relative flex cursor-pointer flex-col overflow-hidden rounded-2xl border border-[var(--d-admin-surface-border)] bg-[var(--d-admin-surface-card)] transition-all duration-300 hover:-translate-y-1 hover:border-[var(--d-admin-surface-border-hover)] hover:shadow-lg">
+                <div className="relative aspect-[16/9] overflow-hidden border-b border-[var(--d-admin-surface-border)] bg-[var(--d-admin-surface-section)]">
                   <div className="absolute inset-0 z-10 flex flex-col items-center justify-center p-6 text-center">
-                    <h3 className="mb-1 text-2xl font-bold tracking-tight text-white drop-shadow-lg">
+                    <h3 className="mb-1 text-2xl font-bold tracking-tight text-[var(--d-admin-text-color)] drop-shadow-sm">
                       Kickoff
                     </h3>
-                    <span className="rounded-full border border-white/10 bg-[var(--d-admin-surface-ground)]/20 px-3 py-1 text-[10px] font-bold tracking-widest text-white uppercase backdrop-blur-md">
+                    <span className="rounded-full border border-[var(--d-admin-surface-border)] bg-[var(--d-admin-surface-ground)]/50 px-3 py-1 text-[10px] font-bold tracking-widest text-[var(--d-admin-text-color-secondary)] uppercase backdrop-blur-md">
                       Project Sync
                     </span>
                   </div>
                   {/* Hover Overlay */}
-                  <div className="absolute inset-0 z-20 flex items-center justify-center gap-3 bg-black/60 opacity-0 backdrop-blur-[2px] transition-all duration-300 group-hover:opacity-100">
+                  <div className="absolute inset-0 z-20 flex items-center justify-center gap-3 bg-black/40 opacity-0 backdrop-blur-[2px] transition-all duration-300 group-hover:opacity-100">
                     <button
                       onClick={handleCreateNew}
-                      className="rounded-full bg-pink-500 px-5 py-2 text-xs font-bold tracking-wider text-white uppercase shadow-xl transition-transform hover:scale-105 hover:bg-pink-600"
+                      className="rounded-full bg-[var(--d-admin-primary)] px-5 py-2 text-xs font-bold tracking-wider text-white uppercase shadow-xl transition-transform hover:scale-105 hover:bg-[var(--d-admin-primary)]/90"
                     >
                       Use Template
                     </button>
                   </div>
                 </div>
-                <div className="bg-[var(--d-admin-surface-ground)]/5 p-4 transition-colors group-hover:bg-white/[0.07]">
+                <div className="bg-[var(--d-admin-surface-section)] p-4 transition-colors group-hover:bg-[var(--d-admin-surface-hover)]">
                   <h3 className="font-medium text-[var(--d-admin-text-color)]">
                     Project Kickoff Deck
                   </h3>
-                  <p className="mt-1 text-xs text-[var(--d-admin-text-color)]">
+                  <p className="mt-1 text-xs text-[var(--d-admin-text-color-secondary)]">
                     Perfect for internal alignment
                   </p>
                 </div>
               </div>
 
               {/* Static Template: Brainstorming */}
-              <div className="group relative flex cursor-pointer flex-col overflow-hidden rounded-2xl border border-[var(--d-admin-surface-border)] bg-[var(--d-admin-surface-card)] backdrop-blur-sm transition-all duration-300 hover:-translate-y-1 hover:border-emerald-500/50 hover:shadow-[0_0_30px_-10px_rgba(16,185,129,0.3)]">
-                <div className="relative aspect-[16/9] overflow-hidden border-b border-white/5 bg-gradient-to-br from-zinc-900 to-black">
-                  <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-emerald-900/40 via-transparent to-transparent" />
+              <div className="group relative flex cursor-pointer flex-col overflow-hidden rounded-2xl border border-[var(--d-admin-surface-border)] bg-[var(--d-admin-surface-card)] transition-all duration-300 hover:-translate-y-1 hover:border-[var(--d-admin-surface-border-hover)] hover:shadow-lg">
+                <div className="relative aspect-[16/9] overflow-hidden border-b border-[var(--d-admin-surface-border)] bg-[var(--d-admin-surface-section)]">
                   <div className="absolute inset-0 z-10 flex flex-col items-center justify-center p-6 text-center">
                     <Icon
                       icon="lucide:lightbulb"
-                      className="mb-2 size-12 text-emerald-400 drop-shadow-[0_0_15px_rgba(52,211,153,0.5)]"
+                      className="mb-2 size-12 text-[var(--d-admin-text-color-secondary)]"
                     />
-                    <h3 className="text-xl font-bold text-white drop-shadow-md">
+                    <h3 className="text-xl font-bold text-[var(--d-admin-text-color)] drop-shadow-sm">
                       Brainstorming
                     </h3>
                   </div>
                   {/* Hover Overlay */}
-                  <div className="absolute inset-0 z-20 flex items-center justify-center gap-3 bg-black/60 opacity-0 backdrop-blur-[2px] transition-all duration-300 group-hover:opacity-100">
+                  <div className="absolute inset-0 z-20 flex items-center justify-center gap-3 bg-black/40 opacity-0 backdrop-blur-[2px] transition-all duration-300 group-hover:opacity-100">
                     <button
                       onClick={handleCreateNew}
-                      className="rounded-full bg-emerald-500 px-5 py-2 text-xs font-bold tracking-wider text-white uppercase shadow-xl transition-transform hover:scale-105 hover:bg-emerald-600"
+                      className="rounded-full bg-[var(--d-admin-primary)] px-5 py-2 text-xs font-bold tracking-wider text-white uppercase shadow-xl transition-transform hover:scale-105 hover:bg-[var(--d-admin-primary)]/90"
                     >
                       Use Template
                     </button>
                   </div>
                 </div>
-                <div className="bg-[var(--d-admin-surface-ground)]/5 p-4 transition-colors group-hover:bg-white/[0.07]">
+                <div className="bg-[var(--d-admin-surface-section)] p-4 transition-colors group-hover:bg-[var(--d-admin-surface-hover)]">
                   <h3 className="font-medium text-[var(--d-admin-text-color)]">
                     6 Thinking Hats
                   </h3>
-                  <p className="mt-1 text-xs text-[var(--d-admin-text-color)]">
+                  <p className="mt-1 text-xs text-[var(--d-admin-text-color-secondary)]">
                     Structured creative thinking
                   </p>
                 </div>
               </div>
 
               {/* Static Template: Portfolio */}
-              <div className="group relative flex cursor-pointer flex-col overflow-hidden rounded-2xl border border-[var(--d-admin-surface-border)] bg-[var(--d-admin-surface-card)] backdrop-blur-sm transition-all duration-300 hover:-translate-y-1 hover:border-orange-500/50 hover:shadow-[0_0_30px_-10px_rgba(249,115,22,0.3)]">
-                <div className="relative aspect-[16/9] overflow-hidden border-b border-white/5 bg-gradient-to-tr from-gray-800 to-slate-800">
+              <div className="group relative flex cursor-pointer flex-col overflow-hidden rounded-2xl border border-[var(--d-admin-surface-border)] bg-[var(--d-admin-surface-card)] transition-all duration-300 hover:-translate-y-1 hover:border-[var(--d-admin-surface-border-hover)] hover:shadow-lg">
+                <div className="relative aspect-[16/9] overflow-hidden border-b border-[var(--d-admin-surface-border)] bg-[var(--d-admin-surface-section)]">
                   <div className="absolute inset-0 z-10 flex flex-col items-center justify-center p-6 text-center">
                     <div className="mb-2 flex -space-x-4">
-                      <div className="size-8 rounded-full border-2 border-gray-800 bg-red-400"></div>
-                      <div className="relative -top-2 size-8 rounded-full border-2 border-gray-800 bg-yellow-400"></div>
-                      <div className="size-8 rounded-full border-2 border-gray-800 bg-blue-400"></div>
+                      <div className="size-8 rounded-full border-2 border-[var(--d-admin-surface-ground)] bg-red-400"></div>
+                      <div className="relative -top-2 size-8 rounded-full border-2 border-[var(--d-admin-surface-ground)] bg-yellow-400"></div>
+                      <div className="size-8 rounded-full border-2 border-[var(--d-admin-surface-ground)] bg-blue-400"></div>
                     </div>
-                    <h3 className="text-xl font-bold text-white">Portfolio</h3>
+                    <h3 className="text-xl font-bold text-[var(--d-admin-text-color)]">Portfolio</h3>
                   </div>
                   {/* Hover Overlay */}
-                  <div className="absolute inset-0 z-20 flex items-center justify-center gap-3 bg-black/60 opacity-0 backdrop-blur-[2px] transition-all duration-300 group-hover:opacity-100">
+                  <div className="absolute inset-0 z-20 flex items-center justify-center gap-3 bg-black/40 opacity-0 backdrop-blur-[2px] transition-all duration-300 group-hover:opacity-100">
                     <button
                       onClick={handleCreateNew}
-                      className="rounded-full bg-orange-500 px-5 py-2 text-xs font-bold tracking-wider text-white uppercase shadow-xl transition-transform hover:scale-105 hover:bg-orange-600"
+                      className="rounded-full bg-[var(--d-admin-primary)] px-5 py-2 text-xs font-bold tracking-wider text-white uppercase shadow-xl transition-transform hover:scale-105 hover:bg-[var(--d-admin-primary)]/90"
                     >
                       Use Template
                     </button>
                   </div>
                 </div>
-                <div className="bg-[var(--d-admin-surface-ground)]/5 p-4 transition-colors group-hover:bg-white/[0.07]">
+                <div className="bg-[var(--d-admin-surface-section)] p-4 transition-colors group-hover:bg-[var(--d-admin-surface-hover)]">
                   <h3 className="font-medium text-[var(--d-admin-text-color)]">
                     Visual Portfolio
                   </h3>
-                  <p className="mt-1 text-xs text-[var(--d-admin-text-color)]">
+                  <p className="mt-1 text-xs text-[var(--d-admin-text-color-secondary)]">
                     Showcase your work
                   </p>
                 </div>
