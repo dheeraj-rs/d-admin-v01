@@ -1,7 +1,7 @@
 import type {
   EditorDocument,
   ScrollPosition,
-} from '../components/CodeMirrorEditor';
+} from '../components/editor/CodeMirrorEditor';
 import { ActionRunner } from '../lib/runtime/action-runner';
 import type {
   ActionCallbackData,

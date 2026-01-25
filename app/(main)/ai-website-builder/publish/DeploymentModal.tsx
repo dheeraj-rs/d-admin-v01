@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import Modal from '../components/common/Modal';
+import Modal from '../components/ui/Modal';
 import { useDeployment } from '../hooks/useDeployment';
 import { useFilesStore } from '../stores/zustand';
 import {

@@ -1,0 +1,316 @@
+import { Icon } from '@iconify/react';
+import type { Message } from 'ai';
+import { useChat } from 'ai/react';
+import { useAnimate } from 'framer-motion';
+import { memo, useEffect, useRef, useState } from 'react';
+import { cssTransition, toast, ToastContainer } from 'react-toastify';
+import {
+  useMessageParser,
+  usePromptEnhancer,
+  useShortcuts,
+  useSnapScroll,
+} from '../../hooks';
+import { useChatHistory } from '../../lib/persistence';
+import { useChatStore, useWorkbenchStore } from '../../stores/zustand';
+import { workbenchStore } from '../../stores/workbench';
+import { fileModificationsToHTML } from '../../utils/diff';
+import { cubicEasingFn } from '../../utils/easings';
+import { createScopedLogger, renderLogger } from '../../utils/logger';
+import ChatInterface from './ChatInterface';
+import type { ModelProvider } from './ChatModelSelector';
+
+const toastAnimation = cssTransition({
+  enter: 'animated fadeInRight',
+  exit: 'animated fadeOutRight',
+});
+
+const logger = createScopedLogger('Chat');
+
+export function Chat() {
+  renderLogger.trace('Chat');
+
+  const { ready, initialMessages, storeMessageHistory } = useChatHistory();
+
+  return (
+    <>
+      {ready && (
+        <ChatImpl
+          initialMessages={initialMessages}
+          storeMessageHistory={storeMessageHistory}
+        />
+      )}
+      <ToastContainer
+        closeButton={({ closeToast }) => {
+          return (
+            <button className="Toastify__close-button" onClick={closeToast}>
+              <Icon icon="ph:x" className="text-lg" />
+            </button>
+          );
+        }}
+        icon={({ type }) => {
+          /**
+           * @todo Handle more types if we need them. This may require extra color palettes.
+           */
+          switch (type) {
+            case 'success': {
+              return (
+                <Icon
+                  icon="ph:check-bold"
+                  className="text-2xl text-green-500"
+                />
+              );
+            }
+            case 'error': {
+              return (
+                <Icon
+                  icon="ph:warning-circle-bold"
+                  className="text-2xl text-red-500"
+                />
+              );
+            }
+          }
+
+          return undefined;
+        }}
+        position="bottom-right"
+        pauseOnFocusLoss
+        transition={toastAnimation}
+      />
+    </>
+  );
+}
+
+interface ChatProps {
+  initialMessages: Message[];
+  storeMessageHistory: (messages: Message[]) => Promise<void>;
+}
+
+export const ChatImpl = memo(
+  ({ initialMessages, storeMessageHistory }: ChatProps) => {
+    useShortcuts();
+
+    const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+    const [chatStarted, setChatStarted] = useState(initialMessages.length > 0);
+
+    const showChat = useChatStore((state) => state.showChat);
+    const selectedProvider = useChatStore((state) => state.selectedProvider);
+    const setStarted = useChatStore((state) => state.setStarted);
+    const setAborted = useChatStore((state) => state.setAborted);
+    const setSelectedProvider = useChatStore(
+      (state) => state.setSelectedProvider,
+    );
+    const setShowHistory = useChatStore((state) => state.setShowHistory);
+
+    useEffect(() => {
+      if (typeof window !== 'undefined') {
+        const saved = localStorage.getItem('selected_ai_provider_v2');
+        if (saved) {
+          setSelectedProvider(saved as ModelProvider);
+        }
+      }
+    }, []);
+
+    useEffect(() => {
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('selected_ai_provider_v2', selectedProvider);
+      }
+    }, [selectedProvider]);
+
+    const [animationScope, animate] = useAnimate();
+
+    const {
+      messages,
+      isLoading,
+      input,
+      handleInputChange,
+      setInput,
+      stop,
+      append,
+    } = useChat({
+      api: '/api/chat',
+      body: {
+        provider: selectedProvider,
+      },
+      onError: (error) => {
+        logger.error('Request failed\n\n', error);
+        toast.error('There was an error processing your request');
+      },
+      onFinish: () => {
+        logger.debug('Finished streaming');
+      },
+      initialMessages,
+    });
+
+    const { enhancingPrompt, promptEnhanced, enhancePrompt, resetEnhancer } =
+      usePromptEnhancer();
+    const { parsedMessages, parseMessages } = useMessageParser();
+
+    const TEXTAREA_MAX_HEIGHT = chatStarted ? 400 : 200;
+
+    useEffect(() => {
+      setStarted(initialMessages.length > 0);
+    }, []);
+
+    useEffect(() => {
+      parseMessages(messages, isLoading);
+
+      if (messages.length > initialMessages.length) {
+        storeMessageHistory(messages).catch((error) =>
+          toast.error(error.message),
+        );
+      }
+    }, [messages, isLoading, parseMessages]);
+
+    const scrollTextArea = () => {
+      const textarea = textareaRef.current;
+
+      if (textarea) {
+        textarea.scrollTop = textarea.scrollHeight;
+      }
+    };
+
+    const abort = () => {
+      stop();
+      setAborted(true);
+      workbenchStore.abortAllActions();
+    };
+
+    useEffect(() => {
+      const textarea = textareaRef.current;
+
+      if (textarea) {
+        textarea.style.height = 'auto';
+
+        const scrollHeight = textarea.scrollHeight;
+
+        textarea.style.height = `${Math.min(scrollHeight, TEXTAREA_MAX_HEIGHT)}px`;
+        textarea.style.overflowY =
+          scrollHeight > TEXTAREA_MAX_HEIGHT ? 'auto' : 'hidden';
+      }
+    }, [input, textareaRef]);
+
+    const runAnimation = async () => {
+      if (chatStarted) {
+        return;
+      }
+
+      await animate(
+        '#intro',
+        { opacity: 0, flex: 1 },
+        { duration: 0.2, ease: cubicEasingFn },
+      );
+
+      setStarted(true);
+
+      setChatStarted(true);
+    };
+
+    const sendMessage = async (
+      _event: React.UIEvent,
+      messageInput?: string,
+    ) => {
+      const _input = messageInput || input;
+
+      if (_input.length === 0 || isLoading) {
+        return;
+      }
+
+      /**
+       * @note (delm) Usually saving files shouldn't take long but it may take longer if there
+       * many unsaved files. In that case we need to block user input and show an indicator
+       * of some kind so the user is aware that something is happening. But I consider the
+       * happy case to be no unsaved files and I would expect users to save their changes
+       * before they send another message.
+       */
+      await workbenchStore.saveAllFiles();
+
+      const fileModifications = workbenchStore.getFileModifcations();
+
+      setAborted(false);
+
+      runAnimation();
+
+      if (fileModifications !== undefined) {
+        const diff = fileModificationsToHTML(fileModifications);
+
+        /**
+         * If we have file modifications we append a new user message manually since we have to prefix
+         * the user input with the file modifications and we don't want the new user input to appear
+         * in the prompt. Using `append` is almost the same as `handleSubmit` except that we have to
+         * manually reset the input and we'd have to manually pass in file attachments. However, those
+         * aren't relevant here.
+         */
+        append({ role: 'user', content: `${diff}\n\n${_input}` });
+
+        /**
+         * After sending a new message we reset all modifications since the model
+         * should now be aware of all the changes.
+         */
+        workbenchStore.resetAllFileModifications();
+      } else {
+        append({ role: 'user', content: _input });
+      }
+
+      setInput('');
+
+      resetEnhancer();
+
+      textareaRef.current?.blur();
+    };
+
+    const [messageRef, scrollRef] = useSnapScroll();
+
+    return (
+      <ChatInterface
+        ref={animationScope}
+        textareaRef={textareaRef as React.RefObject<HTMLTextAreaElement>}
+        input={input}
+        showChat={showChat}
+        chatStarted={chatStarted}
+        isStreaming={isLoading}
+        enhancingPrompt={enhancingPrompt}
+        promptEnhanced={promptEnhanced}
+        sendMessage={sendMessage}
+        messageRef={messageRef}
+        scrollRef={scrollRef}
+        handleInputChange={handleInputChange}
+        handleStop={abort}
+        messages={messages.map((message, i) => {
+          if (message.role === 'user') {
+            return message;
+          }
+
+          return {
+            ...message,
+            content: parsedMessages[i] || '',
+          };
+        })}
+        enhancePrompt={() => {
+          enhancePrompt(
+            input,
+            (input: string) => {
+              setInput(input);
+              scrollTextArea();
+            },
+            selectedProvider,
+          );
+        }}
+        selectedProvider={selectedProvider}
+        onProviderChange={(provider) => setSelectedProvider(provider)}
+        onHistoryClick={() => setShowHistory(true)}
+        buildError={useWorkbenchStore((state) => state.buildError)}
+        onFixError={() => {
+          append({
+            role: 'user',
+            content:
+              'I noticed a build error in the terminal. Please analyze the error and fix the code.',
+          });
+          useWorkbenchStore.getState().setBuildError(false);
+        }}
+      />
+    );
+  },
+);
+
+ChatImpl.displayName = 'ChatImpl';

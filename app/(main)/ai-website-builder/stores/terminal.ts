@@ -1,5 +1,5 @@
 import type { WebContainer } from '@webcontainer/api';
-import type { ITerminal } from '../../types/terminal';
+import type { ITerminal } from '../types/terminal';
 import { useTerminalStore } from './zustand';
 
 export class TerminalStore {

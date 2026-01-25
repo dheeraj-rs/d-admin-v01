@@ -1,7 +1,7 @@
 import type {
   EditorDocument,
   ScrollPosition,
-} from '../../components/editor/codemirror/CodeMirrorEditor';
+} from '../components/editor/CodeMirrorEditor';
 import { useEditorStore, type EditorDocuments } from './zustand';
 import type { FilesStore, FileMap } from './files';
 
