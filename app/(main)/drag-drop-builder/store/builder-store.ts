@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { Component, ComponentWithCategories, Theme } from '../types';
-import { loadTheme } from './builderApi';
+import { loadTheme } from '../lib/api';
 
 export const THEMES: Theme[] = [
   { name: 'Hyper UI', folder: 'hyperui' },
@@ -72,7 +72,7 @@ interface DragDropState {
   ) => Promise<void>;
 }
 
-export const useDragDropStore = create<DragDropState>((set, get) => ({
+export const useBuilderStore = create<DragDropState>((set, get) => ({
   themeIndex: 0,
   components: {},
   error: null,

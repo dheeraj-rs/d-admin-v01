@@ -1,20 +1,20 @@
 import { useState, useEffect } from 'react';
 import ChevronDownIcon from '@heroicons/react/24/outline/ChevronDownIcon';
 import {
-  useDragDropStore,
+  useBuilderStore,
   THEMES,
-} from '../../../drag-drop-builder/drag-drop-view/lib/drag-drop-store';
-import { Category } from '../../../drag-drop-builder/drag-drop-view/components/Category';
-import { Select } from '../../../drag-drop-builder/drag-drop-view/components/Select';
+} from '../store/builder-store';
+import { Category } from './Category';
+import { Select } from './Select';
 
-export function DragDropSidebarContent() {
+export function Sidebar() {
   const {
     themeIndex,
     components,
     setThemeIndex,
     loadThemeComponents,
     setPendingAddComponent,
-  } = useDragDropStore();
+  } = useBuilderStore();
 
   const [selectOpen, setSelectOpen] = useState(false);
   const [isDragging, setIsDragging] = useState(false);

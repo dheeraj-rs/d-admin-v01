@@ -8,7 +8,7 @@ import * as DialogPrimitive from '@radix-ui/react-dialog';
 import XMarkIcon from '@heroicons/react/24/outline/XMarkIcon';
 import DocumentIcon from '@heroicons/react/24/outline/DocumentIcon';
 import CodeBracketIcon from '@heroicons/react/24/outline/CodeBracketIcon';
-import { classMixin } from '../../lib/classMixin';
+import { classMixin } from '../lib/class-utils';
 import { DeploymentModal } from './DeploymentModal';
 
 interface PublishDialogProps {

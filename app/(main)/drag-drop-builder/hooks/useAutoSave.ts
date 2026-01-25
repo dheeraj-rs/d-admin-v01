@@ -3,8 +3,8 @@
  */
 
 import { useRef } from 'react';
-import { debounce } from '../lib/builderUtils';
-import { savePage } from '../lib/builderApi';
+import { debounce } from '../lib/utils';
+import { savePage } from '../lib/api';
 
 export function useAutoSave(standaloneServer: boolean) {
   const savePageDebounced = useRef(

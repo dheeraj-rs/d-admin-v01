@@ -1,20 +1,20 @@
 'use client';
 
 import { useEffect } from 'react';
-import { Header } from './drag-drop-view/components/Header';
-import { DragDropInterface } from './drag-drop-view/components/DragDropInterface';
-import { DragDropWorkbench } from './drag-drop-view/components/DragDropWorkbench';
-import { MobileDragDropSidebar } from './drag-drop-view/components/MobileDragDropSidebar';
+import { Header } from './components/Header';
+import { Interface } from './components/Interface';
+import { Workbench } from './components/Workbench';
+import { SidebarMobile } from './components/SidebarMobile';
 import { Panel, PanelGroup, PanelResizeHandle } from 'react-resizable-panels';
 import { useAiBuilderStore } from './store/ai-builder-store';
 import { useIsMobile } from '@/core/hooks/use-mobile';
-import { useDragDropStore } from './drag-drop-view/lib/drag-drop-store';
-import { ProjectsGallery } from './drag-drop-view/components/ProjectsGallery';
+import { useBuilderStore } from './store/builder-store';
+import { ProjectsGallery } from './components/ProjectsGallery';
 
 export default function DragDropBuilderPage() {
   const { setBuilderView } = useAiBuilderStore();
   const isMobile = useIsMobile();
-  const { isPreview, showProjectsGallery } = useDragDropStore();
+  const { isPreview, showProjectsGallery } = useBuilderStore();
 
   useEffect(() => {
     setBuilderView('drag-drop');
@@ -29,12 +29,12 @@ export default function DragDropBuilderPage() {
         <div className="relative h-full w-full flex-1 overflow-hidden">
           {showProjectsGallery && <ProjectsGallery />}
           {/* Mobile Sidebar Overlay */}
-          <MobileDragDropSidebar />
+          <SidebarMobile />
 
           {/* Mobile Add Component FAB */}
           {isMobile && !isPreview && (
             <button
-              onClick={() => useDragDropStore.getState().setMobileSidebar(true)}
+              onClick={() => useBuilderStore.getState().setMobileSidebar(true)}
               className="fixed right-5 bottom-14 z-40 flex size-14 items-center justify-center rounded-full bg-[var(--d-admin-primary-color)] text-white shadow-lg transition-all hover:scale-105 active:scale-95"
               aria-label="Add Component"
             >
@@ -69,7 +69,7 @@ export default function DragDropBuilderPage() {
                     minSize={isMobile ? 100 : 20}
                     className="h-full"
                   >
-                    <DragDropInterface />
+                    <Interface />
                   </Panel>
                 )}
                 {!isMobile && showInterface &&
@@ -87,7 +87,7 @@ export default function DragDropBuilderPage() {
                   minSize={isMobile ? 100 : 50}
                   className="h-full"
                 >
-                  <DragDropWorkbench />
+                  <Workbench />
                 </Panel>
               </PanelGroup>
             </div>

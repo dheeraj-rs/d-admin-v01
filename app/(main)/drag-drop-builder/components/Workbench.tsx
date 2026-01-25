@@ -5,24 +5,24 @@ import ArrowUpIcon from '@heroicons/react/24/outline/ArrowUpIcon';
 import CursorArrowRaysIcon from '@heroicons/react/24/outline/CursorArrowRaysIcon';
 import ArrowSmallUpIcon from '@heroicons/react/24/outline/ArrowSmallUpIcon'; // Check if needed
 
-import { ImageDialog } from '../../../drag-drop-builder/drag-drop-view/components/dialogs/ImageDialog';
-import { ButtonDialog } from '../../../drag-drop-builder/drag-drop-view/components/dialogs/ButtonDialog';
-import { LinkDialog } from '../../../drag-drop-builder/drag-drop-view/components/dialogs/LinkDialog';
-import { SvgDialog } from '../../../drag-drop-builder/drag-drop-view/components/dialogs/SvgDialog';
-import { ExportDialog } from '../../../drag-drop-builder/drag-drop-view/components/dialogs/ExportDialog';
-import { PublishDialog } from '../../../drag-drop-builder/drag-drop-view/components/dialogs/PublishDialog';
-import { SaveProjectModal } from './dialogs/SaveProjectModal';
+import { ImageDialog } from '../dialogs/ImageDialog';
+import { ButtonDialog } from '../dialogs/ButtonDialog';
+import { LinkDialog } from '../dialogs/LinkDialog';
+import { SvgDialog } from '../dialogs/SvgDialog';
+import { ExportDialog } from '../dialogs/ExportDialog';
+import { PublishDialog } from '../dialogs/PublishDialog';
+import { SaveProjectModal } from '../dialogs/SaveProjectModal';
 import { ReorderModal } from './ReorderModal';
 
 import {
   savePage,
   loadPage,
-} from '../lib/builderApi';
+} from '../lib/api';
 import {
   debounce,
   isEventOnElement,
   isElementTopHalf,
-} from '../lib/builderUtils';
+} from '../lib/utils';
 import {
   Component,
   ComponentWithCategories,
@@ -30,15 +30,15 @@ import {
 import {
   exportAsHTML,
   exportAsReactProject,
-} from '../lib/dragDropZip';
-import { useDragDropStore } from '../lib/drag-drop-store';
-import { useProjectsStore } from '../../store/projects-store';
+} from '../lib/export-utils';
+import { useBuilderStore } from '../store/builder-store';
+import { useProjectsStore } from '../store/projects-store';
 
 import { useIsMobile } from '@/core/hooks/use-mobile';
 import '../styles/builder.css';
 
 
-export function DragDropWorkbench() {
+export function Workbench() {
   const {
     components,
     isPreview,
@@ -67,7 +67,7 @@ export function DragDropWorkbench() {
     showSaveDialog,
     setShowSaveDialog,
     clearCanvasTrigger,
-  } = useDragDropStore();
+  } = useBuilderStore();
   const { currentProjectId, getProject } = useProjectsStore();
   const isMobile = useIsMobile();
 
@@ -164,7 +164,7 @@ export function DragDropWorkbench() {
   }, [currentProjectId, getProject, standaloneServer]);
 
   // Handle header actions
-  const { headerAction, setHeaderAction } = useDragDropStore();
+  const { headerAction, setHeaderAction } = useBuilderStore();
 
   useEffect(() => {
     if (headerAction === 'preparePublish') {

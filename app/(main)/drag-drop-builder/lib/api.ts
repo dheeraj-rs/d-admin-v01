@@ -3,7 +3,7 @@
  */
 
 import { Component } from '../types';
-import { getBaseUrl } from './builderUtils';
+import { getBaseUrl } from './utils';
 
 /**
  * Load theme components from the server

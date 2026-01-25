@@ -12,8 +12,8 @@ import {
   Plus,
   Trash2,
 } from 'lucide-react';
-import { classMixin } from '../../lib/classMixin';
-import { useProjectsStore } from '../../../store/projects-store';
+import { classMixin } from '../lib/class-utils';
+import { useProjectsStore } from '../store/projects-store';
 
 interface DeploymentModalProps {
   isOpen: boolean;

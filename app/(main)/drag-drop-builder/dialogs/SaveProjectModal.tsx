@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import * as DialogPrimitive from '@radix-ui/react-dialog';
 import XMarkIcon from '@heroicons/react/24/outline/XMarkIcon';
-import { useProjectsStore } from '../../../store/projects-store';
+import { useProjectsStore } from '../store/projects-store';
 import { toast } from 'react-toastify';
-import { classMixin } from '../../lib/classMixin';
+import { classMixin } from '../lib/class-utils';
 
 interface SaveProjectModalProps {
   isOpen: boolean;

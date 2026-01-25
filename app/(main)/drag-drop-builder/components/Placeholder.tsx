@@ -1,6 +1,6 @@
 import React from 'react';
 
-export function DragDropPlaceholder() {
+export function Placeholder() {
   return (
     <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center text-[var(--d-admin-text-color-secondary)] select-none">
       {/* Illustration */}

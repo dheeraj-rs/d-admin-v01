@@ -2,15 +2,15 @@
 
 import React, { useState } from 'react';
 import { Icon } from '@iconify/react';
-import { useProjectsStore } from '../../store/projects-store';
-import { useAiBuilderStore } from '../../store/ai-builder-store';
-import { useDragDropStore } from '../lib/drag-drop-store';
-import { savePage } from '../lib/builderApi';
+import { useProjectsStore } from '../store/projects-store';
+import { useAiBuilderStore } from '../store/ai-builder-store';
+import { useBuilderStore } from '../store/builder-store';
+import { savePage } from '../lib/api';
 import * as Tabs from '@radix-ui/react-tabs';
 
 export function ProjectsGallery() {
   const { projects, setCurrentProject, deleteProject } = useProjectsStore();
-  const { setShowProjectsGallery, triggerClearCanvas } = useDragDropStore();
+  const { setShowProjectsGallery, triggerClearCanvas } = useBuilderStore();
 
   // Manage active tab state locally to control animations/styles
   const [activeTab, setActiveTab] = useState('projects');

@@ -2,10 +2,10 @@ import { useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { Icon } from '@iconify/react';
 import { useIsMobile } from '@/core/hooks/use-mobile';
-import { useAiBuilderStore } from '../../store/ai-builder-store';
-import { useProjectsStore } from '../../store/projects-store';
-import { useDragDropStore } from '../lib/drag-drop-store';
-import { savePage } from '../lib/builderApi';
+import { useAiBuilderStore } from '../store/ai-builder-store';
+import { useProjectsStore } from '../store/projects-store';
+import { useBuilderStore } from '../store/builder-store';
+import { savePage } from '../lib/api';
 
 export function Header() {
     const router = useRouter();
@@ -23,7 +23,7 @@ export function Header() {
         showProjectsGallery,
         setShowProjectsGallery,
         triggerClearCanvas,
-    } = useDragDropStore();
+    } = useBuilderStore();
 
     const { currentProjectId, getProject, setCurrentProject } = useProjectsStore();
     const currentProjectName = currentProjectId ? getProject(currentProjectId)?.name : null;
@@ -190,7 +190,7 @@ export function Header() {
                             <button
                                 className="items-center justify-center gap-2 font-medium min-w-0 max-w-full rounded-md focus-visible:outline-2 disabled:op-50 relative disabled:cursor-not-allowed focus-visible:outline-[var(--d-admin-blue-600)] bg-[var(--d-admin-blue-600)] border border-[var(--d-admin-blue-600)] text-white hover:bg-[var(--d-admin-blue-700)] transition-colors flex gap-1.7 shrink-0 h-8 text-sm px-3 ml-auto"
                                 onClick={() =>
-                                    useDragDropStore.getState().setMobileSidebar(true)
+                                    useBuilderStore.getState().setMobileSidebar(true)
                                 }
                             >
                                 <Icon icon="lucide:plus" className="text-lg" />

@@ -5,7 +5,7 @@
 import React from 'react';
 import * as SelectPrimitive from '@radix-ui/react-select';
 import CheckIcon from '@heroicons/react/24/outline/CheckIcon';
-import { classMixin } from '../lib/classMixin';
+import { classMixin } from '../lib/class-utils';
 
 interface SelectProps {
   defaultValue: string;

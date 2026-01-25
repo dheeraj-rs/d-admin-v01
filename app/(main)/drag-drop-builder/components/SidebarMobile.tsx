@@ -1,15 +1,15 @@
 import React from 'react';
 import { XMarkIcon, Bars3BottomLeftIcon } from '@heroicons/react/24/outline';
-import { useDragDropStore } from '../../../drag-drop-builder/drag-drop-view/lib/drag-drop-store';
-import { DragDropSidebarContent } from './DragDropSidebarContent';
+import { useBuilderStore } from '../store/builder-store';
+import { Sidebar } from './Sidebar';
 
-export function MobileDragDropSidebar() {
+export function SidebarMobile() {
   const {
     showMobileSidebar,
     setMobileSidebar,
     showReorderModal,
     setShowReorderModal,
-  } = useDragDropStore();
+  } = useBuilderStore();
   const [height, setHeight] = React.useState('45vh');
   const [isResizing, setIsResizing] = React.useState(false);
   const startY = React.useRef(0);
@@ -86,7 +86,7 @@ export function MobileDragDropSidebar() {
         </div>
       </div>
       <div className="flex-1 overflow-x-hidden overflow-y-auto p-2 pb-8">
-        <DragDropSidebarContent />
+        <Sidebar />
       </div>
     </div>
   );

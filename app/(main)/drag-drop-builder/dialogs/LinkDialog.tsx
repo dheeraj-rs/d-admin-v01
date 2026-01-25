@@ -1,49 +1,47 @@
 /**
- * SVG Dialog Component
- * Allows users to update SVG path data
+ * Link Dialog Component
+ * Allows users to update link URLs and target
  */
 
 import React, { useEffect, useState } from 'react';
 import * as DialogPrimitive from '@radix-ui/react-dialog';
 import XMarkIcon from '@heroicons/react/24/outline/XMarkIcon';
-import { classMixin } from '../../lib/classMixin';
+import { classMixin } from '../lib/class-utils';
 
-interface SvgDialogProps {
+interface LinkDialogProps {
   isOpen: boolean;
   onClose: () => void;
-  element: SVGElement | SVGPathElement | null;
+  element: HTMLAnchorElement | null;
 }
 
-export function SvgDialog({ isOpen, onClose, element }: SvgDialogProps) {
-  const [path, setPath] = useState('');
+export function LinkDialog({ isOpen, onClose, element }: LinkDialogProps) {
+  const [link, setLink] = useState('');
+  const [newTab, setNewTab] = useState(true);
 
   useEffect(() => {
-    if (element) {
-      if (element.tagName === 'path') {
-        // eslint-disable-next-line
-                setPath(element.getAttribute('d') ?? '');
-      } else if (element.tagName === 'svg') {
-        const pathElement = element.querySelector('path');
-        setPath(pathElement?.getAttribute('d') ?? '');
-      } else {
-        setPath('');
-      }
+    if (element && element.href) {
+      const url = new URL(element.href);
+      const linkNew =
+        url.hostname === 'localhost'
+          ? url.pathname.replace('/', '') + url.hash
+          : element.href;
+      setLink(linkNew);
     } else {
-      setPath('');
+      setLink('');
     }
   }, [element]);
 
   const onSave = () => {
     if (!element) return;
 
+    const linkElement = element;
     onClose();
+    setLink('');
 
-    if (element.tagName === 'path') {
-      element.setAttribute('d', path);
-    } else if (element.tagName === 'svg') {
-      const pathElement = element.querySelector('path');
-      pathElement?.setAttribute('d', path);
-    }
+    // eslint-disable-next-line
+        linkElement.href = link;
+    // eslint-disable-next-line
+        linkElement.target = newTab ? '_blank' : '_self';
   };
 
   return (
@@ -58,7 +56,7 @@ export function SvgDialog({ isOpen, onClose, element }: SvgDialogProps) {
             )}
           >
             <DialogPrimitive.Title className="text-sm font-medium text-(--d-admin-text-color)">
-              Update SVG Path
+              Update Link
             </DialogPrimitive.Title>
 
             <div className="mt-8 mb-4">
@@ -68,10 +66,19 @@ export function SvgDialog({ isOpen, onClose, element }: SvgDialogProps) {
                     <input
                       type="text"
                       className="mb-4 block w-full rounded-lg border border-(--d-admin-surface-border) bg-(--d-admin-surface-ground) p-2.5 text-sm text-(--d-admin-text-color)"
-                      placeholder="Eg. d = 'M150 0 L75 200 L225 200 Z'"
-                      defaultValue={path}
-                      onChange={(e) => setPath(e.target.value)}
+                      placeholder="Eg. https://github.com/LiveDuo/destack"
+                      value={link}
+                      onChange={(e) => setLink(e.target.value)}
                     />
+                    <div className="ml-4 flex items-center">
+                      <p>Open in new tab</p>
+                      <input
+                        defaultChecked={newTab}
+                        type="checkbox"
+                        onChange={(e) => setNewTab(e.target.checked)}
+                        className="ml-4 h-4 w-4 border-(--d-admin-surface-border) bg-(--d-admin-surface-ground) text-(--d-admin-blue-600) focus:ring-2 focus:ring-(--d-admin-blue-600)"
+                      />
+                    </div>
                   </div>
                 </div>
               </div>

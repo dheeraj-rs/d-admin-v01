@@ -7,8 +7,8 @@ import React, { useState } from 'react';
 import * as DialogPrimitive from '@radix-ui/react-dialog';
 import XMarkIcon from '@heroicons/react/24/outline/XMarkIcon';
 import ChevronDownIcon from '@heroicons/react/24/outline/ChevronDownIcon';
-import { classMixin } from '../../lib/classMixin';
-import { Select } from '../Select';
+import { classMixin } from '../lib/class-utils';
+import { Select } from '../components/Select';
 
 const capitalize = (text: string) =>
   text[0].toUpperCase() + text.substring(1, text.length);

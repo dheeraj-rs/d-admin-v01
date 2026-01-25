@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import Squares2X2Icon from '@heroicons/react/24/outline/Squares2X2Icon';
 import ArrowSmallUpIcon from '@heroicons/react/24/outline/ArrowSmallUpIcon';
-import { getImageUrl } from '../lib/builderUtils';
+import { getImageUrl } from '../lib/utils';
 import { Component } from '../types';
-import { THEMES } from '../lib/drag-drop-store';
+import { THEMES } from '../store/builder-store';
 
 interface CategoryProps {
   themeIndex: number;
