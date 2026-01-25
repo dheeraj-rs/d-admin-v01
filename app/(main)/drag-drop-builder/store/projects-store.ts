@@ -9,6 +9,7 @@ export interface Project {
   updatedAt: number;
   thumbnail?: string;
   category?: 'custom' | 'template';
+  deploymentUrl?: string;
 }
 
 interface ProjectsState {

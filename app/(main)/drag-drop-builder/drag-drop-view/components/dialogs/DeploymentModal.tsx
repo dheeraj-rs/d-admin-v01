@@ -13,6 +13,7 @@ import {
   Trash2,
 } from 'lucide-react';
 import { classMixin } from '../../lib/classMixin';
+import { useProjectsStore } from '../../../store/projects-store';
 
 interface DeploymentModalProps {
   isOpen: boolean;
@@ -35,6 +36,8 @@ export function DeploymentModal({
   htmlContent,
   deploymentFormat,
 }: DeploymentModalProps) {
+  const { saveProject, currentProjectId } = useProjectsStore();
+  
   const [projectName, setProjectName] = useState('');
   const [isDeploying, setIsDeploying] = useState(false);
   const [deploymentStatus, setDeploymentStatus] = useState<
@@ -46,6 +49,11 @@ export function DeploymentModal({
   const [progress, setProgress] = useState(0);
   const [showAdvanced, setShowAdvanced] = useState(false);
   const [envVars, setEnvVars] = useState<{ key: string; value: string }[]>([]);
+  
+  // AI Fix State
+  const [errorLogs, setErrorLogs] = useState('');
+  const [isFixing, setIsFixing] = useState(false);
+  const [suggestedFixes, setSuggestedFixes] = useState<string[]>([]);
 
   // Generate project name on mount
   useEffect(() => {
@@ -121,6 +129,9 @@ export function DeploymentModal({
               setDeploymentStatus('success');
               setDeploymentUrl(data.url);
               setIsDeploying(false);
+              
+              // Save project with deployment URL
+              saveProjectWithDeploymentUrl(data.url);
             }, 2000);
           } else if (data.status === 'ERROR' || data.status === 'CANCELED') {
             clearInterval(pollInterval);
@@ -129,6 +140,9 @@ export function DeploymentModal({
               data.error?.message ||
                 'Deployment failed or was canceled by Vercel.',
             );
+            setErrorLogs(
+              data.error?.logs || JSON.stringify(data.error || {}, null, 2),
+            );
             setIsDeploying(false);
           }
         }
@@ -136,6 +150,18 @@ export function DeploymentModal({
         console.error('Polling error:', error);
       }
     }, 3000);
+  };
+
+  const saveProjectWithDeploymentUrl = (url: string) => {
+    const projectId = currentProjectId || `project-${Date.now()}`;
+    
+    saveProject({
+      id: projectId,
+      name: projectName,
+      html: htmlContent,
+      deploymentUrl: url,
+      category: 'custom',
+    });
   };
 
   const handleDeploy = async () => {
@@ -148,23 +174,18 @@ export function DeploymentModal({
     setProgress(0);
 
     try {
-      let deploymentFiles;
-      let framework = null;
+      const imageUrls = extractUploadedImageUrls(htmlContent);
+      let processedHtml = htmlContent;
 
-      if (deploymentFormat === 'html') {
-        // HTML deployment - embed images as base64
-        const imageUrls = extractUploadedImageUrls(htmlContent);
-        let processedHtml = htmlContent;
+      for (const imageUrl of imageUrls) {
+        const base64 = await fetchImageAsBase64(imageUrl);
+        processedHtml = processedHtml.replace(
+          new RegExp(imageUrl.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g'),
+          base64,
+        );
+      }
 
-        for (const imageUrl of imageUrls) {
-          const base64 = await fetchImageAsBase64(imageUrl);
-          processedHtml = processedHtml.replace(
-            new RegExp(imageUrl.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g'),
-            base64,
-          );
-        }
-
-        const fullHTML = `<!DOCTYPE html>
+      const fullHTML = `<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -177,144 +198,12 @@ ${processedHtml}
 </body>
 </html>`;
 
-        deploymentFiles = [
-          {
-            path: 'index.html',
-            content: fullHTML,
-          },
-        ];
-      } else {
-        // React/Vite deployment
-        framework = 'vite';
-        
-        // Create React component from HTML
-        const componentContent = `export default function App() {
-  return (
-    <div dangerouslySetInnerHTML={{ __html: \`${htmlContent.replace(/`/g, '\\`')}\` }} />
-  );
-}`;
-
-        deploymentFiles = [
-          {
-            path: 'src/App.tsx',
-            content: componentContent,
-          },
-          {
-            path: 'src/main.tsx',
-            content: `import React from 'react';
-import ReactDOM from 'react-dom/client';
-import App from './App';
-import './index.css';
-
-ReactDOM.createRoot(document.getElementById('root')!).render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
-);`,
-          },
-          {
-            path: 'src/index.css',
-            content: `@tailwind base;
-@tailwind components;
-@tailwind utilities;`,
-          },
-          {
-            path: 'index.html',
-            content: `<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>${projectName}</title>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
-  </body>
-</html>`,
-          },
-          {
-            path: 'package.json',
-            content: JSON.stringify({
-              name: projectName,
-              private: true,
-              version: '0.0.0',
-              type: 'module',
-              scripts: {
-                dev: 'vite',
-                build: 'tsc && vite build',
-                preview: 'vite preview',
-              },
-              dependencies: {
-                react: '^18.2.0',
-                'react-dom': '^18.2.0',
-              },
-              devDependencies: {
-                '@types/react': '^18.2.43',
-                '@types/react-dom': '^18.2.17',
-                '@vitejs/plugin-react': '^4.2.1',
-                autoprefixer: '^10.4.16',
-                postcss: '^8.4.32',
-                tailwindcss: '^3.3.6',
-                typescript: '^5.2.2',
-                vite: '^5.0.8',
-              },
-            }, null, 2),
-          },
-          {
-            path: 'vite.config.ts',
-            content: `import { defineConfig } from 'vite';
-import react from '@vitejs/plugin-react';
-
-export default defineConfig({
-  plugins: [react()],
-});`,
-          },
-          {
-            path: 'tsconfig.json',
-            content: JSON.stringify({
-              compilerOptions: {
-                target: 'ES2020',
-                useDefineForClassFields: true,
-                lib: ['ES2020', 'DOM', 'DOM.Iterable'],
-                module: 'ESNext',
-                skipLibCheck: true,
-                moduleResolution: 'bundler',
-                allowImportingTsExtensions: true,
-                resolveJsonModule: true,
-                isolatedModules: true,
-                noEmit: true,
-                jsx: 'react-jsx',
-                strict: true,
-                noUnusedLocals: true,
-                noUnusedParameters: true,
-                noFallthroughCasesInSwitch: true,
-              },
-              include: ['src'],
-              references: [{ path: './tsconfig.node.json' }],
-            }, null, 2),
-          },
-          {
-            path: 'tailwind.config.js',
-            content: `export default {
-  content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
-  theme: {
-    extend: {},
-  },
-  plugins: [],
-};`,
-          },
-          {
-            path: 'postcss.config.js',
-            content: `export default {
-  plugins: {
-    tailwindcss: {},
-    autoprefixer: {},
-  },
-};`,
-          },
-        ];
-      }
+      const deploymentFiles = [
+        {
+          path: 'index.html',
+          content: fullHTML,
+        },
+      ];
 
       const response = await fetch('/api/deploy', {
         method: 'POST',
@@ -324,7 +213,7 @@ export default defineConfig({
         body: JSON.stringify({
           projectName,
           files: deploymentFiles,
-          framework,
+          framework: null,
           envVars: showAdvanced ? envVars : [],
         }),
       });
@@ -340,7 +229,48 @@ export default defineConfig({
       console.error('Deployment error:', error);
       setDeploymentStatus('error');
       setErrorMessage(error.message || 'An error occurred during deployment');
+      setErrorLogs(error.stack || error.toString());
       setIsDeploying(false);
+    }
+  };
+
+  const handleAIFix = async () => {
+    setIsFixing(true);
+    setSuggestedFixes([]);
+
+    try {
+      const response = await fetch('/api/fix-deployment', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          errorLogs,
+          htmlContent,
+          projectName,
+        }),
+      });
+
+      const result = await response.json();
+
+      if (response.ok && result.success) {
+        setSuggestedFixes(result.fixes || []);
+
+        if (result.fixedHtml) {
+          localStorage.setItem('drag-drop-builder-html', result.fixedHtml);
+        }
+
+        setTimeout(async () => {
+          setIsFixing(false);
+          await handleDeploy();
+        }, 1500);
+      } else {
+        throw new Error(result.error || 'Failed to fix deployment');
+      }
+    } catch (error: any) {
+      console.error('AI fix error:', error);
+      setErrorMessage(`AI Fix Failed: ${error.message}`);
+      setIsFixing(false);
     }
   };
 
@@ -349,21 +279,39 @@ export default defineConfig({
       setDeploymentStatus('idle');
       setDeploymentUrl('');
       setErrorMessage('');
+      setProgress(0);
+      setCurrentStep(0);
       onClose();
     }
   };
 
+  const hasContent = htmlContent.trim().length > 0;
+
   return (
-    <DialogPrimitive.Root open={isOpen} onOpenChange={handleClose}>
+    <DialogPrimitive.Root open={isOpen} onOpenChange={(open) => {
+      if (!open && !isDeploying) {
+        handleClose();
+      }
+    }}>
       <DialogPrimitive.Portal>
         <DialogPrimitive.Overlay className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm" />
         <DialogPrimitive.Content
           className={classMixin(
             'fixed z-50 rounded-xl bg-[var(--d-admin-surface-card)] shadow-2xl',
-            'w-[90vw] max-w-2xl max-h-[90vh] overflow-y-auto',
+            'w-[90vw] max-w-4xl max-h-[90vh] overflow-y-auto',
             'top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 transform',
             'border border-[var(--d-admin-surface-border)]',
           )}
+          onPointerDownOutside={(e) => {
+            if (isDeploying) {
+              e.preventDefault();
+            }
+          }}
+          onEscapeKeyDown={(e) => {
+            if (isDeploying) {
+              e.preventDefault();
+            }
+          }}
         >
           {/* Header */}
           <div className="sticky top-0 z-10 border-b border-[var(--d-admin-surface-border)] bg-[var(--d-admin-surface-card)] px-6 py-4">
@@ -376,8 +324,8 @@ export default defineConfig({
           {/* Content */}
           <div className="p-6">
             {deploymentStatus === 'idle' && (
-              <div className="space-y-6">
-                <p className="text-sm text-[var(--d-admin-text-color-secondary)]">
+              <>
+                <p className="mb-6 text-sm text-[var(--d-admin-text-color-secondary)]">
                   Deploy your page to a global edge network with a single click.
                 </p>
 
@@ -501,7 +449,7 @@ export default defineConfig({
 
                   <button
                     onClick={handleDeploy}
-                    disabled={!projectName || isDeploying}
+                    disabled={!projectName || isDeploying || !hasContent}
                     className="flex w-full items-center justify-center gap-2 rounded-md bg-[var(--d-admin-blue-600)] px-4 py-3 font-medium text-white transition-colors hover:bg-[var(--d-admin-blue-700)] disabled:cursor-not-allowed disabled:opacity-50"
                   >
                     {isDeploying ? (
@@ -516,8 +464,14 @@ export default defineConfig({
                       </>
                     )}
                   </button>
+
+                  {!hasContent && (
+                    <p className="text-center text-sm text-[var(--d-admin-orange-500)]">
+                      No content found. Please create a page in the builder first.
+                    </p>
+                  )}
                 </div>
-              </div>
+              </>
             )}
 
             {deploymentStatus === 'deploying' && (
@@ -650,16 +604,67 @@ export default defineConfig({
                   </div>
                 )}
 
-                <div className="flex gap-4">
+                {errorLogs && (
+                  <details className="mb-6 rounded-lg border border-[var(--d-admin-surface-border)] bg-[var(--d-admin-surface-ground)] p-4">
+                    <summary className="cursor-pointer text-sm font-medium text-[var(--d-admin-text-color)] transition-colors hover:text-[var(--d-admin-blue-600)]">
+                      📋 View Error Logs
+                    </summary>
+                    <pre className="mt-3 max-h-64 overflow-x-auto overflow-y-auto rounded border border-[var(--d-admin-surface-border)] bg-[var(--d-admin-surface-section)] p-3 text-xs whitespace-pre-wrap text-[var(--d-admin-text-color-secondary)]">
+                      {errorLogs}
+                    </pre>
+                  </details>
+                )}
+
+                {suggestedFixes.length > 0 && (
+                  <div className="mb-6 rounded-lg border border-[var(--d-admin-blue-200)] bg-[var(--d-admin-blue-50)] p-4">
+                    <h3 className="mb-2 flex items-center gap-2 text-sm font-medium text-[var(--d-admin-blue-900)]">
+                      <span>✨</span> AI Suggested Fixes:
+                    </h3>
+                    <ul className="list-inside list-disc space-y-1 text-sm text-[var(--d-admin-blue-700)]">
+                      {suggestedFixes.map((fix, index) => (
+                        <li key={index}>{fix}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+
+                <div className="flex flex-col gap-3 sm:flex-row">
+                  <button
+                    onClick={handleAIFix}
+                    disabled={isFixing}
+                    className="flex flex-1 items-center justify-center gap-2 rounded-md bg-[var(--d-admin-blue-600)] px-4 py-3 font-medium text-white transition-colors hover:bg-[var(--d-admin-blue-700)] disabled:cursor-not-allowed disabled:opacity-50"
+                  >
+                    {isFixing ? (
+                      <>
+                        <Loader2 className="h-5 w-5 animate-spin" />
+                        Analyzing & Fixing...
+                      </>
+                    ) : (
+                      <>
+                        <span>✨</span>
+                        Fix with AI
+                      </>
+                    )}
+                  </button>
+
                   <button
                     onClick={() => handleDeploy()}
-                    className="flex-1 rounded-md bg-[var(--d-admin-orange-600)] px-4 py-3 font-medium text-white transition-colors hover:bg-[var(--d-admin-orange-700)]"
+                    disabled={isFixing}
+                    className="flex flex-1 items-center justify-center gap-2 rounded-md bg-[var(--d-admin-orange-600)] px-4 py-3 font-medium text-white transition-colors hover:bg-[var(--d-admin-orange-700)] disabled:opacity-50"
                   >
+                    <Rocket className="h-5 w-5" />
                     Retry Deployment
                   </button>
+
                   <button
-                    onClick={() => setDeploymentStatus('idle')}
-                    className="flex-1 rounded-md border border-[var(--d-admin-surface-border)] bg-[var(--d-admin-surface-ground)] px-4 py-3 font-medium text-[var(--d-admin-text-color)] transition-colors hover:bg-[var(--d-admin-surface-hover)]"
+                    onClick={() => {
+                      setDeploymentStatus('idle');
+                      setErrorMessage('');
+                      setErrorLogs('');
+                      setSuggestedFixes([]);
+                    }}
+                    disabled={isFixing}
+                    className="flex-1 rounded-md border border-[var(--d-admin-surface-border)] bg-[var(--d-admin-surface-ground)] px-4 py-3 font-medium text-[var(--d-admin-text-color)] transition-colors hover:bg-[var(--d-admin-surface-hover)] disabled:opacity-50"
                   >
                     Back
                   </button>

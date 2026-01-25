@@ -190,10 +190,23 @@ export function ProjectsGallery() {
 
                       {/* Hover Overlay */}
                       <div className="absolute inset-0 flex items-center justify-center gap-3 bg-black/40 opacity-0 backdrop-blur-[2px] transition-all duration-300 group-hover:opacity-100">
-                        <button className="flex items-center gap-2 rounded-full bg-[var(--d-admin-surface-ground)] px-5 py-2 text-xs font-bold tracking-wider text-[var(--d-admin-text-color)] uppercase shadow-xl transition-transform hover:scale-105 hover:bg-[var(--d-admin-surface-hover)] active:scale-95">
-                          <Icon icon="lucide:eye" className="size-3.5" />
-                          Preview
-                        </button>
+                        {project.deploymentUrl ? (
+                          <a
+                            href={project.deploymentUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            onClick={(e) => e.stopPropagation()}
+                            className="flex items-center gap-2 rounded-full bg-[var(--d-admin-blue-600)] px-5 py-2 text-xs font-bold tracking-wider text-white uppercase shadow-xl transition-transform hover:scale-105 hover:bg-[var(--d-admin-blue-700)] active:scale-95"
+                          >
+                            <Icon icon="lucide:external-link" className="size-3.5" />
+                            Live Preview
+                          </a>
+                        ) : (
+                          <button className="flex items-center gap-2 rounded-full bg-[var(--d-admin-surface-ground)] px-5 py-2 text-xs font-bold tracking-wider text-[var(--d-admin-text-color)] uppercase shadow-xl transition-transform hover:scale-105 hover:bg-[var(--d-admin-surface-hover)] active:scale-95">
+                            <Icon icon="lucide:eye" className="size-3.5" />
+                            Preview
+                          </button>
+                        )}
                       </div>
                     </div>
 
@@ -206,6 +219,13 @@ export function ProjectsGallery() {
                         <p className="mt-0.5 flex items-center gap-1.5 text-[10px] text-[var(--d-admin-text-color-secondary)]">
                           <Icon icon="lucide:clock" className="size-2.5" />
                           {new Date(project.updatedAt).toLocaleDateString()}
+                          {project.deploymentUrl && (
+                            <>
+                              <span className="mx-1">•</span>
+                              <Icon icon="lucide:globe" className="size-2.5 text-[var(--d-admin-blue-600)]" />
+                              <span className="text-[var(--d-admin-blue-600)]">Deployed</span>
+                            </>
+                          )}
                         </p>
                       </div>
                       
