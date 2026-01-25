@@ -2,13 +2,13 @@ import { useDragDropStore } from '../../../drag-drop-builder/drag-drop-view/lib/
 import { DragDropSidebarContent } from './DragDropSidebarContent';
 
 export function DragDropInterface() {
-    const { isPreview } = useDragDropStore();
+  const { isPreview } = useDragDropStore();
 
-    if (isPreview) return null;
+  if (isPreview) return null;
 
-    return (
-        <div className="h-full w-full border-r border-[var(--d-admin-surface-border)] overflow-hidden">
-            <DragDropSidebarContent />
-        </div>
-    );
+  return (
+    <div className="h-full w-full overflow-hidden border-r border-[var(--d-admin-surface-border)]">
+      <DragDropSidebarContent />
+    </div>
+  );
 }

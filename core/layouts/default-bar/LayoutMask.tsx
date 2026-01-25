@@ -1,5 +1,5 @@
 const LayoutMask = () => {
-    return <div className="layout__mask" />;
+  return <div className="layout__mask" />;
 };
 
 export default LayoutMask;

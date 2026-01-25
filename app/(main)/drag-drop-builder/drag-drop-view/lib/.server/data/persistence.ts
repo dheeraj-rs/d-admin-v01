@@ -44,7 +44,7 @@ export const loadData = async (route: string, ext: string): Promise<string> => {
  */
 const fixPaths = (c: { name: string; content: string }, basePath: string) => {
   const nameWithoutBasePath = getRouteFromFilename(
-    c.name.replace(basePath, '')
+    c.name.replace(basePath, ''),
   );
   const nameWithFixSeps = nameWithoutBasePath.split(path.sep).join('/');
   return { content: c.content, name: nameWithFixSeps };
@@ -62,8 +62,8 @@ export const loadAllData = async (): Promise<DataType[]> => {
       fs.promises
         .readFile(f, 'utf8')
         .then((c) => ({ name: f, content: c }))
-        .then((c) => fixPaths(c, basePath))
-    )
+        .then((c) => fixPaths(c, basePath)),
+    ),
   );
 
   return data;
@@ -75,7 +75,7 @@ export const loadAllData = async (): Promise<DataType[]> => {
 export const updateData = async (
   route: string,
   ext: string,
-  data: string
+  data: string,
 ): Promise<void> => {
   const fileName = getFileNameFromRoute(route);
   const updatePath = path.join(rootPath, dataFolder);
@@ -87,6 +87,6 @@ export const updateData = async (
 
   await fs.promises.writeFile(
     path.join(updatePath, `${fileName}.${ext}`),
-    data
+    data,
   );
 };

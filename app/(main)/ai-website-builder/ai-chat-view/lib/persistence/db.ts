@@ -46,7 +46,7 @@ export async function setMessages(
   id: string,
   messages: Message[],
   urlId?: string,
-  description?: string
+  description?: string,
 ): Promise<void> {
   return new Promise((resolve, reject) => {
     const transaction = db.transaction('chats', 'readwrite');
@@ -67,14 +67,14 @@ export async function setMessages(
 
 export async function getMessages(
   db: IDBDatabase,
-  id: string
+  id: string,
 ): Promise<ChatHistoryItem> {
   return (await getMessagesById(db, id)) || (await getMessagesByUrlId(db, id));
 }
 
 export async function getMessagesByUrlId(
   db: IDBDatabase,
-  id: string
+  id: string,
 ): Promise<ChatHistoryItem> {
   return new Promise((resolve, reject) => {
     const transaction = db.transaction('chats', 'readonly');
@@ -89,7 +89,7 @@ export async function getMessagesByUrlId(
 
 export async function getMessagesById(
   db: IDBDatabase,
-  id: string
+  id: string,
 ): Promise<ChatHistoryItem> {
   return new Promise((resolve, reject) => {
     const transaction = db.transaction('chats', 'readonly');
@@ -121,7 +121,7 @@ export async function getNextId(db: IDBDatabase): Promise<string> {
     request.onsuccess = () => {
       const highestId = request.result.reduce(
         (cur, acc) => Math.max(+cur, +acc),
-        0
+        0,
       );
       resolve(String(+highestId + 1));
     };

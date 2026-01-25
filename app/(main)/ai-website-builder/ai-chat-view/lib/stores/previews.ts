@@ -37,9 +37,11 @@ export class PreviewsStore {
         console.log('[PreviewsStore] Closing preview on port:', port);
         this.#availablePreviews.delete(port);
         const currentPreviews = usePreviewStore.getState().previews;
-        usePreviewStore.getState().setPreviews(
-          currentPreviews.filter((preview) => preview.port !== port)
-        );
+        usePreviewStore
+          .getState()
+          .setPreviews(
+            currentPreviews.filter((preview) => preview.port !== port),
+          );
 
         return;
       }

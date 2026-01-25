@@ -9,7 +9,7 @@ export const themeSelection = new Compartment();
 
 export function getTheme(
   theme: Theme,
-  settings: EditorSettings = {}
+  settings: EditorSettings = {},
 ): Extension {
   return [
     getEditorTheme(settings),
@@ -21,7 +21,7 @@ export function getTheme(
 
 export function reconfigureTheme(theme: Theme) {
   return themeSelection.reconfigure(
-    theme === 'dark' ? getDarkTheme() : getLightTheme()
+    theme === 'dark' ? getDarkTheme() : getLightTheme(),
   );
 }
 
@@ -36,8 +36,7 @@ function getEditorTheme(settings: EditorSettings) {
       color: 'var(--d-admin-text-color)',
     },
     '.cm-cursor': {
-      borderLeft:
-        '2px solid var(--d-admin-text-color-secondary)',
+      borderLeft: '2px solid var(--d-admin-text-color-secondary)',
     },
     '.cm-scroller': {
       lineHeight: '1.5',
@@ -49,16 +48,15 @@ function getEditorTheme(settings: EditorSettings) {
       padding: '0 0 0 4px',
     },
     '&.cm-focused > .cm-scroller > .cm-selectionLayer .cm-selectionBackground':
-    {
-      backgroundColor:
-        'var(--d-admin-blue-600) !important',
-      opacity: '0.3',
-    },
+      {
+        backgroundColor: 'var(--d-admin-blue-600) !important',
+        opacity: '0.3',
+      },
     '&:not(.cm-focused) > .cm-scroller > .cm-selectionLayer .cm-selectionBackground':
-    {
-      backgroundColor: 'var(--d-admin-blue-200)',
-      opacity: '0.3',
-    },
+      {
+        backgroundColor: 'var(--d-admin-blue-200)',
+        opacity: '0.3',
+      },
     '&.cm-focused > .cm-scroller .cm-matchingBracket': {
       backgroundColor: 'var(--d-admin-surface-hover)',
     },

@@ -50,7 +50,7 @@ export function useSnapScroll() {
       if (onScrollRef.current) {
         scrollNodeRef.current?.removeEventListener(
           'scroll',
-          onScrollRef.current
+          onScrollRef.current,
         );
       }
 

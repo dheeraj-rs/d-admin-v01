@@ -1,7 +1,5 @@
 function OwnerDashboardPage() {
-  return (
-    <h1>Owner Dashboard Page</h1>
-  )
+  return <h1>Owner Dashboard Page</h1>;
 }
 
-export default OwnerDashboardPage
+export default OwnerDashboardPage;

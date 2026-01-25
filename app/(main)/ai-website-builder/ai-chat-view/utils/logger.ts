@@ -89,7 +89,7 @@ function log(level: DebugLevel, scope: string | undefined, messages: any[]) {
   console.log(
     `%c${level.toUpperCase()}${scope ? `%c %c${scope}` : ''}`,
     ...styles,
-    allMessages
+    allMessages,
   );
 }
 

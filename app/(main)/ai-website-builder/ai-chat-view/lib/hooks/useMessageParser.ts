@@ -66,7 +66,7 @@ export function useMessageParser() {
         if (message.role === 'assistant') {
           const newParsedContent = messageParser.parse(
             message.id,
-            (message as any).content
+            (message as any).content,
           );
 
           setParsedMessages((prevParsed) => ({
@@ -78,7 +78,7 @@ export function useMessageParser() {
         }
       }
     },
-    []
+    [],
   );
 
   return { parsedMessages, parseMessages };

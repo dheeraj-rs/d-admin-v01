@@ -123,7 +123,7 @@ export interface ThemeButtonProps {
 export interface ScaleControlProps {
   layoutConfig: LayoutConfig;
   setLayoutConfig: (
-    value: LayoutConfig | ((prevState: LayoutConfig) => LayoutConfig)
+    value: LayoutConfig | ((prevState: LayoutConfig) => LayoutConfig),
   ) => void;
   scales: number[];
   t: (key: string) => string;

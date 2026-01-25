@@ -11,7 +11,7 @@ export async function GET(request: NextRequest) {
           success: false,
           error: 'Deployment ID is required',
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -23,7 +23,7 @@ export async function GET(request: NextRequest) {
           success: false,
           error: 'Vercel token not configured',
         },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -49,7 +49,7 @@ export async function GET(request: NextRequest) {
           error:
             errorData.error?.message || 'Failed to fetch deployment status',
         },
-        { status: statusResponse.status }
+        { status: statusResponse.status },
       );
     }
 
@@ -62,13 +62,21 @@ export async function GET(request: NextRequest) {
     }
 
     // IMPORTANT: Filter out any localhost URLs - should never show development URLs
-    if (deploymentUrl.includes('localhost') || deploymentUrl.includes('127.0.0.1')) {
+    if (
+      deploymentUrl.includes('localhost') ||
+      deploymentUrl.includes('127.0.0.1')
+    ) {
       // If somehow we got a localhost URL, fall back to the statusData.url
       deploymentUrl = `https://${statusData.url}`;
 
       // If that's also localhost (shouldn't happen), construct from project name
-      if (deploymentUrl.includes('localhost') || deploymentUrl.includes('127.0.0.1')) {
-        console.error('Deployment URL contains localhost, this should not happen');
+      if (
+        deploymentUrl.includes('localhost') ||
+        deploymentUrl.includes('127.0.0.1')
+      ) {
+        console.error(
+          'Deployment URL contains localhost, this should not happen',
+        );
         deploymentUrl = ''; // Return empty to trigger error handling
       }
     }
@@ -77,10 +85,16 @@ export async function GET(request: NextRequest) {
       success: true,
       status: statusData.readyState || statusData.state, // Vercel uses 'readyState'
       url: deploymentUrl,
-      error: (statusData.readyState === 'ERROR' || statusData.state === 'ERROR') ? {
-        message: statusData.error?.message || 'Deployment failed',
-        logs: statusData.buildLogs || statusData.error?.logs || JSON.stringify(statusData.error || {}, null, 2)
-      } : undefined,
+      error:
+        statusData.readyState === 'ERROR' || statusData.state === 'ERROR'
+          ? {
+              message: statusData.error?.message || 'Deployment failed',
+              logs:
+                statusData.buildLogs ||
+                statusData.error?.logs ||
+                JSON.stringify(statusData.error || {}, null, 2),
+            }
+          : undefined,
     });
   } catch (error: any) {
     console.error('Status check error:', error);
@@ -89,7 +103,7 @@ export async function GET(request: NextRequest) {
         success: false,
         error: error.message || 'An unexpected error occurred',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

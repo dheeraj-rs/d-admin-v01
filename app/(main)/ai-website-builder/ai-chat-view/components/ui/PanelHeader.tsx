@@ -10,7 +10,7 @@ export const PanelHeader = memo(({ className, children }: PanelHeaderProps) => {
   return (
     <div
       className={classNames(
-        'flex items-center gap-2 bg-surface-b text-text-secondary border-y border-[var(--d-admin-surface-border)] px-4 py-1 min-h-[34px] text-sm',
+        'bg-surface-b text-text-secondary flex min-h-[34px] items-center gap-2 border-y border-[var(--d-admin-surface-border)] px-4 py-1 text-sm',
         className,
       )}
     >

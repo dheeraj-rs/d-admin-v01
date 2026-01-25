@@ -65,4 +65,3 @@ export const MAX_TERMINALS = 3;
 export const EDITOR_SETTINGS = {
   tabSize: 2,
 } as const;
-

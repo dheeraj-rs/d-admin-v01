@@ -14,12 +14,17 @@ const stripAnsi = (str: string) => {
   // 1. Pre-process Cursor control codes
   let clean = str
     // Move Cursor Left (ESC[D or ESC[nD) -> Backspace(s). Default n=1.
-    .replace(/\x1b\[(\d+)?D/g, (match, p1) => '\x08'.repeat(p1 ? parseInt(p1, 10) : 1))
+    .replace(/\x1b\[(\d+)?D/g, (match, p1) =>
+      '\x08'.repeat(p1 ? parseInt(p1, 10) : 1),
+    )
     // Clear Line (ESC[2K or ESC[K) or Cursor Column (ESC[G or ESC[nG) -> Carriage Return (\r)
     .replace(/\x1b\[[0-2]?K|\x1b\[(\d+)?G/g, '\r');
 
   // 2. Strip standard ANSI color codes
-  clean = clean.replace(/[\u001b\u009b][[()#;?]*(?:[0-9]{1,4}(?:;[0-9]{0,4})*)?[0-9A-ORZcf-nqry=><]/g, '');
+  clean = clean.replace(
+    /[\u001b\u009b][[()#;?]*(?:[0-9]{1,4}(?:;[0-9]{0,4})*)?[0-9A-ORZcf-nqry=><]/g,
+    '',
+  );
 
   // 3. Handle Backspace (\x08)
   while (clean.includes('\x08')) {
@@ -27,9 +32,12 @@ const stripAnsi = (str: string) => {
   }
 
   // 4. Handle Carriage Return (\r): keep last non-empty segment
-  clean = clean.split('\n').map(line => {
-    return line.split('\r').reduce((acc, curr) => curr || acc, '');
-  }).join('\n');
+  clean = clean
+    .split('\n')
+    .map((line) => {
+      return line.split('\r').reduce((acc, curr) => curr || acc, '');
+    })
+    .join('\n');
 
   // 5. Collapse excessive newlines (max 2)
   return clean.replace(/\n{3,}/g, '\n\n');
@@ -111,7 +119,8 @@ export class ActionRunner {
 
   async runAction(data: ActionCallbackData) {
     const { actionId } = data;
-    const actions = useWorkbenchStore.getState().artifacts[this.#artifactId]?.actions || {};
+    const actions =
+      useWorkbenchStore.getState().artifacts[this.#artifactId]?.actions || {};
     const action = actions[actionId];
 
     if (!action) {
@@ -134,16 +143,19 @@ export class ActionRunner {
   }
 
   async #executeAction(actionId: string) {
-    const actions = useWorkbenchStore.getState().artifacts[this.#artifactId]?.actions || {};
+    const actions =
+      useWorkbenchStore.getState().artifacts[this.#artifactId]?.actions || {};
     const action = actions[actionId];
 
     if (!action) {
-      console.warn(`[ActionRunner] Action ${actionId} not found, skipping execution`);
+      console.warn(
+        `[ActionRunner] Action ${actionId} not found, skipping execution`,
+      );
       return;
     }
 
     console.log(
-      `[ActionRunner] Executing action ${actionId}, type: ${action.type}`
+      `[ActionRunner] Executing action ${actionId}, type: ${action.type}`,
     );
     console.time(`[ActionRunner] Action ${actionId}`);
 
@@ -230,7 +242,11 @@ export class ActionRunner {
           const lowerStr = str.toLowerCase();
 
           // Detect various error types
-          if (rawOutput.toLowerCase().includes('command not found') || rawOutput.toLowerCase().includes('not found:') || rawOutput.toLowerCase().includes('cannot find module')) {
+          if (
+            rawOutput.toLowerCase().includes('command not found') ||
+            rawOutput.toLowerCase().includes('not found:') ||
+            rawOutput.toLowerCase().includes('cannot find module')
+          ) {
             missingDependencyDetected = true;
           }
 
@@ -239,7 +255,11 @@ export class ActionRunner {
             logger.error('Syntax error detected in generated code');
           }
 
-          if (rawOutput.match(/Failed to compile|Build failed|compilation error|Failed to resolve import/i)) {
+          if (
+            rawOutput.match(
+              /Failed to compile|Build failed|compilation error|Failed to resolve import/i,
+            )
+          ) {
             buildErrorDetected = true;
             useWorkbenchStore.getState().setBuildError(true);
             logger.error('Build error detected');
@@ -250,7 +270,7 @@ export class ActionRunner {
             logger.warn('Port conflict detected');
           }
         },
-      })
+      }),
     );
 
     // for dev servers, monitor output and mark complete when started
@@ -261,7 +281,6 @@ export class ActionRunner {
     }
     // ...
     // replacing just the throw block
-
 
     // for dev servers, monitor output and mark complete when started
     if (isDevServer) {
@@ -295,7 +314,10 @@ export class ActionRunner {
       });
 
       try {
-        const result = await Promise.race([startDetectionPromise, processExitPromise]);
+        const result = await Promise.race([
+          startDetectionPromise,
+          processExitPromise,
+        ]);
 
         // Final update upon completion/failure
         this.#updateAction(actionId, { output: stripAnsi(outputBuffer) });
@@ -305,14 +327,18 @@ export class ActionRunner {
           const code = (result as { code: number }).code;
           if (code !== 0) {
             const errorOutput = rawOutput.slice(-2000) || 'No output captured';
-            throw new Error(`Process exited with code ${code}\nOutput:\n${errorOutput}`);
+            throw new Error(
+              `Process exited with code ${code}\nOutput:\n${errorOutput}`,
+            );
           }
           // If code is 0 but server didn't start, it might be a quick command or the Mock
           if (!devServerStarted) {
-            // If it's the mock (which returns 0 immediately), we shouldn't fail, 
+            // If it's the mock (which returns 0 immediately), we shouldn't fail,
             // but strictly speaking a "dev server" command should keep running.
             // For now, we assume if it exits 0, it's fine (or it was the mock).
-            logger.debug('Process exited with code 0 before dev server start detected.');
+            logger.debug(
+              'Process exited with code 0 before dev server start detected.',
+            );
             return;
           }
         }
@@ -323,10 +349,14 @@ export class ActionRunner {
         // If process exited with error, check if we should recover
         if (missingDependencyDetected) {
           logger.info(
-            'Detected missing dependency. Attempting auto-recovery with npm install...'
+            'Detected missing dependency. Attempting auto-recovery with npm install...',
           );
 
-          this.#updateAction(actionId, { output: stripAnsi(outputBuffer) + '\n\n[Auto-Recovery] Installing missing dependencies...\n' });
+          this.#updateAction(actionId, {
+            output:
+              stripAnsi(outputBuffer) +
+              '\n\n[Auto-Recovery] Installing missing dependencies...\n',
+          });
 
           // Notify user (via terminal output mostly)
           const installProcess = await webcontainer.spawn('npm', ['install']);
@@ -338,11 +368,13 @@ export class ActionRunner {
                 // Update UI periodically during recovery
                 const now = Date.now();
                 if (now - lastUpdate > updateInterval) {
-                  this.#updateAction(actionId, { output: stripAnsi(outputBuffer) });
+                  this.#updateAction(actionId, {
+                    output: stripAnsi(outputBuffer),
+                  });
                   lastUpdate = now;
                 }
               },
-            })
+            }),
           );
           await installProcess.exit;
 
@@ -354,7 +386,7 @@ export class ActionRunner {
         // Log other error types for visibility
         if (syntaxErrorDetected) {
           logger.error(
-            'Syntax error in code - manual fix required or AI regeneration needed'
+            'Syntax error in code - manual fix required or AI regeneration needed',
           );
         }
 
@@ -381,9 +413,13 @@ export class ActionRunner {
     // Auto-recovery for non-dev commands too
     if (exitCode !== 0 && missingDependencyDetected) {
       logger.info(
-        'Detected missing dependency on non-dev command. Installing...'
+        'Detected missing dependency on non-dev command. Installing...',
       );
-      this.#updateAction(actionId, { output: stripAnsi(outputBuffer) + '\n\n[Auto-Recovery] Installing missing dependencies...\n' });
+      this.#updateAction(actionId, {
+        output:
+          stripAnsi(outputBuffer) +
+          '\n\n[Auto-Recovery] Installing missing dependencies...\n',
+      });
 
       const installProcess = await webcontainer.spawn('npm', ['install']);
       installProcess.output.pipeTo(
@@ -398,7 +434,7 @@ export class ActionRunner {
               lastUpdate = now;
             }
           },
-        })
+        }),
       );
       await installProcess.exit;
       this.#updateAction(actionId, { output: stripAnsi(outputBuffer) });
@@ -476,10 +512,11 @@ export class ActionRunner {
       let fileContent = action.content;
 
       // Auto-inject route tracker into React App files
-      if (action.filePath.match(/src\/(App|app)\.(jsx|tsx)$/i) &&
+      if (
+        action.filePath.match(/src\/(App|app)\.(jsx|tsx)$/i) &&
         action.content.includes('react-router') &&
-        !action.content.includes('ROUTE_CHANGE')) {
-
+        !action.content.includes('ROUTE_CHANGE')
+      ) {
         logger.info('Injecting route tracker into', action.filePath);
 
         // Inject route tracking code
@@ -505,23 +542,44 @@ function RouteTracker() {
 `;
 
         // Find the App component and inject RouteTracker
-        if (fileContent.includes('<BrowserRouter>') || fileContent.includes('<Router>')) {
+        if (
+          fileContent.includes('<BrowserRouter>') ||
+          fileContent.includes('<Router>')
+        ) {
           // Inject the RouteTracker component definition before the App component
           // Matches: function App, const App, export default function App, export function App
-          const appComponentMatch = fileContent.match(/(?:function|const|class)\s+App|export\s+(?:default\s+)?(?:function|class)\s+App/);
+          const appComponentMatch = fileContent.match(
+            /(?:function|const|class)\s+App|export\s+(?:default\s+)?(?:function|class)\s+App/,
+          );
 
           if (appComponentMatch && appComponentMatch.index !== undefined) {
             // Insert before the match
             const insertPosition = appComponentMatch.index;
-            fileContent = fileContent.slice(0, insertPosition) + routeTrackerCode + '\n' + fileContent.slice(insertPosition);
-            logger.info('[ActionRunner] ✅ Injected RouteTracker component definition');
+            fileContent =
+              fileContent.slice(0, insertPosition) +
+              routeTrackerCode +
+              '\n' +
+              fileContent.slice(insertPosition);
+            logger.info(
+              '[ActionRunner] ✅ Injected RouteTracker component definition',
+            );
           } else {
             // Fallback: Insert at the end of imports (look for last import)
-            const lastImportMatch = fileContent.match(/import\s+.*;\n(?![^]*import)/);
+            const lastImportMatch = fileContent.match(
+              /import\s+.*;\n(?![^]*import)/,
+            );
             if (lastImportMatch && lastImportMatch.index !== undefined) {
-              const insertPosition = lastImportMatch.index + lastImportMatch[0].length;
-              fileContent = fileContent.slice(0, insertPosition) + '\n' + routeTrackerCode + '\n' + fileContent.slice(insertPosition);
-              logger.info('[ActionRunner] ✅ Injected RouteTracker after imports (fallback)');
+              const insertPosition =
+                lastImportMatch.index + lastImportMatch[0].length;
+              fileContent =
+                fileContent.slice(0, insertPosition) +
+                '\n' +
+                routeTrackerCode +
+                '\n' +
+                fileContent.slice(insertPosition);
+              logger.info(
+                '[ActionRunner] ✅ Injected RouteTracker after imports (fallback)',
+              );
             }
           }
 
@@ -529,13 +587,13 @@ function RouteTracker() {
           if (fileContent.includes('<BrowserRouter>')) {
             fileContent = fileContent.replace(
               /(<BrowserRouter>)/,
-              '$1\n      <RouteTracker />'
+              '$1\n      <RouteTracker />',
             );
           } else if (fileContent.includes('<Router>')) {
             // Match <Router> with optional props
             fileContent = fileContent.replace(
               /(<Router[^>]*>)/,
-              '$1\n      <RouteTracker />'
+              '$1\n      <RouteTracker />',
             );
           }
         }
@@ -558,13 +616,18 @@ function RouteTracker() {
   #updateAction(id: string, newState: ActionStateUpdate) {
     const artifact = useWorkbenchStore.getState().artifacts[this.#artifactId];
     const actions = artifact?.actions || {};
-    this.#updateArtifactActions({ ...actions, [id]: { ...actions[id]!, ...newState } as ActionState });
+    this.#updateArtifactActions({
+      ...actions,
+      [id]: { ...actions[id]!, ...newState } as ActionState,
+    });
   }
 
   #updateArtifactActions(actions: Record<string, ActionState>) {
     const artifact = useWorkbenchStore.getState().artifacts[this.#artifactId];
     if (artifact) {
-      useWorkbenchStore.getState().setArtifact(this.#artifactId, { ...artifact, actions });
+      useWorkbenchStore
+        .getState()
+        .setArtifact(this.#artifactId, { ...artifact, actions });
     }
   }
 }

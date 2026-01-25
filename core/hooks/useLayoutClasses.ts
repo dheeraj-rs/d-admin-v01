@@ -42,6 +42,6 @@ export const useLayoutClasses = ({
         [LAYOUT_MODE_CLASSES.SIDEBAR_AUTO_OVERLAY_ACTIVE]:
           layoutState.sidebarAutoOverlayActive,
       }),
-    [layoutConfig, layoutState]
+    [layoutConfig, layoutState],
   );
 };

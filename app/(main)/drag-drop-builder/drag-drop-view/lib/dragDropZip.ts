@@ -65,7 +65,10 @@ export const exportAsHTML = async (htmlContent: string) => {
   for (const imageUrl of imageUrls) {
     const base64 = await fetchImageAsBase64(imageUrl);
     // Replace all occurrences of this image URL with base64
-    processedHtml = processedHtml.replace(new RegExp(imageUrl.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g'), base64);
+    processedHtml = processedHtml.replace(
+      new RegExp(imageUrl.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g'),
+      base64,
+    );
   }
 
   const fullHTML = `<!DOCTYPE html>

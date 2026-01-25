@@ -4,7 +4,7 @@ import { withResolvers } from './promises';
 
 export async function newShellProcess(
   webcontainer: WebContainer,
-  terminal: ITerminal
+  terminal: ITerminal,
 ) {
   terminal.clear();
 
@@ -41,7 +41,7 @@ export async function newShellProcess(
 
         terminal.write(data);
       },
-    })
+    }),
   );
 
   terminal.onData((data) => {

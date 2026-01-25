@@ -1,5 +1,5 @@
-import Layout from '@/core/layouts/Layout'
-import LayoutIsolated from '@/core/layouts/LayoutIsolated'
+import Layout from '@/core/layouts/Layout';
+import LayoutIsolated from '@/core/layouts/LayoutIsolated';
 
 function Home() {
   return (
@@ -8,7 +8,7 @@ function Home() {
         <h1>Home</h1>
       </LayoutIsolated>
     </Layout>
-  )
+  );
 }
 
-export default Home
+export default Home;

@@ -1,7 +1,5 @@
 function TopBarContent() {
-    return (
-        <div>TopBarContent</div>
-    )
+  return <div>TopBarContent</div>;
 }
 
-export default TopBarContent
+export default TopBarContent;

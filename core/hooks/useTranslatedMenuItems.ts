@@ -3,7 +3,7 @@ import { AppMenuItem } from '../types/admin-layout';
 
 const translateMenuItem = (
   item: AppMenuItem,
-  t: (key: string) => string
+  t: (key: string) => string,
 ): AppMenuItem => {
   const translatedItem = { ...item };
 
@@ -25,7 +25,7 @@ const translateMenuItem = (
 
   if (item.items && item.items.length > 0) {
     translatedItem.items = item.items.map((childItem) =>
-      translateMenuItem(childItem, t)
+      translateMenuItem(childItem, t),
     );
   }
 
@@ -33,7 +33,7 @@ const translateMenuItem = (
 };
 
 export const useTranslatedMenuItems = (
-  originalItems: AppMenuItem[]
+  originalItems: AppMenuItem[],
 ): AppMenuItem[] => {
   const { t } = useLanguage();
 

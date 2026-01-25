@@ -14,7 +14,7 @@ import FormidableForm from 'formidable/Formidable';
  */
 export const formParse = (
   form: FormidableForm,
-  req: NextApiRequest
+  req: NextApiRequest,
 ): Promise<formidable.Files> =>
   new Promise<formidable.Files>((resolve, reject) => {
     form.parse(req, (err, _, files) => {
@@ -55,7 +55,7 @@ export const exists = (s: fs.PathLike): Promise<boolean> =>
  */
 export const readdirRecursive = (
   folder: string,
-  files: string[] = []
+  files: string[] = [],
 ): string[] | void => {
   fs.readdirSync(folder).forEach((file) => {
     const pathAbsolute = path.join(folder, file);

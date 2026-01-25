@@ -10,11 +10,17 @@ interface PanelHeaderButtonProps {
 }
 
 export const PanelHeaderButton = memo(
-  ({ className, disabledClassName, disabled = false, children, onClick }: PanelHeaderButtonProps) => {
+  ({
+    className,
+    disabledClassName,
+    disabled = false,
+    children,
+    onClick,
+  }: PanelHeaderButtonProps) => {
     return (
       <button
         className={classNames(
-          'flex items-center shrink-0 gap-1.5 px-1.5 rounded-md py-0.5 text-text-secondary bg-transparent enabled:hover:text-text enabled:hover:bg-surface-c disabled:cursor-not-allowed',
+          'text-text-secondary enabled:hover:text-text enabled:hover:bg-surface-c flex shrink-0 items-center gap-1.5 rounded-md bg-transparent px-1.5 py-0.5 disabled:cursor-not-allowed',
           {
             [classNames('opacity-30', disabledClassName)]: disabled,
           },

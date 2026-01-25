@@ -1,7 +1,5 @@
 function SideBarContent() {
-    return (
-        <div>SideBarContent</div>
-    )
+  return <div>SideBarContent</div>;
 }
 
-export default SideBarContent
+export default SideBarContent;

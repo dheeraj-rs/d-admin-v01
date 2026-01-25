@@ -1,9 +1,7 @@
 import AppConfigbar from './AppConfigbar';
 
 const RightbarContent = () => {
-    return (
-        <AppConfigbar />
-    );
+  return <AppConfigbar />;
 };
 
 export default RightbarContent;

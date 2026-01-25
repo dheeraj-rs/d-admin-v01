@@ -42,30 +42,35 @@ class MockWebContainer {
       console.log('[MockWebContainer] readFile:', path);
       return '';
     },
-    rm: async (path: string, options?: { recursive?: boolean; force?: boolean }) => {
+    rm: async (
+      path: string,
+      options?: { recursive?: boolean; force?: boolean },
+    ) => {
       console.log('[MockWebContainer] rm:', path);
     },
     readdir: async (path: string) => {
       return [];
-    }
+    },
   };
 
   async spawn(command: string, args: string[], options?: any) {
-    console.warn(`[MockWebContainer] Cannot spawn "${command}" in insecure context.`);
+    console.warn(
+      `[MockWebContainer] Cannot spawn "${command}" in insecure context.`,
+    );
     return {
       output: new ReadableStream({
         start(controller) {
           controller.close();
-        }
+        },
       }),
       input: new WritableStream(),
       exit: Promise.resolve(0),
-      kill: () => { }
+      kill: () => {},
     };
   }
 
   on(event: string, listener: (...args: any[]) => void) {
-    return () => { };
+    return () => {};
   }
 
   mount(mountPoints: any) {
@@ -84,7 +89,7 @@ if (typeof window !== 'undefined') {
       .then(() => {
         if (!window.crossOriginIsolated) {
           console.warn(
-            'WebContainer requires a Secure Context (HTTPS or localhost) including specific headers (Cross-Origin-Opener-Policy: same-origin, Cross-Origin-Embedder-Policy: require-corp). The application is running in an insecure context, so WebContainer will NOT boot.'
+            'WebContainer requires a Secure Context (HTTPS or localhost) including specific headers (Cross-Origin-Opener-Policy: same-origin, Cross-Origin-Embedder-Policy: require-corp). The application is running in an insecure context, so WebContainer will NOT boot.',
           );
           return new MockWebContainer() as any as WebContainer;
         }

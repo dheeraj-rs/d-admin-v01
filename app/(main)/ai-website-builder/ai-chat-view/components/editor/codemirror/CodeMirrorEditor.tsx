@@ -1,8 +1,24 @@
-import { acceptCompletion, autocompletion, closeBrackets } from '@codemirror/autocomplete';
+import {
+  acceptCompletion,
+  autocompletion,
+  closeBrackets,
+} from '@codemirror/autocomplete';
 import { defaultKeymap, history, historyKeymap } from '@codemirror/commands';
-import { bracketMatching, foldGutter, indentOnInput, indentUnit } from '@codemirror/language';
+import {
+  bracketMatching,
+  foldGutter,
+  indentOnInput,
+  indentUnit,
+} from '@codemirror/language';
 import { searchKeymap } from '@codemirror/search';
-import { Compartment, EditorSelection, EditorState, StateEffect, StateField, type Extension } from '@codemirror/state';
+import {
+  Compartment,
+  EditorSelection,
+  EditorState,
+  StateEffect,
+  StateField,
+  type Extension,
+} from '@codemirror/state';
 import {
   drawSelection,
   dropCursor,
@@ -16,7 +32,13 @@ import {
   tooltips,
   type Tooltip,
 } from '@codemirror/view';
-import { memo, useEffect, useRef, useState, type MutableRefObject } from 'react';
+import {
+  memo,
+  useEffect,
+  useRef,
+  useState,
+  type MutableRefObject,
+} from 'react';
 import type { Theme } from '../../../lib/stores/zustand';
 import { classNames } from '../../../utils/classNames';
 import { debounce } from '../../../utils/debounce';
@@ -171,9 +193,15 @@ export const CodeMirrorEditor = memo(
 
           const selectionChanged =
             newSelection !== previousSelection &&
-            (newSelection === undefined || previousSelection === undefined || !newSelection.eq(previousSelection));
+            (newSelection === undefined ||
+              previousSelection === undefined ||
+              !newSelection.eq(previousSelection));
 
-          if (docRef.current && (transactions.some((transaction) => transaction.docChanged) || selectionChanged)) {
+          if (
+            docRef.current &&
+            (transactions.some((transaction) => transaction.docChanged) ||
+              selectionChanged)
+          ) {
             onUpdate({
               selection: view.state.selection,
               content: view.state.doc.toString(),
@@ -212,9 +240,15 @@ export const CodeMirrorEditor = memo(
       const theme = themeRef.current!;
 
       if (!doc) {
-        const state = newEditorState('', theme, settings, onScrollRef, debounceScroll, onSaveRef, [
-          languageCompartment.of([]),
-        ]);
+        const state = newEditorState(
+          '',
+          theme,
+          settings,
+          onScrollRef,
+          debounceScroll,
+          onSaveRef,
+          [languageCompartment.of([])],
+        );
 
         view.setState(state);
 
@@ -234,9 +268,15 @@ export const CodeMirrorEditor = memo(
       let state = editorStates.get(doc.filePath);
 
       if (!state) {
-        state = newEditorState(doc.value, theme, settings, onScrollRef, debounceScroll, onSaveRef, [
-          languageCompartment.of([]),
-        ]);
+        state = newEditorState(
+          doc.value,
+          theme,
+          settings,
+          onScrollRef,
+          debounceScroll,
+          onSaveRef,
+          [languageCompartment.of([])],
+        );
 
         editorStates.set(doc.filePath, state);
       }
@@ -284,7 +324,10 @@ function newEditorState(
             return;
           }
 
-          onScrollRef.current?.({ left: view.scrollDOM.scrollLeft, top: view.scrollDOM.scrollTop });
+          onScrollRef.current?.({
+            left: view.scrollDOM.scrollLeft,
+            top: view.scrollDOM.scrollTop,
+          });
         }, debounceScroll),
         keydown: (event, view) => {
           if (view.state.readOnly) {
@@ -402,7 +445,10 @@ function setEditorDocument(
     }
 
     view.dispatch({
-      effects: [languageCompartment.reconfigure([languageSupport]), reconfigureTheme(theme)],
+      effects: [
+        languageCompartment.reconfigure([languageSupport]),
+        reconfigureTheme(theme),
+      ],
     });
 
     requestAnimationFrame(() => {
@@ -452,7 +498,8 @@ function getReadOnlyTooltip(state: EditorState) {
         create: () => {
           const divElement = document.createElement('div');
           divElement.className = 'cm-readonly-tooltip';
-          divElement.textContent = 'Cannot edit file while AI response is being generated';
+          divElement.textContent =
+            'Cannot edit file while AI response is being generated';
 
           return { dom: divElement };
         },

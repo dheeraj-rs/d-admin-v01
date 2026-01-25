@@ -5,7 +5,7 @@ import type { FileMap } from '../stores/files';
  * Filters out unnecessary files and formats them for the Vercel API
  */
 export function extractFilesForDeployment(
-  files: FileMap
+  files: FileMap,
 ): Array<{ path: string; content: string }> {
   // Use a Map to deduplicate files by their relative path
   const fileMap = new Map<string, string>();
@@ -26,7 +26,7 @@ export function extractFilesForDeployment(
   for (const [filePath, fileData] of Object.entries(files)) {
     // Skip if file matches any exclude pattern
     const shouldExclude = excludePatterns.some((pattern) =>
-      pattern.test(filePath)
+      pattern.test(filePath),
     );
     if (shouldExclude) {
       continue;
@@ -55,10 +55,12 @@ export function extractFilesForDeployment(
   }
 
   // Convert Map to array
-  const deploymentFiles = Array.from(fileMap.entries()).map(([path, content]) => ({
-    path,
-    content,
-  }));
+  const deploymentFiles = Array.from(fileMap.entries()).map(
+    ([path, content]) => ({
+      path,
+      content,
+    }),
+  );
 
   return deploymentFiles;
 }
@@ -67,7 +69,7 @@ export function extractFilesForDeployment(
  * Validate that required files exist for deployment
  */
 export function validateDeploymentFiles(
-  files: Array<{ path: string; content: string }>
+  files: Array<{ path: string; content: string }>,
 ): {
   valid: boolean;
   error?: string;
@@ -81,7 +83,7 @@ export function validateDeploymentFiles(
 
   // Check if there's at least one HTML file or index file
   const hasIndexFile = files.some(
-    (f) => f.path === 'index.html' || f.path.endsWith('/index.html')
+    (f) => f.path === 'index.html' || f.path.endsWith('/index.html'),
   );
   const hasPackageJson = files.some((f) => f.path === 'package.json');
 

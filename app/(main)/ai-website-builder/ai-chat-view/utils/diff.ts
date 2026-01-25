@@ -4,7 +4,7 @@ import { MODIFICATIONS_TAG_NAME } from './constants';
 
 export const modificationsRegex = new RegExp(
   `^<${MODIFICATIONS_TAG_NAME}>[\\s\\S]*?<\\/${MODIFICATIONS_TAG_NAME}>\\s+`,
-  'g'
+  'g',
 );
 
 interface ModifiedFile {
@@ -16,7 +16,7 @@ type FileModifications = Record<string, ModifiedFile>;
 
 export function computeFileModifications(
   files: FileMap,
-  modifiedFiles: Map<string, string>
+  modifiedFiles: Map<string, string>,
 ) {
   const modifications: FileModifications = {};
 
@@ -64,13 +64,13 @@ export function computeFileModifications(
 export function diffFiles(
   fileName: string,
   oldFileContent: string,
-  newFileContent: string
+  newFileContent: string,
 ) {
   let unifiedDiff = createTwoFilesPatch(
     fileName,
     fileName,
     oldFileContent,
-    newFileContent
+    newFileContent,
   );
 
   const patchHeaderEnd = `--- ${fileName}\n+++ ${fileName}\n`;
@@ -114,7 +114,7 @@ export function fileModificationsToHTML(modifications: FileModifications) {
     result.push(
       `<${type} path=${JSON.stringify(filePath)}>`,
       content,
-      `</${type}>`
+      `</${type}>`,
     );
   }
 

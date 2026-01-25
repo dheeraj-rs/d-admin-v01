@@ -17,7 +17,7 @@ const createRipple = (event: MouseEvent) => {
     const rect = rippleElement.getBoundingClientRect();
     const diameter = Math.max(
       rippleElement.clientWidth,
-      rippleElement.clientHeight
+      rippleElement.clientHeight,
     );
     const radius = diameter / 2;
 
@@ -64,7 +64,7 @@ const ThemeManager = {
     currentTheme: string,
     newTheme: string,
     linkElementId: string,
-    callback?: () => void
+    callback?: () => void,
   ): void {
     let linkElement = document.getElementById(linkElementId) as HTMLLinkElement;
 

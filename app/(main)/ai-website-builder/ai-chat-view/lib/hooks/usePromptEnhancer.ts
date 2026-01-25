@@ -16,7 +16,7 @@ export function usePromptEnhancer() {
   const enhancePrompt = async (
     input: string,
     setInput: (value: string) => void,
-    provider?: string
+    provider?: string,
   ) => {
     setEnhancingPrompt(true);
     setPromptEnhanced(false);

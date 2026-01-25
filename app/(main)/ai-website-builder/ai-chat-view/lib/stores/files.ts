@@ -7,7 +7,13 @@ import { WORK_DIR } from '../../utils/constants';
 import { computeFileModifications } from '../../utils/diff';
 import { createScopedLogger } from '../../utils/logger';
 import { unreachable } from '../../utils/unreachable';
-import { useFilesStore, type FileMap, type File, type Dirent, type Folder } from './zustand';
+import {
+  useFilesStore,
+  type FileMap,
+  type File,
+  type Dirent,
+  type Folder,
+} from './zustand';
 
 // Re-export types for compatibility
 export type { File, Folder, Dirent, FileMap } from './zustand';
@@ -50,7 +56,10 @@ export class FilesStore {
   }
 
   getFileModifications() {
-    return computeFileModifications(useFilesStore.getState().files, this.#modifiedFiles);
+    return computeFileModifications(
+      useFilesStore.getState().files,
+      this.#modifiedFiles,
+    );
   }
 
   resetFileModifications() {
@@ -87,7 +96,9 @@ export class FilesStore {
       }
 
       // we immediately update the file and don't rely on the `change` event coming from the watcher
-      useFilesStore.getState().setFile(filePath, { type: 'file', content, isBinary: false });
+      useFilesStore
+        .getState()
+        .setFile(filePath, { type: 'file', content, isBinary: false });
 
       logger.info('File updated');
     } catch (error) {
@@ -109,16 +120,16 @@ export class FilesStore {
             exclude: ['**/node_modules', '.git'],
             includeContent: true,
           },
-          bufferWatchEvents(100, this.#processEventBuffer.bind(this))
+          bufferWatchEvents(100, this.#processEventBuffer.bind(this)),
         );
       } else {
         console.error('[FilesStore] Internal WebContainer API not available!');
         console.error(
-          '[FilesStore] File watching will not work. You need @webcontainer/api@1.3.0-internal.10'
+          '[FilesStore] File watching will not work. You need @webcontainer/api@1.3.0-internal.10',
         );
         console.error(
           '[FilesStore] Current version:',
-          (webcontainer as any).constructor?.name
+          (webcontainer as any).constructor?.name,
         );
       }
     } catch (error) {
@@ -172,7 +183,9 @@ export class FilesStore {
             content = this.#decodeFileContent(buffer);
           }
 
-          useFilesStore.getState().setFile(sanitizedPath, { type: 'file', content, isBinary });
+          useFilesStore
+            .getState()
+            .setFile(sanitizedPath, { type: 'file', content, isBinary });
 
           break;
         }

@@ -10,7 +10,7 @@ import { getBaseUrl } from './builderUtils';
  */
 export async function loadTheme(
   themeFolder: string,
-  standaloneServer: boolean
+  standaloneServer: boolean,
 ): Promise<Component[]> {
   const baseUrl = getBaseUrl(standaloneServer);
   const url = standaloneServer
@@ -27,7 +27,7 @@ export async function loadTheme(
  */
 export async function savePage(
   html: string,
-  standaloneServer: boolean
+  standaloneServer: boolean,
 ): Promise<void> {
   const baseUrl = getBaseUrl(standaloneServer);
   const url = standaloneServer
@@ -59,7 +59,7 @@ export async function loadPage(standaloneServer: boolean): Promise<string> {
  */
 export async function uploadImage(
   file: File,
-  standaloneServer: boolean
+  standaloneServer: boolean,
 ): Promise<string[]> {
   const baseUrl = getBaseUrl(standaloneServer);
   const url = standaloneServer

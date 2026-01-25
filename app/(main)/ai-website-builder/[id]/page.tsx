@@ -13,70 +13,71 @@ import { Header } from '../ai-chat-view/Header';
 import LightCircleRayBackground from '@/core/components/not-found/LightCircleRayBackground';
 
 export default function AiWebsiteBuilderPage() {
-    const { activeMobilePanel, builderView } = useAiBuilderStore();
-    const isMobile = useIsMobile();
+  const { activeMobilePanel, builderView } = useAiBuilderStore();
+  const isMobile = useIsMobile();
 
+  const InterfaceComponents = {
+    chat: ChatInterfacePanel,
+    'drag-drop': DragDropInterface,
+    templates: TemplatesInterface,
+  };
 
-    const InterfaceComponents = {
-        chat: ChatInterfacePanel,
-        'drag-drop': DragDropInterface,
-        templates: TemplatesInterface,
-    };
+  const WorkbenchComponents = {
+    chat: WorkbenchPanel,
+    'drag-drop': DragDropWorkbench,
+    templates: TemplatesWorkbench,
+  };
 
-    const WorkbenchComponents = {
-        chat: WorkbenchPanel,
-        'drag-drop': DragDropWorkbench,
-        templates: TemplatesWorkbench,
-    };
+  const ActiveInterface =
+    InterfaceComponents[builderView as keyof typeof InterfaceComponents];
+  const ActiveWorkbench =
+    WorkbenchComponents[builderView as keyof typeof WorkbenchComponents];
 
-    const ActiveInterface = InterfaceComponents[builderView as keyof typeof InterfaceComponents];
-    const ActiveWorkbench = WorkbenchComponents[builderView as keyof typeof WorkbenchComponents];
+  const showInterface = isMobile ? activeMobilePanel === 'chat' : true;
+  const showWorkbench = isMobile ? activeMobilePanel === 'workbench' : true;
 
-    const showInterface = isMobile ? activeMobilePanel === 'chat' : true;
-    const showWorkbench = isMobile ? activeMobilePanel === 'workbench' : true;
+  return (
+    <div className="relative h-full w-full bg-[var(--d-admin-surface-ground)] text-[var(--d-admin-text-color)]">
+      <LightCircleRayBackground />
+      <HistorySidebar />
+      <div className="relative z-10 flex h-full w-full flex-col">
+        <Header />
+        <div className="relative h-full w-full flex-1 overflow-hidden">
+          <div className="h-full w-full">
+            <div className="flex size-full overscroll-contain">
+              <PanelGroup
+                direction="horizontal"
+                key={isMobile ? 'mobile' : 'desktop'}
+              >
+                {showInterface && (
+                  <Panel
+                    defaultSize={isMobile ? 100 : 40}
+                    minSize={isMobile ? 100 : 25}
+                    maxSize={isMobile ? 100 : 50}
+                    className={`${isMobile && activeMobilePanel !== 'chat' ? 'hidden' : ''}`}
+                  >
+                    {ActiveInterface && <ActiveInterface />}
+                  </Panel>
+                )}
 
-    return (
-        <div className="w-full h-full bg-[var(--d-admin-surface-ground)] relative text-[var(--d-admin-text-color)]">
-            <LightCircleRayBackground />
-            <HistorySidebar />
-            <div className="flex flex-col h-full w-full relative z-10">
-                <Header />
-                <div className="relative flex-1 w-full h-full overflow-hidden">
-                    <div
-                        className="h-full w-full"
-                    >
-                        <div className="flex size-full overscroll-contain">
-                            <PanelGroup direction="horizontal" key={isMobile ? 'mobile' : 'desktop'}>
-                                {showInterface && (
-                                    <Panel
-                                        defaultSize={isMobile ? 100 : 40}
-                                        minSize={isMobile ? 100 : 25}
-                                        maxSize={isMobile ? 100 : 50}
-                                        className={`${isMobile && activeMobilePanel !== 'chat' ? 'hidden' : ''}`}
-                                    >
-                                        {ActiveInterface && <ActiveInterface />}
-                                    </Panel>
-                                )}
+                {!isMobile && (
+                  <PanelResizeHandle className="group relative flex w-2 items-center justify-center bg-transparent hover:bg-transparent" />
+                )}
 
-                                {!isMobile && (
-                                    <PanelResizeHandle className="w-2 bg-transparent hover:bg-transparent relative group flex justify-center items-center" />
-                                )}
-
-                                {showWorkbench && (
-                                    <Panel
-                                        defaultSize={isMobile ? 100 : 60}
-                                        minSize={isMobile ? 100 : 50}
-                                        className={`${isMobile && activeMobilePanel !== 'workbench' ? 'hidden' : ''}`}
-                                    >
-                                        {ActiveWorkbench && <ActiveWorkbench />}
-                                    </Panel>
-                                )}
-                            </PanelGroup>
-                        </div>
-                    </div>
-                </div>
-
+                {showWorkbench && (
+                  <Panel
+                    defaultSize={isMobile ? 100 : 60}
+                    minSize={isMobile ? 100 : 50}
+                    className={`${isMobile && activeMobilePanel !== 'workbench' ? 'hidden' : ''}`}
+                  >
+                    {ActiveWorkbench && <ActiveWorkbench />}
+                  </Panel>
+                )}
+              </PanelGroup>
             </div>
+          </div>
         </div>
-    );
+      </div>
+    </div>
+  );
 }

@@ -1,9 +1,7 @@
-import React from 'react'
+import React from 'react';
 
 function ContentArea({ children }: { children: React.ReactNode }) {
-    return (
-        <main className="layout__container">{children}</main>
-    )
+  return <main className="layout__container">{children}</main>;
 }
 
-export default ContentArea
+export default ContentArea;

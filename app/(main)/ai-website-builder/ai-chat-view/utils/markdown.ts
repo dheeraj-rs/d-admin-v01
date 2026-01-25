@@ -115,7 +115,7 @@ const limitedMarkdownPlugin: Plugin = () => {
 
       let value = contents.slice(
         node.position.start.offset,
-        node.position.end.offset
+        node.position.end.offset,
       );
 
       if (node.type === 'heading') {

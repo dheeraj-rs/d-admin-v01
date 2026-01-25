@@ -1,4 +1,3 @@
-
 import { memo, useCallback, useEffect } from 'react';
 import { toast } from 'react-toastify';
 import {
@@ -8,8 +7,17 @@ import {
 import { IconButton } from '../ui/IconButton';
 import { PanelHeaderButton } from '../ui/PanelHeaderButton';
 import { Slider, type SliderOptions } from '../ui/Slider';
-import { workbenchStore, type WorkbenchViewType } from '../../lib/stores/workbench';
-import { useFilesStore, useEditorStore, useWorkbenchStore, usePreviewStore, useTerminalStore } from '../../lib/stores/zustand';
+import {
+  workbenchStore,
+  type WorkbenchViewType,
+} from '../../lib/stores/workbench';
+import {
+  useFilesStore,
+  useEditorStore,
+  useWorkbenchStore,
+  usePreviewStore,
+  useTerminalStore,
+} from '../../lib/stores/zustand';
 import { renderLogger } from '../../utils/logger';
 import { EditorPanel } from './EditorPanel';
 import { Preview } from './Preview';
@@ -17,8 +25,6 @@ import { Preview } from './Preview';
 interface WorkspaceProps {
   isStreaming?: boolean;
 }
-
-
 
 const sliderOptions: SliderOptions<WorkbenchViewType> = {
   left: {
@@ -34,19 +40,17 @@ const sliderOptions: SliderOptions<WorkbenchViewType> = {
 export const Workbench = memo(({ isStreaming }: WorkspaceProps) => {
   renderLogger.trace('Workbench');
 
-  const selectedView = useWorkbenchStore(state => state.currentView);
-  const currentDocument = useEditorStore(state => state.getCurrentDocument());
-  const unsavedFiles = useWorkbenchStore(state => state.unsavedFiles);
-  const files = useFilesStore(state => state.files);
-  const selectedFile = useEditorStore(state => state.selectedFile);
+  const selectedView = useWorkbenchStore((state) => state.currentView);
+  const currentDocument = useEditorStore((state) => state.getCurrentDocument());
+  const unsavedFiles = useWorkbenchStore((state) => state.unsavedFiles);
+  const files = useFilesStore((state) => state.files);
+  const selectedFile = useEditorStore((state) => state.selectedFile);
 
   const setSelectedView = (view: WorkbenchViewType) => {
     useWorkbenchStore.getState().setCurrentView(view);
   };
 
-  const hasPreview = usePreviewStore(state => state.previews.length > 0);
-
-
+  const hasPreview = usePreviewStore((state) => state.previews.length > 0);
 
   useEffect(() => {
     workbenchStore.setDocuments(files);
@@ -75,11 +79,9 @@ export const Workbench = memo(({ isStreaming }: WorkspaceProps) => {
   }, []);
 
   return (
-    <div className="h-full w-full flex flex-col overflow-hidden bg-surface-0">
+    <div className="bg-surface-0 flex h-full w-full flex-col overflow-hidden">
       <div className="relative flex-1 overflow-hidden">
-        <View
-          animate={{ x: selectedView === 'code' ? 0 : '-100%' }}
-        >
+        <View animate={{ x: selectedView === 'code' ? 0 : '-100%' }}>
           <EditorPanel
             editorDocument={currentDocument}
             isStreaming={isStreaming}
@@ -93,9 +95,7 @@ export const Workbench = memo(({ isStreaming }: WorkspaceProps) => {
             onFileReset={onFileReset}
           />
         </View>
-        <View
-          animate={{ x: selectedView === 'preview' ? 0 : '100%' }}
-        >
+        <View animate={{ x: selectedView === 'preview' ? 0 : '100%' }}>
           <Preview />
         </View>
       </div>
@@ -112,7 +112,12 @@ interface ViewProps {
 
 const View = memo(({ children, animate }: ViewProps) => {
   return (
-    <div className="absolute inset-0" style={{ transform: `translateX(${typeof animate?.x === 'number' ? animate.x + 'px' : animate?.x || 0})` }}>
+    <div
+      className="absolute inset-0"
+      style={{
+        transform: `translateX(${typeof animate?.x === 'number' ? animate.x + 'px' : animate?.x || 0})`,
+      }}
+    >
       {children}
     </div>
   );

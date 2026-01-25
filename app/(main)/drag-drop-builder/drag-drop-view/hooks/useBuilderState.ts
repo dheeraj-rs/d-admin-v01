@@ -6,7 +6,7 @@ import { useState } from 'react';
 
 export function useBuilderState() {
   const [selectedElement, setSelectedElement] = useState<HTMLElement | null>(
-    null
+    null,
   );
   const [currentTheme, setCurrentTheme] = useState<number>(0);
   const [showImageDialog, setShowImageDialog] = useState<boolean>(false);

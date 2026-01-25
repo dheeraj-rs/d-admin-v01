@@ -1,7 +1,11 @@
-
 import { Icon } from '@iconify/react';
 import { memo, useEffect, useMemo, useRef, useState } from 'react';
-import { Panel, PanelGroup, PanelResizeHandle, type ImperativePanelHandle } from 'react-resizable-panels';
+import {
+  Panel,
+  PanelGroup,
+  PanelResizeHandle,
+  type ImperativePanelHandle,
+} from 'react-resizable-panels';
 import {
   CodeMirrorEditor,
   type EditorDocument,
@@ -18,7 +22,13 @@ import type { FileMap } from '../../lib/stores/files';
 import { workbenchStore } from '../../lib/stores/workbench';
 import { useTerminalStore, useThemeStore } from '../../lib/stores/zustand';
 import { classNames } from '../../utils/classNames';
-import { WORK_DIR, PANEL_SIZES, MAX_TERMINALS, EDITOR_SETTINGS, IGNORE_PATTERNS } from '../../utils/constants';
+import {
+  WORK_DIR,
+  PANEL_SIZES,
+  MAX_TERMINALS,
+  EDITOR_SETTINGS,
+  IGNORE_PATTERNS,
+} from '../../utils/constants';
 import { renderLogger } from '../../utils/logger';
 import { isMobile } from '../../utils/mobile';
 import { FileBreadcrumb } from './FileBreadcrumb';
@@ -57,8 +67,8 @@ export const EditorPanel = memo(
   }: EditorPanelProps) => {
     renderLogger.trace('EditorPanel');
 
-    const theme = useThemeStore(state => state.theme);
-    const showTerminal = useTerminalStore(state => state.showTerminal);
+    const theme = useThemeStore((state) => state.theme);
+    const showTerminal = useTerminalStore((state) => state.showTerminal);
 
     const terminalRefs = useRef<Array<TerminalRef | null>>([]);
     const terminalPanelRef = useRef<ImperativePanelHandle>(null);
@@ -79,21 +89,29 @@ export const EditorPanel = memo(
     }, [editorDocument]);
 
     const activeFileUnsaved = useMemo(() => {
-      return editorDocument !== undefined && unsavedFiles?.has(editorDocument.filePath);
+      return (
+        editorDocument !== undefined &&
+        unsavedFiles?.has(editorDocument.filePath)
+      );
     }, [editorDocument, unsavedFiles]);
 
     useEffect(() => {
-      const unsubscribeFromEventEmitter = shortcutEventEmitter.on('toggleTerminal', () => {
-        terminalToggledByShortcut.current = true;
-      });
+      const unsubscribeFromEventEmitter = shortcutEventEmitter.on(
+        'toggleTerminal',
+        () => {
+          terminalToggledByShortcut.current = true;
+        },
+      );
 
-      const unsubscribeFromThemeStore = useThemeStore.subscribe((state, prevState) => {
-        if (state.theme !== prevState.theme) {
-          for (const ref of Object.values(terminalRefs.current)) {
-            ref?.reloadStyles();
+      const unsubscribeFromThemeStore = useThemeStore.subscribe(
+        (state, prevState) => {
+          if (state.theme !== prevState.theme) {
+            for (const ref of Object.values(terminalRefs.current)) {
+              ref?.reloadStyles();
+            }
           }
-        }
-      });
+        },
+      );
 
       return () => {
         unsubscribeFromEventEmitter();
@@ -140,8 +158,14 @@ export const EditorPanel = memo(
     };
 
     return (
-      <PanelGroup direction="vertical" className="bg-[var(--d-admin-surface-section)]">
-        <Panel defaultSize={showTerminal ? DEFAULT_EDITOR_SIZE : 100} minSize={20}>
+      <PanelGroup
+        direction="vertical"
+        className="bg-[var(--d-admin-surface-section)]"
+      >
+        <Panel
+          defaultSize={showTerminal ? DEFAULT_EDITOR_SIZE : 100}
+          minSize={20}
+        >
           <PanelGroup direction="horizontal" style={{ touchAction: 'none' }}>
             <Panel
               ref={filePanelRef}
@@ -151,9 +175,12 @@ export const EditorPanel = memo(
               onCollapse={() => setIsFilePanelCollapsed(true)}
               onExpand={() => setIsFilePanelCollapsed(false)}
             >
-              <div className="flex flex-col border-r border-[var(--d-admin-surface-border)] h-full bg-surface-0">
+              <div className="bg-surface-0 flex h-full flex-col border-r border-[var(--d-admin-surface-border)]">
                 <PanelHeader>
-                  <Icon icon="ph:tree-structure-duotone" className="shrink-0 text-lg" />
+                  <Icon
+                    icon="ph:tree-structure-duotone"
+                    className="shrink-0 text-lg"
+                  />
                   Files
                 </PanelHeader>
                 <FileTree
@@ -164,7 +191,12 @@ export const EditorPanel = memo(
                   rootFolder={WORK_DIR}
                   selectedFile={selectedFile}
                   onFileSelect={onFileSelect}
-                  hiddenFiles={IGNORE_PATTERNS.map(pattern => new RegExp(pattern.replace(/\*\*/g, '.*').replace(/\*/g, '[^/]*')))}
+                  hiddenFiles={IGNORE_PATTERNS.map(
+                    (pattern) =>
+                      new RegExp(
+                        pattern.replace(/\*\*/g, '.*').replace(/\*/g, '[^/]*'),
+                      ),
+                  )}
                 />
               </div>
             </Panel>
@@ -175,7 +207,7 @@ export const EditorPanel = memo(
                 role="button"
                 aria-label="Expand file panel"
                 tabIndex={0}
-                className="absolute left-0 top-1/2 -translate-y-1/2 w-3 h-20 bg-surface-b border border-[var(--d-admin-surface-border)] rounded-r-md flex items-center justify-center cursor-pointer z-20 hover:bg-surface-c transition-colors focus:outline-none focus:ring-2 focus:ring-primary"
+                className="bg-surface-b hover:bg-surface-c focus:ring-primary absolute top-1/2 left-0 z-20 flex h-20 w-3 -translate-y-1/2 cursor-pointer items-center justify-center rounded-r-md border border-[var(--d-admin-surface-border)] transition-colors focus:ring-2 focus:outline-none"
                 onClick={() => filePanelRef.current?.expand()}
                 onKeyDown={(e) => {
                   if (e.key === 'Enter' || e.key === ' ') {
@@ -189,16 +221,27 @@ export const EditorPanel = memo(
               </div>
             )}
 
-            <PanelResizeHandle className="group relative" style={{ touchAction: 'none' }}>
-              <div className="absolute inset-0 z-10 flex items-center justify-center w-2" />
+            <PanelResizeHandle
+              className="group relative"
+              style={{ touchAction: 'none' }}
+            >
+              <div className="absolute inset-0 z-10 flex w-2 items-center justify-center" />
             </PanelResizeHandle>
-            <Panel className="flex flex-col" defaultSize={PANEL_SIZES.EDITOR.default} minSize={PANEL_SIZES.EDITOR.min}>
+            <Panel
+              className="flex flex-col"
+              defaultSize={PANEL_SIZES.EDITOR.default}
+              minSize={PANEL_SIZES.EDITOR.min}
+            >
               <PanelHeader className="overflow-x-auto">
-                <div className="flex items-center flex-1 text-sm">
+                <div className="flex flex-1 items-center text-sm">
                   {activeFileSegments?.length && (
-                    <FileBreadcrumb pathSegments={activeFileSegments} files={files} onFileSelect={onFileSelect} />
+                    <FileBreadcrumb
+                      pathSegments={activeFileSegments}
+                      files={files}
+                      onFileSelect={onFileSelect}
+                    />
                   )}
-                  <div className="flex gap-1 ml-auto -mr-1.5 items-center">
+                  <div className="-mr-1.5 ml-auto flex items-center gap-1">
                     {activeFileUnsaved && (
                       <>
                         <PanelHeaderButton onClick={onFileSave}>
@@ -211,14 +254,18 @@ export const EditorPanel = memo(
                         </PanelHeaderButton>
                       </>
                     )}
-                    <PanelHeaderButton onClick={() => workbenchStore.toggleTerminal(!showTerminal)}>
+                    <PanelHeaderButton
+                      onClick={() =>
+                        workbenchStore.toggleTerminal(!showTerminal)
+                      }
+                    >
                       <Icon icon="ph:terminal" />
                       Toggle Terminal
                     </PanelHeaderButton>
                   </div>
                 </div>
               </PanelHeader>
-              <div className="h-full flex-1 overflow-hidden relative">
+              <div className="relative h-full flex-1 overflow-hidden">
                 {activeFileSegments?.length ? (
                   <CodeMirrorEditor
                     theme={theme}
@@ -231,13 +278,17 @@ export const EditorPanel = memo(
                     onSave={onFileSave}
                   />
                 ) : (
-                  <div className="absolute inset-0 flex flex-col items-center justify-center bg-surface-1 text-text-secondary select-none px-4">
-                    <div className="opacity-50 mb-3 md:mb-6 scale-75 md:scale-125">
+                  <div className="bg-surface-1 text-text-secondary absolute inset-0 flex flex-col items-center justify-center px-4 select-none">
+                    <div className="mb-3 scale-75 opacity-50 md:mb-6 md:scale-125">
                       <EmptyStateIllustration />
                     </div>
-                    <div className="text-center space-y-1 md:space-y-2">
-                      <p className="text-base md:text-xl font-medium text-text-primary">Select a file to edit</p>
-                      <p className="text-xs md:text-sm opacity-60">Choose a file from the explorer on the left</p>
+                    <div className="space-y-1 text-center md:space-y-2">
+                      <p className="text-text-primary text-base font-medium md:text-xl">
+                        Select a file to edit
+                      </p>
+                      <p className="text-xs opacity-60 md:text-sm">
+                        Choose a file from the explorer on the left
+                      </p>
                     </div>
                   </div>
                 )}
@@ -245,9 +296,11 @@ export const EditorPanel = memo(
             </Panel>
           </PanelGroup>
         </Panel>
-        <PanelResizeHandle className="group relative" style={{ touchAction: 'none' }}>
-          <div className="absolute inset-0 flex items-center justify-center h-" />
-
+        <PanelResizeHandle
+          className="group relative"
+          style={{ touchAction: 'none' }}
+        >
+          <div className="h- absolute inset-0 flex items-center justify-center" />
         </PanelResizeHandle>
         <Panel
           ref={terminalPanelRef}
@@ -266,8 +319,8 @@ export const EditorPanel = memo(
           }}
         >
           <div className="h-full">
-            <div className="bg-surface-0 h-full flex flex-col">
-              <div className="flex items-center bg-surface-b border-y border-[var(--d-admin-surface-border)] gap-1.5 min-h-[34px] p-2">
+            <div className="bg-surface-0 flex h-full flex-col">
+              <div className="bg-surface-b flex min-h-[34px] items-center gap-1.5 border-y border-[var(--d-admin-surface-border)] p-2">
                 {Array.from({ length: terminalCount }, (_, index) => {
                   const isActive = activeTerminal === index;
 
@@ -275,19 +328,25 @@ export const EditorPanel = memo(
                     <div
                       key={index}
                       className={classNames(
-                        'flex items-center text-sm cursor-pointer gap-1 px-2 py-1.5 h-full whitespace-nowrap rounded-full transition-colors group',
+                        'group flex h-full cursor-pointer items-center gap-1 rounded-full px-2 py-1.5 text-sm whitespace-nowrap transition-colors',
                         {
                           'bg-primary/10 text-primary': isActive,
-                          'bg-transparent text-text-secondary hover:bg-surface-c': !isActive,
+                          'text-text-secondary hover:bg-surface-c bg-transparent':
+                            !isActive,
                         },
                       )}
                       onClick={() => setActiveTerminal(index)}
                     >
-                      <Icon icon="ph:terminal-window-duotone" className="text-base" />
-                      <span className="text-xs">Terminal {terminalCount > 1 && index + 1}</span>
+                      <Icon
+                        icon="ph:terminal-window-duotone"
+                        className="text-base"
+                      />
+                      <span className="text-xs">
+                        Terminal {terminalCount > 1 && index + 1}
+                      </span>
                       {terminalCount > 1 && (
                         <button
-                          className="ml-1 opacity-0 group-hover:opacity-100 hover:text-red-500 transition-opacity"
+                          className="ml-1 opacity-0 transition-opacity group-hover:opacity-100 hover:text-red-500"
                           onClick={(e) => {
                             e.stopPropagation();
                             removeTerminal(index);
@@ -322,8 +381,12 @@ export const EditorPanel = memo(
                     ref={(ref) => {
                       terminalRefs.current.push(ref);
                     }}
-                    onTerminalReady={(terminal) => workbenchStore.attachTerminal(terminal)}
-                    onTerminalResize={(cols, rows) => workbenchStore.onTerminalResize(cols, rows)}
+                    onTerminalReady={(terminal) =>
+                      workbenchStore.attachTerminal(terminal)
+                    }
+                    onTerminalResize={(cols, rows) =>
+                      workbenchStore.onTerminalResize(cols, rows)
+                    }
                     theme={theme}
                   />
                 );

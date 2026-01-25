@@ -7,7 +7,7 @@ interface ThemeSwitchProps {
 }
 
 export const ThemeSwitch = memo(({ className }: ThemeSwitchProps) => {
-  const theme = useThemeStore(state => state.theme);
+  const theme = useThemeStore((state) => state.theme);
   const [domLoaded, setDomLoaded] = useState(false);
 
   useEffect(() => {
@@ -18,12 +18,16 @@ export const ThemeSwitch = memo(({ className }: ThemeSwitchProps) => {
     domLoaded && (
       <IconButton
         className={className}
-        icon={theme === 'dark' ? 'i-ph-moon-stars-duotone' : 'i-ph-sun-dim-duotone'}
+        icon={
+          theme === 'dark' ? 'i-ph-moon-stars-duotone' : 'i-ph-sun-dim-duotone'
+        }
         size="xl"
         title={`Current Theme: ${theme === 'dark' ? 'Dark' : 'Light'} (Change theme from main app settings)`}
         onClick={() => {
           // Theme is controlled by main app - show tooltip or navigate to settings
-          console.log('Theme is controlled by the main app. Use the theme selector in the config bar to change themes.');
+          console.log(
+            'Theme is controlled by the main app. Use the theme selector in the config bar to change themes.',
+          );
         }}
       />
     )

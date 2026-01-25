@@ -47,8 +47,8 @@ export class EditorStore {
               },
             ] as [string, EditorDocument];
           })
-          .filter(Boolean) as Array<[string, EditorDocument]>
-      )
+          .filter(Boolean) as Array<[string, EditorDocument]>,
+      ),
     );
   }
 

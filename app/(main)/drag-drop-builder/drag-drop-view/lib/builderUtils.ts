@@ -39,7 +39,7 @@ export function getBaseUrl(standaloneServer: boolean): string {
  */
 export function getImageUrl(
   standaloneServer: boolean,
-  imageSrc: string
+  imageSrc: string,
 ): string {
   // For standalone server mode
   if (standaloneServer) {
@@ -61,7 +61,7 @@ export function getImageUrl(
  */
 export function isEventOnElement(
   element: Element | null,
-  event: React.MouseEvent<any> | MouseEvent
+  event: React.MouseEvent<any> | MouseEvent,
 ): boolean {
   if (!element) return false;
   const rect = element.getBoundingClientRect();
@@ -78,7 +78,7 @@ export function isEventOnElement(
  */
 export function isElementTopHalf(
   element: Element | null,
-  event: React.MouseEvent<any> | MouseEvent
+  event: React.MouseEvent<any> | MouseEvent,
 ): boolean {
   if (!element) return false;
   const rect = element.getBoundingClientRect();

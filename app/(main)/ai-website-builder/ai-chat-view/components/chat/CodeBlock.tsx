@@ -1,5 +1,11 @@
 import { memo, useEffect, useState } from 'react';
-import { bundledLanguages, codeToHtml, isSpecialLang, type BundledLanguage, type SpecialLanguage } from 'shiki';
+import {
+  bundledLanguages,
+  codeToHtml,
+  isSpecialLang,
+  type BundledLanguage,
+  type SpecialLanguage,
+} from 'shiki';
 import { classNames } from '../../utils/classNames';
 import { createScopedLogger } from '../../utils/logger';
 
@@ -14,7 +20,13 @@ interface CodeBlockProps {
 }
 
 export const CodeBlock = memo(
-  ({ className, code, language = 'plaintext', theme = 'dark-plus', disableCopy = false }: CodeBlockProps) => {
+  ({
+    className,
+    code,
+    language = 'plaintext',
+    theme = 'dark-plus',
+    disableCopy = false,
+  }: CodeBlockProps) => {
     const [html, setHTML] = useState<string | undefined>(undefined);
     const [copied, setCopied] = useState(false);
 
@@ -33,7 +45,11 @@ export const CodeBlock = memo(
     };
 
     useEffect(() => {
-      if (language && !isSpecialLang(language) && !(language in bundledLanguages)) {
+      if (
+        language &&
+        !isSpecialLang(language) &&
+        !(language in bundledLanguages)
+      ) {
         logger.warn(`Unsupported language '${language}'`);
       }
 
@@ -47,10 +63,10 @@ export const CodeBlock = memo(
     }, [code]);
 
     return (
-      <div className={classNames('relative group text-left', className)}>
+      <div className={classNames('group relative text-left', className)}>
         <div
           className={classNames(
-            'absolute top-[10px] right-[10px] rounded-md z-10 text-lg flex items-center justify-center opacity-0 group-hover:opacity-100',
+            'absolute top-[10px] right-[10px] z-10 flex items-center justify-center rounded-md text-lg opacity-0 group-hover:opacity-100',
             {
               'rounded-l-0 opacity-100': copied,
             },
@@ -59,9 +75,9 @@ export const CodeBlock = memo(
           {!disableCopy && (
             <button
               className={classNames(
-                'flex items-center bg-transparent p-[6px] justify-center',
-                'before:content-["Copied"] before:absolute before:-left-[53px] before:text-xs before:h-[30px] before:px-1.5 before:py-0.5',
-                'before:rounded-l-md before:text-gray-500 before:border-r before:border-gray-300',
+                'flex items-center justify-center bg-transparent p-[6px]',
+                'before:absolute before:-left-[53px] before:h-[30px] before:px-1.5 before:py-0.5 before:text-xs before:content-["Copied"]',
+                'before:rounded-l-md before:border-r before:border-gray-300 before:text-gray-500',
                 {
                   'before:opacity-0': !copied,
                   'before:opacity-100': copied,

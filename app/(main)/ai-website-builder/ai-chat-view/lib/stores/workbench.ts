@@ -1,4 +1,3 @@
-
 import type {
   EditorDocument,
   ScrollPosition,
@@ -25,8 +24,6 @@ export interface ArtifactState {
 }
 
 export type ArtifactUpdateState = Pick<ArtifactState, 'title' | 'closed'>;
-
-
 
 export type WorkbenchViewType = 'code' | 'preview';
 
@@ -60,7 +57,7 @@ export class WorkbenchStore {
     return useWorkbenchStore.getState().artifactIdList;
   }
 
-  constructor() { }
+  constructor() {}
 
   get previewsStore() {
     return this.#previewsStore;
@@ -121,10 +118,7 @@ export class WorkbenchStore {
   setDocuments(files: FileMap) {
     this.#editorStore.setDocuments(files);
 
-    if (
-      this.#filesStore.filesCount > 0 &&
-      this.currentDocument === undefined
-    ) {
+    if (this.#filesStore.filesCount > 0 && this.currentDocument === undefined) {
       // we find the first file and select it
       for (const [filePath, dirent] of Object.entries(files)) {
         if (dirent?.type === 'file') {
@@ -261,7 +255,9 @@ export class WorkbenchStore {
     }
 
     if (!this.artifactIdList.includes(messageId)) {
-      useWorkbenchStore.getState().setArtifactIdList([...this.artifactIdList, messageId]);
+      useWorkbenchStore
+        .getState()
+        .setArtifactIdList([...this.artifactIdList, messageId]);
     }
 
     useWorkbenchStore.getState().setArtifact(messageId, {
@@ -274,7 +270,7 @@ export class WorkbenchStore {
 
   updateArtifact(
     { messageId }: ArtifactCallbackData,
-    state: Partial<ArtifactUpdateState>
+    state: Partial<ArtifactUpdateState>,
   ) {
     const artifact = this.#getArtifact(messageId);
 
@@ -282,7 +278,9 @@ export class WorkbenchStore {
       return;
     }
 
-    useWorkbenchStore.getState().setArtifact(messageId, { ...artifact, ...state });
+    useWorkbenchStore
+      .getState()
+      .setArtifact(messageId, { ...artifact, ...state });
   }
 
   async addAction(data: ActionCallbackData) {

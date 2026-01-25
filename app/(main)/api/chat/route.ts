@@ -27,7 +27,7 @@ export async function POST(request: NextRequest) {
         JSON.stringify({
           error: 'Messages array is required and must not be empty',
         }),
-        { status: 400, headers: { 'Content-Type': 'application/json' } }
+        { status: 400, headers: { 'Content-Type': 'application/json' } },
       );
     }
 
@@ -51,7 +51,7 @@ export async function POST(request: NextRequest) {
         const switchesLeft = MAX_RESPONSE_SEGMENTS - stream.switches;
 
         console.log(
-          `[API_CHAT] Reached max token limit (${MAX_TOKENS}): Continuing message (${switchesLeft} switches left)`
+          `[API_CHAT] Reached max token limit (${MAX_TOKENS}): Continuing message (${switchesLeft} switches left)`,
         );
 
         messages.push({ role: 'assistant', content });
@@ -70,7 +70,7 @@ export async function POST(request: NextRequest) {
           messages,
           env as any,
           provider,
-          options
+          options,
         );
 
         return stream.switchSource(result.toDataStreamResponse().body!);

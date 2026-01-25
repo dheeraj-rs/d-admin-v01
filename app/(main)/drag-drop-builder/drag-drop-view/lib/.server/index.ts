@@ -16,7 +16,7 @@ const development = process.env.NODE_ENV !== 'production';
  */
 const handleData = async (
   req: NextApiRequest,
-  res: NextApiResponse
+  res: NextApiResponse,
 ): Promise<void> => {
   if (req.method !== 'GET' && req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
@@ -25,7 +25,7 @@ const handleData = async (
   if (req.method === 'GET') {
     const data = await loadData(
       req.query.path as string,
-      (req.query.ext as string) ?? 'html'
+      (req.query.ext as string) ?? 'html',
     );
     return res.status(200).send(data);
   }
@@ -39,7 +39,7 @@ const handleData = async (
     await updateData(
       req.query.path as string,
       (req.query.ext as string) ?? 'html',
-      body
+      body,
     );
     return res.status(200).send('');
   } else {
@@ -53,7 +53,7 @@ const handleData = async (
  */
 const handleAsset = async (
   req: NextApiRequest,
-  res: NextApiResponse
+  res: NextApiResponse,
 ): Promise<void> => {
   if (req.method !== 'GET') {
     return res.status(405).json({ error: 'Method not allowed' });
@@ -75,7 +75,7 @@ const handleAsset = async (
  */
 const handleTheme = async (
   req: NextApiRequest,
-  res: NextApiResponse
+  res: NextApiResponse,
 ): Promise<void> => {
   if (req.method !== 'GET') {
     return res.status(405).json({ error: 'Method not allowed' });
@@ -92,7 +92,7 @@ const handleTheme = async (
  */
 export const handleEditor = async (
   req: NextApiRequest,
-  res: NextApiResponse
+  res: NextApiResponse,
 ): Promise<void> => {
   // Only allow in development
   if (!development) {

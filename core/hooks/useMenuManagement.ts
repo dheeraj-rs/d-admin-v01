@@ -8,7 +8,7 @@ import { LayoutState } from '@/core/types/layout-store';
 interface UseMenuManagementProps {
   layoutState: LayoutState;
   setLayoutState: (
-    state: Partial<LayoutState> | ((prev: LayoutState) => LayoutState)
+    state: Partial<LayoutState> | ((prev: LayoutState) => LayoutState),
   ) => void;
 
   menubarRef: RefObject<HTMLDivElement | null>;

@@ -5,28 +5,36 @@ export const supportedLanguages = [
     name: 'TS',
     extensions: ['ts'],
     async load() {
-      return import('@codemirror/lang-javascript').then((module) => module.javascript({ typescript: true }));
+      return import('@codemirror/lang-javascript').then((module) =>
+        module.javascript({ typescript: true }),
+      );
     },
   }),
   LanguageDescription.of({
     name: 'JS',
     extensions: ['js', 'mjs', 'cjs'],
     async load() {
-      return import('@codemirror/lang-javascript').then((module) => module.javascript());
+      return import('@codemirror/lang-javascript').then((module) =>
+        module.javascript(),
+      );
     },
   }),
   LanguageDescription.of({
     name: 'TSX',
     extensions: ['tsx'],
     async load() {
-      return import('@codemirror/lang-javascript').then((module) => module.javascript({ jsx: true, typescript: true }));
+      return import('@codemirror/lang-javascript').then((module) =>
+        module.javascript({ jsx: true, typescript: true }),
+      );
     },
   }),
   LanguageDescription.of({
     name: 'JSX',
     extensions: ['jsx'],
     async load() {
-      return import('@codemirror/lang-javascript').then((module) => module.javascript({ jsx: true }));
+      return import('@codemirror/lang-javascript').then((module) =>
+        module.javascript({ jsx: true }),
+      );
     },
   }),
   LanguageDescription.of({
@@ -47,14 +55,18 @@ export const supportedLanguages = [
     name: 'SASS',
     extensions: ['sass'],
     async load() {
-      return import('@codemirror/lang-sass').then((module) => module.sass({ indented: true }));
+      return import('@codemirror/lang-sass').then((module) =>
+        module.sass({ indented: true }),
+      );
     },
   }),
   LanguageDescription.of({
     name: 'SCSS',
     extensions: ['scss'],
     async load() {
-      return import('@codemirror/lang-sass').then((module) => module.sass({ indented: false }));
+      return import('@codemirror/lang-sass').then((module) =>
+        module.sass({ indented: false }),
+      );
     },
   }),
   LanguageDescription.of({
@@ -68,7 +80,9 @@ export const supportedLanguages = [
     name: 'Markdown',
     extensions: ['md'],
     async load() {
-      return import('@codemirror/lang-markdown').then((module) => module.markdown());
+      return import('@codemirror/lang-markdown').then((module) =>
+        module.markdown(),
+      );
     },
   }),
   LanguageDescription.of({
@@ -82,7 +96,9 @@ export const supportedLanguages = [
     name: 'Python',
     extensions: ['py'],
     async load() {
-      return import('@codemirror/lang-python').then((module) => module.python());
+      return import('@codemirror/lang-python').then((module) =>
+        module.python(),
+      );
     },
   }),
   LanguageDescription.of({
@@ -95,7 +111,10 @@ export const supportedLanguages = [
 ];
 
 export async function getLanguage(fileName: string) {
-  const languageDescription = LanguageDescription.matchFilename(supportedLanguages, fileName);
+  const languageDescription = LanguageDescription.matchFilename(
+    supportedLanguages,
+    fileName,
+  );
 
   if (languageDescription) {
     return await languageDescription.load();

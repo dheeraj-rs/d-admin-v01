@@ -44,14 +44,15 @@ export function HistoryItem({ item, onDelete, onSelect }: HistoryItemProps) {
   return (
     <div
       ref={hoverRef}
-      className="flex items-center gap-3 w-full p-3 rounded-lg hover:bg-[var(--d-admin-surface-hover)] text-left group transition-all">
-      <span className="bg-[var(--d-admin-surface-section)] p-1.5 rounded-md text-[var(--d-admin-text-color-secondary)] group-hover:text-[var(--d-admin-primary-color)] transition-colors">
+      className="group flex w-full items-center gap-3 rounded-lg p-3 text-left transition-all hover:bg-[var(--d-admin-surface-hover)]"
+    >
+      <span className="rounded-md bg-[var(--d-admin-surface-section)] p-1.5 text-[var(--d-admin-text-color-secondary)] transition-colors group-hover:text-[var(--d-admin-primary-color)]">
         <Icon icon="ph:chat-circle-text" className="size-4" />
       </span>
-      <div className="flex-1 min-w-0">
+      <div className="min-w-0 flex-1">
         <Link
           href={`/ai-website-builder/${item.id}`}
-          className="flex w-full relative truncate block"
+          className="relative block flex w-full truncate"
           onClick={() => {
             onSelect?.();
             useAiBuilderStore.getState().setIsHistoryOpen(false);
@@ -59,13 +60,15 @@ export function HistoryItem({ item, onDelete, onSelect }: HistoryItemProps) {
             useAiBuilderStore.getState().setActiveMobilePanel('chat');
           }}
         >
-          <div className="flex flex-col w-full min-w-0">
+          <div className="flex w-full min-w-0 flex-col">
             <span className="truncate">{item.description}</span>
-            <span className="text-xs truncate text-[var(--d-admin-text-color-secondary)]">
-              {formatDistanceToNow(new Date(item.timestamp), { addSuffix: true })}
+            <span className="truncate text-xs text-[var(--d-admin-text-color-secondary)]">
+              {formatDistanceToNow(new Date(item.timestamp), {
+                addSuffix: true,
+              })}
             </span>
           </div>
-          <div className="absolute right-0 z-1 top-0 bottom-0 w-10 flex justify-end group-hover:w-15 group-hover:from-45%">
+          <div className="absolute top-0 right-0 bottom-0 z-1 flex w-10 justify-end group-hover:w-15 group-hover:from-45%">
             {hovering && (
               <div className="flex items-center p-1 text-gray-500 hover:text-red-500">
                 <Dialog.Trigger asChild>
@@ -84,7 +87,6 @@ export function HistoryItem({ item, onDelete, onSelect }: HistoryItemProps) {
           </div>
         </Link>
       </div>
-
     </div>
   );
 }

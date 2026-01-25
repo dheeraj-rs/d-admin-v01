@@ -167,8 +167,8 @@ export const useLayoutStore = create<LayoutStore>()(
             state.setIsHydrated(true);
           }
         },
-      }
+      },
     ),
-    { name: 'LayoutStore' }
-  )
+    { name: 'LayoutStore' },
+  ),
 );

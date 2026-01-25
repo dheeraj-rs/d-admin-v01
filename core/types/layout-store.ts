@@ -36,10 +36,10 @@ export interface LayoutStore {
   isHydrated: boolean;
   language: string;
   setLayoutConfig: (
-    config: Partial<LayoutConfig> | ((prev: LayoutConfig) => LayoutConfig)
+    config: Partial<LayoutConfig> | ((prev: LayoutConfig) => LayoutConfig),
   ) => void;
   setLayoutState: (
-    state: Partial<LayoutState> | ((prev: LayoutState) => LayoutState)
+    state: Partial<LayoutState> | ((prev: LayoutState) => LayoutState),
   ) => void;
   setLanguage: (lang: string) => void;
   onMenuToggle: () => void;

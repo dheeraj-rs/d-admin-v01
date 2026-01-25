@@ -24,7 +24,9 @@ type IconButtonWithChildrenProps = {
   children: React.ReactNode;
 } & BaseIconButtonProps;
 
-type IconButtonProps = IconButtonWithoutChildrenProps | IconButtonWithChildrenProps;
+type IconButtonProps =
+  | IconButtonWithoutChildrenProps
+  | IconButtonWithChildrenProps;
 
 export const IconButton = memo(
   ({
@@ -41,7 +43,7 @@ export const IconButton = memo(
     return (
       <button
         className={classNames(
-          'flex items-center text-gray-500 dark:text-gray-400 bg-transparent enabled:hover:text-gray-700 dark:enabled:hover:text-gray-200 rounded-md p-1 enabled:hover:bg-gray-100 dark:enabled:hover:bg-zinc-800 disabled:cursor-not-allowed',
+          'flex items-center rounded-md bg-transparent p-1 text-gray-500 enabled:hover:bg-gray-100 enabled:hover:text-gray-700 disabled:cursor-not-allowed dark:text-gray-400 dark:enabled:hover:bg-zinc-800 dark:enabled:hover:text-gray-200',
           {
             [classNames('opacity-30', disabledClassName)]: disabled,
           },
@@ -57,11 +59,14 @@ export const IconButton = memo(
           onClick?.(event);
         }}
       >
-        {children ? (
-          children
-        ) : (
-          icon && <Icon icon={icon} className={classNames(getIconSize(size), iconClassName)} />
-        )}
+        {children
+          ? children
+          : icon && (
+              <Icon
+                icon={icon}
+                className={classNames(getIconSize(size), iconClassName)}
+              />
+            )}
       </button>
     );
   },

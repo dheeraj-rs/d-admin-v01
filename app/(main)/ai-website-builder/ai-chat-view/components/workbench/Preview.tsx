@@ -4,10 +4,12 @@ import { usePreviewStore } from '../../lib/stores/zustand';
 
 export const Preview = memo(() => {
   const iframeRef = useRef<HTMLIFrameElement>(null);
-  const iframeUrl = usePreviewStore(state => state.iframeUrl);
-  const refreshTrigger = usePreviewStore(state => state.refreshTrigger);
-  const previews = usePreviewStore(state => state.previews);
-  const activePreviewIndex = usePreviewStore(state => state.activePreviewIndex);
+  const iframeUrl = usePreviewStore((state) => state.iframeUrl);
+  const refreshTrigger = usePreviewStore((state) => state.refreshTrigger);
+  const previews = usePreviewStore((state) => state.previews);
+  const activePreviewIndex = usePreviewStore(
+    (state) => state.activePreviewIndex,
+  );
   const [isSecureContext, setIsSecureContext] = useState(true);
 
   useEffect(() => {
@@ -26,11 +28,14 @@ export const Preview = memo(() => {
       if (!activePreview) return;
 
       // Check if message origin matches the preview URL
-      // We relax this check because the app might be running on a different port (e.g. 5174) 
+      // We relax this check because the app might be running on a different port (e.g. 5174)
       // than what we think is active (5173), causing origin mismatch.
       try {
         if (event.data?.type === 'ROUTE_CHANGE') {
-          console.log('[Preview] Processing route change from origin:', event.origin);
+          console.log(
+            '[Preview] Processing route change from origin:',
+            event.origin,
+          );
         }
       } catch (e) {
         // ignore
@@ -59,37 +64,43 @@ export const Preview = memo(() => {
 
   if (!isSecureContext) {
     return (
-      <div className="w-full h-full flex flex-col items-center justify-center bg-surface-0 p-6 text-center">
-        <div className="bg-orange-500/10 p-4 rounded-full mb-4">
-          <Icon icon="ph:warning-circle-duotone" className="w-8 h-8 text-orange-500" />
+      <div className="bg-surface-0 flex h-full w-full flex-col items-center justify-center p-6 text-center">
+        <div className="mb-4 rounded-full bg-orange-500/10 p-4">
+          <Icon
+            icon="ph:warning-circle-duotone"
+            className="h-8 w-8 text-orange-500"
+          />
         </div>
-        <h3 className="text-lg font-medium text-[var(--d-admin-text-color)] mb-2">
+        <h3 className="mb-2 text-lg font-medium text-[var(--d-admin-text-color)]">
           Live Preview Unavailable
         </h3>
-        <p className="text-sm text-[var(--d-admin-text-color-secondary)] max-w-sm">
-          The live preview requires a secure context (HTTPS or localhost) to run the in-browser server.
-          <br /><br />
-          You are viewing the app in <strong>Read-Only Mode</strong>. You can still browse the code and chat with the AI.
+        <p className="max-w-sm text-sm text-[var(--d-admin-text-color-secondary)]">
+          The live preview requires a secure context (HTTPS or localhost) to run
+          the in-browser server.
+          <br />
+          <br />
+          You are viewing the app in <strong>Read-Only Mode</strong>. You can
+          still browse the code and chat with the AI.
         </p>
       </div>
     );
   }
 
   return (
-    <div className="w-full h-full flex flex-col bg-surface-0">
-      <div className="flex-1 w-full h-full relative">
+    <div className="bg-surface-0 flex h-full w-full flex-col">
+      <div className="relative h-full w-full flex-1">
         {iframeUrl ? (
           <iframe
             key={refreshTrigger}
             ref={iframeRef}
-            className="border-none w-full h-full absolute inset-0"
+            className="absolute inset-0 h-full w-full border-none"
             src={iframeUrl}
             allow="clipboard-read; clipboard-write"
             onLoad={() => console.log('[Preview] Iframe loaded:', iframeUrl)}
             onError={(e) => console.error('[Preview] Iframe error:', e)}
           />
         ) : (
-          <div className="flex w-full h-full justify-center items-center text-text-secondary">
+          <div className="text-text-secondary flex h-full w-full items-center justify-center">
             No preview available
           </div>
         )}

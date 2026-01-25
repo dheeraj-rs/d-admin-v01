@@ -1,15 +1,8 @@
 // @ts-nocheck
 // preventing TS errors during migration
 import { streamText as _streamText, convertToCoreMessages } from 'ai';
-import {
-  getAPIKey,
-  getGoogleAPIKey,
-  getOpenAIKey,
-} from './api-key';
-import {
-  getAnthropicModel,
-  getOpenAIModel,
-} from './model';
+import { getAPIKey, getGoogleAPIKey, getOpenAIKey } from './api-key';
+import { getAnthropicModel, getOpenAIModel } from './model';
 import { MAX_TOKENS } from './constants';
 import { getSystemPrompt } from './prompts';
 import { GoogleGenAI } from '@google/genai';
@@ -44,7 +37,7 @@ export async function streamText(
   messages: Messages,
   env: Env,
   provider: AIProvider = 'anthropic',
-  options?: StreamingOptions
+  options?: StreamingOptions,
 ) {
   if (provider === 'google') {
     // server-side Google GenAI SDK implementation
@@ -78,7 +71,7 @@ export async function streamText(
                 if (text) {
                   fullText += text;
                   controller.enqueue(
-                    encoder.encode(`0:${JSON.stringify(text)}\n`)
+                    encoder.encode(`0:${JSON.stringify(text)}\n`),
                   );
                 }
               }

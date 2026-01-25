@@ -27,7 +27,7 @@ Enhanced prompt:`,
         },
       ],
       env as any,
-      provider as any
+      provider as any,
     );
 
     const stream = result.toDataStreamResponse().body;

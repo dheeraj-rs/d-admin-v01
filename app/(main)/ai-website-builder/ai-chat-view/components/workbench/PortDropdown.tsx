@@ -22,49 +22,47 @@ export const PortDropdown = memo(
     setHasSelectedPreview,
     previews,
   }: PortDropdownProps) => {
-
-
     // sort previews, preserving original index
     const allReadyPreviews = previews
       .map((previewInfo, index) => ({ ...previewInfo, index }))
       .filter((preview) => preview.ready);
 
-    const maxPort = Math.max(...allReadyPreviews.map(p => p.port));
+    const maxPort = Math.max(...allReadyPreviews.map((p) => p.port));
     const activePort = previews[activePreviewIndex]?.port;
 
     const sortedPreviews = allReadyPreviews
-      .filter(p => p.port === maxPort || p.port === activePort)
+      .filter((p) => p.port === maxPort || p.port === activePort)
       .sort((a, b) => a.port - b.port);
 
     return (
       <DropdownMenu.Root open={isDropdownOpen} onOpenChange={setIsDropdownOpen}>
         <DropdownMenu.Trigger asChild>
           <button
-            className="flex items-center gap-2 text-gray-500 dark:text-gray-400 bg-transparent hover:text-gray-700 dark:hover:text-gray-200 rounded-md p-1 hover:bg-gray-100 dark:hover:bg-zinc-800 outline-none disabled:cursor-not-allowed disabled:opacity-30"
+            className="flex items-center gap-2 rounded-md bg-transparent p-1 text-gray-500 outline-none hover:bg-gray-100 hover:text-gray-700 disabled:cursor-not-allowed disabled:opacity-30 dark:text-gray-400 dark:hover:bg-zinc-800 dark:hover:text-gray-200"
             onClick={(e) => {
               // Trigger automatically handles click, but we want to toggle.
               // Controlled state handling needs care. Radix Trigger toggles automatically.
             }}
           >
             <Icon icon="ph:plug" className="text-xl" />
-            <span className="text-sm font-medium text-text">
+            <span className="text-text text-sm font-medium">
               {previews[activePreviewIndex]?.port}
             </span>
           </button>
         </DropdownMenu.Trigger>
         <DropdownMenu.Portal>
           <DropdownMenu.Content
-            className="z-[9999] min-w-[140px] bg-[var(--d-admin-surface-section)] border border-[var(--d-admin-surface-border)] rounded shadow-sm overflow-hidden p-1 data-[side=top]:animate-slide-up-fade data-[side=right]:animate-slide-right-fade data-[side=bottom]:animate-slide-down-fade data-[side=left]:animate-slide-left-fade"
+            className="data-[side=top]:animate-slide-up-fade data-[side=right]:animate-slide-right-fade data-[side=bottom]:animate-slide-down-fade data-[side=left]:animate-slide-left-fade z-[9999] min-w-[140px] overflow-hidden rounded border border-[var(--d-admin-surface-border)] bg-[var(--d-admin-surface-section)] p-1 shadow-sm"
             align="end"
             sideOffset={5}
           >
-            <div className="px-2 py-1.5 text-xs font-semibold text-[var(--d-admin-text-color)] border-b border-[var(--d-admin-surface-border)] mb-1">
+            <div className="mb-1 border-b border-[var(--d-admin-surface-border)] px-2 py-1.5 text-xs font-semibold text-[var(--d-admin-text-color)]">
               Ports
             </div>
             {sortedPreviews.map((preview) => (
               <DropdownMenu.Item
                 key={preview.port}
-                className="flex items-center gap-2 px-2 py-1.5 text-sm cursor-pointer rounded outline-none text-[var(--d-admin-text-color)] data-[highlighted]:bg-[var(--d-admin-surface-hover)]"
+                className="flex cursor-pointer items-center gap-2 rounded px-2 py-1.5 text-sm text-[var(--d-admin-text-color)] outline-none data-[highlighted]:bg-[var(--d-admin-surface-hover)]"
                 onSelect={() => {
                   setActivePreviewIndex(preview.index);
                   setHasSelectedPreview(true);
@@ -81,7 +79,10 @@ export const PortDropdown = memo(
                   {preview.port}
                 </span>
                 {activePreviewIndex === preview.index && (
-                  <Icon icon="ph:check" className="ml-auto text-[var(--d-admin-primary-color)]" />
+                  <Icon
+                    icon="ph:check"
+                    className="ml-auto text-[var(--d-admin-primary-color)]"
+                  />
                 )}
               </DropdownMenu.Item>
             ))}

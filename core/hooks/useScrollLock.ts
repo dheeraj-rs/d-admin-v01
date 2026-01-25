@@ -3,7 +3,7 @@ import { useRef, useEffect, useCallback, useState } from 'react';
 export function useScrollLock(
   autoLock: boolean = false,
   lockTarget: HTMLElement | string | null = null,
-  widthReflow = true
+  widthReflow = true,
 ) {
   const target = useRef<HTMLElement | null>(null);
   const originalStyle = useRef<{

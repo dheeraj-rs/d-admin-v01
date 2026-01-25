@@ -1,12 +1,14 @@
-import type { Metadata } from "next";
-import "./globals.css";
-import AppProviders from "@/core/providers/AppProviders";
-import { getThemeFromCookies } from "@/core/utils/theme-cookies";
+import type { Metadata } from 'next';
+import './globals.css';
+import AppProviders from '@/core/providers/AppProviders';
+import { getThemeFromCookies } from '@/core/utils/theme-cookies';
 
 export const metadata: Metadata = {
   title: 'D-Admin - Website Builder & Management Platform',
-  description: 'Professional website builder and management platform. Create, deploy, and manage websites with advanced features, templates, and analytics.',
-  keywords: 'website builder, web development, website management, templates, portfolio, SEO, analytics, drag and drop, responsive design',
+  description:
+    'Professional website builder and management platform. Create, deploy, and manage websites with advanced features, templates, and analytics.',
+  keywords:
+    'website builder, web development, website management, templates, portfolio, SEO, analytics, drag and drop, responsive design',
 };
 
 export default async function RootLayout({
@@ -15,7 +17,8 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   const themeConfig = await getThemeFromCookies();
-  const isDark = themeConfig.theme.includes('dark') || themeConfig.colorScheme === 'dark';
+  const isDark =
+    themeConfig.theme.includes('dark') || themeConfig.colorScheme === 'dark';
   return (
     <html lang="en" className={isDark ? 'dark' : ''}>
       <head>
@@ -33,9 +36,7 @@ export default async function RootLayout({
         <link rel="icon" type="image/x-icon" href="/favicon.ico" />
         <link rel="manifest" href="/manifest.json" />
       </head>
-      <body
-        className={`antialiased`}
-      >
+      <body className={`antialiased`}>
         <AppProviders>{children}</AppProviders>
       </body>
     </html>

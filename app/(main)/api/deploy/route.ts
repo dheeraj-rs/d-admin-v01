@@ -23,7 +23,7 @@ export async function POST(request: NextRequest) {
           error:
             'Vercel token not configured. Please add VERCEL_TOKEN to your environment variables.',
         },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -34,7 +34,7 @@ export async function POST(request: NextRequest) {
           error:
             'No files provided for deployment. Please generate a website first.',
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -76,7 +76,7 @@ export async function POST(request: NextRequest) {
           success: false,
           error: 'No valid files to deploy after filtering.',
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -113,7 +113,7 @@ export async function POST(request: NextRequest) {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(deploymentPayload),
-      }
+      },
     );
 
     if (!deploymentResponse.ok) {
@@ -131,8 +131,12 @@ export async function POST(request: NextRequest) {
       }
 
       // Check for specific file-related errors
-      if (errorData.error?.code === 'invalid_files' || errorMessage.includes('file definitions')) {
-        errorMessage = 'One or more file definitions contain errors. Please ensure all files have valid content and paths.';
+      if (
+        errorData.error?.code === 'invalid_files' ||
+        errorMessage.includes('file definitions')
+      ) {
+        errorMessage =
+          'One or more file definitions contain errors. Please ensure all files have valid content and paths.';
       }
 
       return NextResponse.json(
@@ -141,7 +145,7 @@ export async function POST(request: NextRequest) {
           error: errorMessage,
           details: errorData, // Include full error details for debugging
         },
-        { status: deploymentResponse.status }
+        { status: deploymentResponse.status },
       );
     }
 
@@ -149,7 +153,7 @@ export async function POST(request: NextRequest) {
 
     console.log(
       '✅ Vercel API Response:',
-      JSON.stringify(deploymentData, null, 2)
+      JSON.stringify(deploymentData, null, 2),
     );
 
     // Prefer the alias (production URL) if available, otherwise use the deployment URL
@@ -175,7 +179,7 @@ export async function POST(request: NextRequest) {
         success: false,
         error: error.message || 'An unexpected error occurred',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

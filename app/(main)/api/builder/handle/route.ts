@@ -107,7 +107,7 @@ async function loadData(route: string, ext: string): Promise<string> {
 async function updateData(
   route: string,
   ext: string,
-  data: string
+  data: string,
 ): Promise<void> {
   const fileName = getFileNameFromRoute(route);
   const updatePath = path.join(rootPath, dataFolder);
@@ -119,7 +119,7 @@ async function updateData(
 
   await fs.promises.writeFile(
     path.join(updatePath, `${fileName}.${ext}`),
-    data
+    data,
   );
 }
 
@@ -169,7 +169,7 @@ async function handleAsset(req: NextRequest): Promise<NextResponse> {
     fullPath = path.join(
       getPackagePath(),
       'builder-elements',
-      assetPath.replace('/themes', '')
+      assetPath.replace('/themes', ''),
     );
   } else {
     fullPath = path.join(getPackagePath(), assetPath);
@@ -209,13 +209,13 @@ async function handleTheme(req: NextRequest): Promise<NextResponse> {
     console.log('Theme loading failed:', debugInfo);
     return NextResponse.json(
       { error: 'Theme not found', debug: debugInfo },
-      { status: 404 }
+      { status: 404 },
     );
   }
 
   const allFiles = await fs.promises.readdir(folderPath);
   const componentNames = allFiles.filter(
-    (c) => c !== 'index.ts' && !c.startsWith('.')
+    (c) => c !== 'index.ts' && !c.startsWith('.'),
   );
 
   const componentsP = componentNames.map(async (c) => {

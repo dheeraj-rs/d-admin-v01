@@ -38,7 +38,10 @@ export const FileTree = memo(
   }: Props) => {
     renderLogger.trace('FileTree');
 
-    const computedHiddenFiles = useMemo(() => [...DEFAULT_HIDDEN_FILES, ...(hiddenFiles ?? [])], [hiddenFiles]);
+    const computedHiddenFiles = useMemo(
+      () => [...DEFAULT_HIDDEN_FILES, ...(hiddenFiles ?? [])],
+      [hiddenFiles],
+    );
 
     const fileList = useMemo(() => {
       return buildFileList(files, rootFolder, hideRoot, computedHiddenFiles);
@@ -46,13 +49,23 @@ export const FileTree = memo(
 
     const [collapsedFolders, setCollapsedFolders] = useState(() => {
       return collapsed
-        ? new Set(fileList.filter((item) => item.kind === 'folder').map((item) => item.fullPath))
+        ? new Set(
+            fileList
+              .filter((item) => item.kind === 'folder')
+              .map((item) => item.fullPath),
+          )
         : new Set<string>();
     });
 
     useEffect(() => {
       if (collapsed) {
-        setCollapsedFolders(new Set(fileList.filter((item) => item.kind === 'folder').map((item) => item.fullPath)));
+        setCollapsedFolders(
+          new Set(
+            fileList
+              .filter((item) => item.kind === 'folder')
+              .map((item) => item.fullPath),
+          ),
+        );
         return;
       }
 
@@ -113,10 +126,10 @@ export const FileTree = memo(
     };
 
     return (
-      <div className={classNames('text-sm overflow-y-auto', className)}>
+      <div className={classNames('overflow-y-auto text-sm', className)}>
         {filteredFileList.length === 0 ? (
-          <div className="h-full flex flex-col items-center justify-center text-center p-4 text-text-secondary select-none">
-            <div className="opacity-40 mb-4 scale-75">
+          <div className="text-text-secondary flex h-full flex-col items-center justify-center p-4 text-center select-none">
+            <div className="mb-4 scale-75 opacity-40">
               <FileTreeIllustration />
             </div>
             <p className="text-sm font-medium opacity-60">No files found</p>
@@ -142,7 +155,10 @@ export const FileTree = memo(
                   <Folder
                     key={fileOrFolder.id}
                     folder={fileOrFolder}
-                    selected={allowFolderSelection && selectedFile === fileOrFolder.fullPath}
+                    selected={
+                      allowFolderSelection &&
+                      selectedFile === fileOrFolder.fullPath
+                    }
                     collapsed={collapsedFolders.has(fileOrFolder.fullPath)}
                     onClick={() => {
                       toggleCollapseState(fileOrFolder.fullPath);
@@ -170,13 +186,19 @@ interface FolderProps {
   onClick: () => void;
 }
 
-function Folder({ folder: { depth, name }, collapsed, selected = false, onClick }: FolderProps) {
+function Folder({
+  folder: { depth, name },
+  collapsed,
+  selected = false,
+  onClick,
+}: FolderProps) {
   return (
     <NodeButton
       className={classNames('group', {
-        'bg-transparent text-text-secondary hover:text-text hover:bg-surface-c border-transparent':
+        'text-text-secondary hover:text-text hover:bg-surface-c border-transparent bg-transparent':
           !selected,
-        'bg-[var(--d-admin-surface-d)] text-[var(--d-admin-primary-color)] !border-l-[var(--d-admin-primary-color)] font-medium': selected,
+        '!border-l-[var(--d-admin-primary-color)] bg-[var(--d-admin-surface-d)] font-medium text-[var(--d-admin-primary-color)]':
+          selected,
       })}
       depth={depth}
       iconClasses="scale-98"
@@ -201,12 +223,19 @@ interface FileProps {
   onClick: () => void;
 }
 
-function File({ file: { depth, name }, onClick, selected, unsavedChanges = false }: FileProps) {
+function File({
+  file: { depth, name },
+  onClick,
+  selected,
+  unsavedChanges = false,
+}: FileProps) {
   return (
     <NodeButton
       className={classNames('group', {
-        'bg-transparent hover:bg-surface-c text-text-secondary border-transparent': !selected,
-        'bg-[var(--d-admin-surface-d)] text-[var(--d-admin-primary-color)] !border-l-[var(--d-admin-primary-color)] font-medium': selected,
+        'hover:bg-surface-c text-text-secondary border-transparent bg-transparent':
+          !selected,
+        '!border-l-[var(--d-admin-primary-color)] bg-[var(--d-admin-surface-d)] font-medium text-[var(--d-admin-primary-color)]':
+          selected,
       })}
       depth={depth}
       iconClasses={classNames('scale-98', {
@@ -227,7 +256,9 @@ function File({ file: { depth, name }, onClick, selected, unsavedChanges = false
         })}
       >
         <div className="flex-1 truncate pr-2">{name}</div>
-        {unsavedChanges && <span className="scale-68 shrink-0 text-orange-500 w-2 h-2 rounded-full bg-orange-500" />}
+        {unsavedChanges && (
+          <span className="h-2 w-2 shrink-0 scale-68 rounded-full bg-orange-500 text-orange-500" />
+        )}
       </div>
     </NodeButton>
   );
@@ -241,18 +272,31 @@ interface ButtonProps {
   onClick?: () => void;
 }
 
-function NodeButton({ depth, iconClasses, onClick, className, children }: ButtonProps) {
+function NodeButton({
+  depth,
+  iconClasses,
+  onClick,
+  className,
+  children,
+}: ButtonProps) {
   return (
     <button
       className={classNames(
-        'flex items-center gap-1.5 w-full pr-2 border-2 border-transparent text-faded py-0.5',
+        'text-faded flex w-full items-center gap-1.5 border-2 border-transparent py-0.5 pr-2',
         className,
       )}
       style={{ paddingLeft: `${6 + depth * NODE_PADDING_LEFT}px` }}
       onClick={() => onClick?.()}
     >
-      <div className={classNames('scale-120 shrink-0 flex items-center justify-center', iconClasses)}></div>
-      <div className="truncate w-full text-left flex items-center gap-2">{children}</div>
+      <div
+        className={classNames(
+          'flex shrink-0 scale-120 items-center justify-center',
+          iconClasses,
+        )}
+      ></div>
+      <div className="flex w-full items-center gap-2 truncate text-left">
+        {children}
+      </div>
     </button>
   );
 }
@@ -287,7 +331,13 @@ function buildFileList(
 
   if (rootFolder === '/' && !hideRoot) {
     defaultDepth = 1;
-    fileList.push({ kind: 'folder', name: '/', depth: 0, id: 0, fullPath: '/' });
+    fileList.push({
+      kind: 'folder',
+      name: '/',
+      depth: 0,
+      id: 0,
+      fullPath: '/',
+    });
   }
 
   for (const [filePath, dirent] of Object.entries(files)) {
@@ -307,7 +357,10 @@ function buildFileList(
       const name = segments[i];
       const fullPath = (currentPath += `/${name}`);
 
-      if (!fullPath.startsWith(rootFolder) || (hideRoot && fullPath === rootFolder)) {
+      if (
+        !fullPath.startsWith(rootFolder) ||
+        (hideRoot && fullPath === rootFolder)
+      ) {
         i++;
         continue;
       }
@@ -340,7 +393,11 @@ function buildFileList(
   return sortFileList(rootFolder, fileList, hideRoot);
 }
 
-function isHiddenFile(filePath: string, fileName: string, hiddenFiles: Array<string | RegExp>) {
+function isHiddenFile(
+  filePath: string,
+  fileName: string,
+  hiddenFiles: Array<string | RegExp>,
+) {
   return hiddenFiles.some((pathOrRegex) => {
     if (typeof pathOrRegex === 'string') {
       return fileName === pathOrRegex;
@@ -363,7 +420,11 @@ function isHiddenFile(filePath: string, fileName: string, hiddenFiles: Array<str
  *
  * @returns A new array of nodes sorted in depth-first order.
  */
-function sortFileList(rootFolder: string, nodeList: Node[], hideRoot: boolean): Node[] {
+function sortFileList(
+  rootFolder: string,
+  nodeList: Node[],
+  hideRoot: boolean,
+): Node[] {
   logger.trace('sortFileList');
 
   const nodeMap = new Map<string, Node>();
@@ -427,5 +488,8 @@ function compareNodes(a: Node, b: Node): number {
     return a.kind === 'folder' ? -1 : 1;
   }
 
-  return a.name.localeCompare(b.name, undefined, { numeric: true, sensitivity: 'base' });
+  return a.name.localeCompare(b.name, undefined, {
+    numeric: true,
+    sensitivity: 'base',
+  });
 }

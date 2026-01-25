@@ -10,7 +10,7 @@ export function useAutoSave(standaloneServer: boolean) {
   const savePageDebounced = useRef(
     debounce((html: string) => {
       savePage(html, standaloneServer);
-    }, 1000)
+    }, 1000),
   );
 
   const triggerSave = (html: string) => {

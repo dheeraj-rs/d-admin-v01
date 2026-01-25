@@ -1,5 +1,5 @@
 const Component = {
   displayName: 'Heading 1',
   category: 'Heading',
-}
-export default Component
+};
+export default Component;

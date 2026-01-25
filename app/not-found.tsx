@@ -1,8 +1,6 @@
-import NotFoundPage from '@/core/layouts/not-found/not-found'
+import NotFoundPage from '@/core/layouts/not-found/not-found';
 function NotFound() {
-    return (
-        <NotFoundPage />
-    )
+  return <NotFoundPage />;
 }
 
-export default NotFound
+export default NotFound;

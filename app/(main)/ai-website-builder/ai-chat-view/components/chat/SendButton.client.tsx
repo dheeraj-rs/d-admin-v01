@@ -14,7 +14,7 @@ export function SendButton({ show, isStreaming, onClick }: SendButtonProps) {
     <AnimatePresence>
       {show ? (
         <motion.button
-          className="flex justify-center bg-[var(--d-admin-blue-600)] enabled:hover:brightness-94 text-white rounded-full transition-theme disabled:cursor-not-allowed disabled:opacity-50 shrink-0 overflow-hidden items-center p-1 size-7"
+          className="transition-theme flex size-7 shrink-0 items-center justify-center overflow-hidden rounded-full bg-[var(--d-admin-blue-600)] p-1 text-white enabled:hover:brightness-94 disabled:cursor-not-allowed disabled:opacity-50"
           transition={{ ease: customEasingFn, duration: 0.17 }}
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
@@ -24,8 +24,20 @@ export function SendButton({ show, isStreaming, onClick }: SendButtonProps) {
             onClick?.(event);
           }}
         >
-          <div className="text-lg flex items-center justify-center">
-            {!isStreaming ? <Icon icon="heroicons-outline:arrow-up" className="size-4" style={{ opacity: 1, filter: 'blur(0px)', transform: 'none' }} /> : <Icon icon="ph:stop-circle-bold" className="text-xl" style={{ opacity: 1, filter: 'blur(0px)', transform: 'none' }} />}
+          <div className="flex items-center justify-center text-lg">
+            {!isStreaming ? (
+              <Icon
+                icon="heroicons-outline:arrow-up"
+                className="size-4"
+                style={{ opacity: 1, filter: 'blur(0px)', transform: 'none' }}
+              />
+            ) : (
+              <Icon
+                icon="ph:stop-circle-bold"
+                className="text-xl"
+                style={{ opacity: 1, filter: 'blur(0px)', transform: 'none' }}
+              />
+            )}
           </div>
         </motion.button>
       ) : null}

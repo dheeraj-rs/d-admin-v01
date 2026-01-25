@@ -1,11 +1,7 @@
-import React from 'react'
+import React from 'react';
 
 function ContentAreaWrapper({ children }: { children?: React.ReactNode }) {
-    return (
-        <div className="owner-dashboard-main">
-            {children}
-        </div>
-    )
+  return <div className="owner-dashboard-main">{children}</div>;
 }
 
-export default ContentAreaWrapper
+export default ContentAreaWrapper;

@@ -17,11 +17,11 @@ export function getTerminalTheme(overrides?: ITheme): ITheme {
     foreground: cssVar('--bolt-elements-terminal-textColor'),
     background: cssVar('--bolt-elements-terminal-backgroundColor'),
     selectionBackground: cssVar(
-      '--bolt-elements-terminal-selection-backgroundColor'
+      '--bolt-elements-terminal-selection-backgroundColor',
     ),
     selectionForeground: cssVar('--bolt-elements-terminal-selection-textColor'),
     selectionInactiveBackground: cssVar(
-      '--bolt-elements-terminal-selection-backgroundColorInactive'
+      '--bolt-elements-terminal-selection-backgroundColorInactive',
     ),
 
     // ansi escape code colors

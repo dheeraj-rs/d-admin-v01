@@ -29,13 +29,13 @@ export const uploadFiles = async (req: NextApiRequest): Promise<string[]> => {
 
   form.on(
     'fileBegin',
-    (_, file) => (file.path = path.join('public', uploadFolder, file.name!))
+    (_, file) => (file.path = path.join('public', uploadFolder, file.name!)),
   );
 
   const files = await formParse(form, req);
 
   const urls = Object.values(files).map((f) =>
-    path.join(path.sep, uploadFolder, (<FormidableFile>f).name ?? '')
+    path.join(path.sep, uploadFolder, (<FormidableFile>f).name ?? ''),
   );
 
   return urls;

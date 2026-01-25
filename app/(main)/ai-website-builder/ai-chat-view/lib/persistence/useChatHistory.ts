@@ -67,7 +67,9 @@ export function useChatHistory() {
             if (storedMessages && storedMessages.messages.length > 0) {
               setInitialMessages(storedMessages.messages);
               setUrlId(storedMessages.urlId);
-              useChatStore.getState().setDescription(storedMessages.description);
+              useChatStore
+                .getState()
+                .setDescription(storedMessages.description);
               useChatStore.getState().setChatId(storedMessages.id);
             } else {
               router.replace('/');
@@ -121,7 +123,7 @@ export function useChatHistory() {
         useChatStore.getState().chatId as string,
         messages,
         urlId,
-        useChatStore.getState().description
+        useChatStore.getState().description,
       );
     },
   };

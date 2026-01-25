@@ -1,6 +1,6 @@
 export function bufferWatchEvents<T extends unknown[]>(
   timeInMs: number,
-  cb: (events: T[]) => unknown
+  cb: (events: T[]) => unknown,
 ) {
   let timeoutId: number | undefined;
   let events: T[] = [];
