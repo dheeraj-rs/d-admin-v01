@@ -32,31 +32,9 @@ export function Header() {
     const [isBuilderMenuOpen, setIsBuilderMenuOpen] = useState(false);
     const isMobile = useIsMobile();
 
-    const getBuilderLabel = (view: typeof builderView) => {
-        switch (view) {
-            case 'chat':
-                return 'AI Chat';
-            case 'drag-drop':
-                return 'Drag & Drop Snippet';
-            case 'templates':
-                return 'Templates';
-            default:
-                return 'AI Chat';
-        }
-    };
 
-    const getBuilderIcon = (view: typeof builderView) => {
-        switch (view) {
-            case 'chat':
-                return 'lucide:sparkles';
-            case 'drag-drop':
-                return 'lucide:hand';
-            case 'templates':
-                return 'lucide:layout-template';
-            default:
-                return 'lucide:sparkles';
-        }
-    };
+
+    const getBuilderIcon = () => 'lucide:sparkles';
 
     // =======================
 
@@ -201,7 +179,7 @@ export function Header() {
                         title="Start New Chat"
                     >
                         <Icon
-                            icon={getBuilderIcon(builderView)}
+                            icon={getBuilderIcon()}
                             className="size-3.5 text-[var(--d-admin-text-color-secondary)]"
                         />
                         <span>New Chat</span>
@@ -371,30 +349,29 @@ export function Header() {
 
                     {/* Desktop Actions */}
                     <div className="ml-auto hidden gap-3 md:flex">
-                        {/* Chat / Default Actions */}
-                        <button
-                            className="disabled:op-50 gap-1.7 relative flex h-8 max-w-full min-w-0 shrink-0 items-center justify-center gap-2 rounded-md border border-[var(--d-admin-surface-border)] bg-[var(--d-admin-surface-section)] px-3 text-sm font-medium text-[var(--d-admin-text-color)] transition-colors hover:bg-[var(--d-admin-surface-hover)] focus-visible:outline-2 focus-visible:outline-[var(--d-admin-blue-600)] disabled:cursor-not-allowed"
-                            type="button"
-                            onClick={() => {
-                                const files = useFilesStore.getState().files;
-                                exportProjectAsZip(files);
-                            }}
-                            title="Export as ZIP"
-                        >
-                            {' '}
-                            <Icon icon="ph:download-duotone" className="text-lg" />
-                            <span>Export</span>
-                        </button>
+                                <button
+                                    className="disabled:op-50 gap-1.7 relative flex h-8 max-w-full min-w-0 shrink-0 items-center justify-center gap-2 rounded-md border border-[var(--d-admin-surface-border)] bg-[var(--d-admin-surface-section)] px-3 text-sm font-medium text-[var(--d-admin-text-color)] transition-colors hover:bg-[var(--d-admin-surface-hover)] focus-visible:outline-2 focus-visible:outline-[var(--d-admin-blue-600)] disabled:cursor-not-allowed"
+                                    type="button"
+                                    onClick={() => {
+                                        const files = useFilesStore.getState().files;
+                                        exportProjectAsZip(files);
+                                    }}
+                                    title="Export as ZIP"
+                                >
+                                    {' '}
+                                    <Icon icon="ph:download-duotone" className="text-lg" />
+                                    <span>Export</span>
+                                </button>
 
-                        <button
-                            className="disabled:op-50 gap-1.7 relative flex h-8 max-w-full min-w-0 shrink-0 items-center justify-center gap-2 rounded-md border border-[var(--d-admin-surface-border)] bg-[var(--d-admin-surface-section)] px-3 text-sm font-medium text-[var(--d-admin-text-color)] transition-colors hover:bg-[var(--d-admin-surface-hover)] focus-visible:outline-2 focus-visible:outline-[var(--d-admin-blue-600)] disabled:cursor-not-allowed"
-                            title="Deploy to Vercel"
-                            onClick={() => setIsDeployModalOpen(true)}
-                        >
-                            {' '}
-                            <Icon icon="ph:rocket-launch-duotone" className="text-lg" />
-                            <span>Publish</span>
-                        </button>
+                                <button
+                                    className="disabled:op-50 gap-1.7 relative flex h-8 max-w-full min-w-0 shrink-0 items-center justify-center gap-2 rounded-md border border-[var(--d-admin-surface-border)] bg-[var(--d-admin-surface-section)] px-3 text-sm font-medium text-[var(--d-admin-text-color)] transition-colors hover:bg-[var(--d-admin-surface-hover)] focus-visible:outline-2 focus-visible:outline-[var(--d-admin-blue-600)] disabled:cursor-not-allowed"
+                                    title="Deploy to Vercel"
+                                    onClick={() => setIsDeployModalOpen(true)}
+                                >
+                                    {' '}
+                                    <Icon icon="ph:rocket-launch-duotone" className="text-lg" />
+                                    <span>Publish</span>
+                                </button>
                     </div>
 
                     {/* Mobile More Menu */}

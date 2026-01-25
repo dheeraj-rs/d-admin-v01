@@ -7,16 +7,22 @@ import { useAiBuilderStore } from '../store/ai-builder-store';
 import { WorkbenchPanel } from '../ai-chat-view/WorkbenchPanel';
 import { Header } from '../ai-chat-view/Header';
 import LightCircleRayBackground from '@/core/components/not-found/LightCircleRayBackground';
+import { useEffect } from 'react';
 
 export default function AiWebsiteBuilderPage() {
-  const { activeMobilePanel } = useAiBuilderStore();
+  const { activeMobilePanel, setBuilderView } = useAiBuilderStore();
   const isMobile = useIsMobile();
+
+  // Ensure we are in chat mode when mounting this page
+  useEffect(() => {
+    setBuilderView('chat');
+  }, [setBuilderView]);
 
   const showInterface = isMobile ? activeMobilePanel === 'chat' : true;
   const showWorkbench = isMobile ? activeMobilePanel === 'workbench' : true;
 
   return (
-    <div className="relative h-full w-full bg-[var(--d-admin-surface-ground)] text-[var(--d-admin-text-color)]">
+    <div className="relative h-full w-full bg-gradient-to-tl from-[var(--d-admin-surface-ground)] to-[var(--d-admin-surface-section)] text-[var(--d-admin-text-color)]">
       <LightCircleRayBackground />
       <HistorySidebar />
       <div className="relative z-10 flex h-full w-full flex-col">
@@ -30,24 +36,27 @@ export default function AiWebsiteBuilderPage() {
               >
                 {showInterface && (
                   <Panel
-                    defaultSize={isMobile ? 100 : 40}
+                    id="interface-panel"
+                    order={1}
+                    defaultSize={isMobile ? 100 : 30}
                     minSize={isMobile ? 100 : 25}
-                    maxSize={isMobile ? 100 : 50}
-                    className={`${isMobile && activeMobilePanel !== 'chat' ? 'hidden' : ''}`}
+                    className="h-full"
                   >
                     <ChatInterfacePanel />
                   </Panel>
                 )}
 
-                {!isMobile && (
-                  <PanelResizeHandle className="group relative flex w-2 items-center justify-center bg-transparent hover:bg-transparent" />
+                {!isMobile && showInterface && (
+                  <PanelResizeHandle className="w-1 bg-transparent transition-colors hover:bg-transparent" />
                 )}
 
                 {showWorkbench && (
                   <Panel
-                    defaultSize={isMobile ? 100 : 60}
-                    minSize={isMobile ? 100 : 50}
-                    className={`${isMobile && activeMobilePanel !== 'workbench' ? 'hidden' : ''}`}
+                    id="workbench-panel"
+                    order={2}
+                    defaultSize={isMobile ? 100 : 70}
+                    minSize={isMobile ? 100 : 30}
+                    className="h-full"
                   >
                     <WorkbenchPanel />
                   </Panel>

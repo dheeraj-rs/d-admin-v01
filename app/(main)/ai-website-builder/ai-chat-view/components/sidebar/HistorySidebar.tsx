@@ -59,7 +59,7 @@ export function HistorySidebar({ onSelect }: MenuProps) {
 
               if (useChatStore.getState().chatId === item.id) {
                 // hard page navigation to clear the stores
-                window.location.pathname = '/website-builder';
+                window.location.pathname = '/ai-website-builder';
               }
             })
             .catch((error) => {
@@ -76,9 +76,11 @@ export function HistorySidebar({ onSelect }: MenuProps) {
     setDialogContent(null);
   };
 
+  const historyReloadTrigger = useChatStore((state) => state.historyReloadTrigger);
+
   useEffect(() => {
     loadEntries();
-  }, [loadEntries]);
+  }, [loadEntries, historyReloadTrigger]);
 
   if (!isHistoryOpen) return null;
 

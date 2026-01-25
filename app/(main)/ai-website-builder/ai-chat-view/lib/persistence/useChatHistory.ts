@@ -82,10 +82,11 @@ export function useChatHistory() {
             setReady(true);
           });
       } else {
-        // No ID in URL - always start new chat (empty)
+        // No ID in URL - always start new chat (empty) with a new array reference
         setInitialMessages([]);
         setUrlId(undefined);
         useChatStore.getState().setDescription(undefined);
+        // Important: clearing the chatId in store triggers the UI reset
         useChatStore.getState().setChatId(undefined);
         setReady(true);
       }
@@ -103,9 +104,18 @@ export function useChatHistory() {
       }
 
       const { firstArtifact } = workbenchStore;
+      let description = useChatStore.getState().description;
 
-      if (!useChatStore.getState().description && firstArtifact?.title) {
-        useChatStore.getState().setDescription(firstArtifact?.title);
+      if (!description && firstArtifact?.title) {
+        description = firstArtifact?.title;
+        useChatStore.getState().setDescription(description);
+      } else if (!description && messages.length > 0) {
+        // Fallback: use the first user message as description
+        const firstUserMessage = messages.find((m) => m.role === 'user');
+        if (firstUserMessage) {
+          description = firstUserMessage.content.slice(0, 100);
+          useChatStore.getState().setDescription(description);
+        }
       }
 
       if (initialMessages.length === 0 && !useChatStore.getState().chatId) {
@@ -114,7 +124,10 @@ export function useChatHistory() {
         useChatStore.getState().setChatId(nextId);
 
         if (!urlId) {
-          navigateChat(nextId);
+            // Generate a URL ID if one doesn't exist
+            const newUrlId = await getUrlId(dbInstance, nextId);
+            setUrlId(newUrlId);
+            navigateChat(newUrlId);
         }
       }
 
@@ -123,8 +136,11 @@ export function useChatHistory() {
         useChatStore.getState().chatId as string,
         messages,
         urlId,
-        useChatStore.getState().description,
+        description,
       );
+      
+      // Trigger a history reload so the sidebar updates immediately
+      useChatStore.getState().triggerHistoryReload();
     },
   };
 }

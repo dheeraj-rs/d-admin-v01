@@ -34,6 +34,7 @@ export function ChatInterfacePanel() {
   renderLogger.trace('Chat');
 
   const { ready, initialMessages, storeMessageHistory } = useChatHistory();
+  const chatId = useChatStore((state) => state.chatId);
 
   return (
     <>
@@ -153,18 +154,26 @@ export const ChatImpl = memo(
 
     const TEXTAREA_MAX_HEIGHT = chatStarted ? 400 : 200;
 
+    const chatId = useChatStore((state) => state.chatId);
+
     useEffect(() => {
-      setStarted(initialMessages.length > 0);
-      // Update chatStarted based on initialMessages
-      if (initialMessages.length > 0 && !chatStarted) {
+      // If we have initial messages (loading from history), simply show them.
+      if (initialMessages.length > 0) {
+        setStarted(true);
         setChatStarted(true);
-      } else if (initialMessages.length === 0) {
+        return;
+      }
+      
+      // If we have no initial messages AND no chatId, it means we are in "New Chat" mode.
+      // We must force a reset of the local state.
+      if (!chatId) {
+        setStarted(false);
         setChatStarted(false);
         setMessages([]);
         setInput('');
         stop();
       }
-    }, [initialMessages, chatStarted, setStarted, setMessages, setInput, stop]);
+    }, [initialMessages, chatId, setStarted, setMessages, setInput, stop]);
 
     useEffect(() => {
       parseMessages(messages, isLoading);

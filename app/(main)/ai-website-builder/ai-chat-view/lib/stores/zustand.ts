@@ -28,6 +28,7 @@ interface ChatState {
   description: string | undefined;
   pendingFix: boolean;
   pendingErrorLog: string | undefined;
+  historyReloadTrigger: number;
 
   // Actions
   setStarted: (started: boolean) => void;
@@ -39,6 +40,7 @@ interface ChatState {
   setDescription: (desc: string | undefined) => void;
   setPendingFix: (pending: boolean) => void;
   setPendingErrorLog: (log: string | undefined) => void;
+  triggerHistoryReload: () => void;
 }
 
 export const useChatStore = create<ChatState>()(
@@ -64,6 +66,10 @@ export const useChatStore = create<ChatState>()(
       setDescription: (desc) => set({ description: desc }),
       setPendingFix: (pending) => set({ pendingFix: pending }),
       setPendingErrorLog: (log) => set({ pendingErrorLog: log }),
+      
+      // History refresh trigger
+      historyReloadTrigger: 0,
+      triggerHistoryReload: () => set((state) => ({ historyReloadTrigger: state.historyReloadTrigger + 1 })),
     }),
     { name: 'ChatStore' },
   ),

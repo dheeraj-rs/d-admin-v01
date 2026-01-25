@@ -42,8 +42,8 @@ export default function AiWebsiteBuilderPage() {
                   <Panel
                     id="interface-panel"
                     order={1}
-                    defaultSize={isMobile ? 100 : 25}
-                    minSize={isMobile ? 100 : 20}
+                    defaultSize={isMobile ? 100 : 30}
+                    minSize={isMobile ? 100 : 25}
                     className="h-full"
                   >
                     <ActiveInterface />
@@ -58,8 +58,8 @@ export default function AiWebsiteBuilderPage() {
                   <Panel
                     id="workbench-panel"
                     order={2}
-                    defaultSize={isMobile ? 100 : 75}
-                    minSize={isMobile ? 100 : 30}
+                    defaultSize={isMobile ? 100 : 70}
+                    minSize={isMobile ? 100 : 50}
                     className="h-full"
                   >
                     <ActiveWorkbench />

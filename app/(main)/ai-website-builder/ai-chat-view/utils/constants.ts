@@ -50,7 +50,7 @@ export const PANEL_SIZES = {
   },
   EDITOR: {
     default: 70,
-    min: 30,
+    min: 50,
   },
   TERMINAL: {
     default: 25,
