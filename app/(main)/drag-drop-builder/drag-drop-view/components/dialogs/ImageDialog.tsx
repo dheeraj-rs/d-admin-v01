@@ -46,17 +46,29 @@ export function ImageDialog({ isOpen, onClose, element, standaloneServer }: Imag
             // eslint-disable-next-line
             imgElement.src = url;
         } else {
-            const formData = new FormData();
-            formData.append('file-0', file!);
-            const baseUrl = getBaseUrl(standaloneServer);
-            const uploadUrl = standaloneServer
-                ? `${baseUrl}/data?path=${location.pathname}`
-                : `${baseUrl}?type=data&path=${location.pathname}`;
+            try {
+                const formData = new FormData();
+                formData.append('file-0', file!);
+                const baseUrl = getBaseUrl(standaloneServer);
+                const uploadUrl = standaloneServer
+                    ? `${baseUrl}/data?path=${location.pathname}`
+                    : `${baseUrl}?type=data&path=${location.pathname}`;
 
-            const res = await fetch(uploadUrl, { method: 'POST', body: formData });
-            const urls = await res.json();
-            // eslint-disable-next-line
-            imgElement.src = urls[0];
+                const res = await fetch(uploadUrl, { method: 'POST', body: formData });
+
+                if (!res.ok) {
+                    throw new Error(`Upload failed with status: ${res.status}`);
+                }
+
+                const urls = await res.json();
+                if (urls && urls.length > 0) {
+                    // eslint-disable-next-line
+                    imgElement.src = urls[0];
+                }
+            } catch (error) {
+                console.error('Image upload failed:', error);
+                alert('Failed to upload image. Please try again.');
+            }
         }
 
         onClose();
