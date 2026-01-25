@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
-import { Header } from '../ai-website-builder/ai-chat-view/Header';
+import { Header } from './drag-drop-view/components/Header';
 import { DragDropInterface } from '../ai-website-builder/components/drag-drop-view/DragDropInterface';
 import { DragDropWorkbench } from '../ai-website-builder/components/drag-drop-view/DragDropWorkbench';
 import { MobileDragDropSidebar } from '../ai-website-builder/components/drag-drop-view/MobileDragDropSidebar';
