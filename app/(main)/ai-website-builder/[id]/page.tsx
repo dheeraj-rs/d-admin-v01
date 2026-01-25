@@ -1,11 +1,11 @@
 'use client';
 import { Panel, PanelGroup, PanelResizeHandle } from 'react-resizable-panels';
 import { useIsMobile } from '@/core/hooks/use-mobile';
-import { HistorySidebar } from '../ai-chat-view/components/sidebar/HistorySidebar';
-import { ChatInterfacePanel } from '../ai-chat-view/components/chat/ChatInterfacePanel.client';
+import { HistorySidebar } from '../components/HistorySidebar';
+import { ChatInterfacePanel } from '../components/ChatInterfacePanel.client';
 import { useAiBuilderStore } from '../store/ai-builder-store';
-import { WorkbenchPanel } from '../ai-chat-view/WorkbenchPanel';
-import { Header } from '../ai-chat-view/Header';
+import { WorkbenchPanel } from '../components/WorkbenchPanel';
+import { Header } from '../components/AiBuilderHeaderWrapper';
 import LightCircleRayBackground from '@/core/components/not-found/LightCircleRayBackground';
 import { useEffect } from 'react';
 

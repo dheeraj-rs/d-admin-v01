@@ -1,5 +1,5 @@
 import { type NextRequest } from 'next/server';
-import { streamText } from '@/app/(main)/ai-website-builder/ai-chat-view/lib/.server/llm';
+import { streamText } from '@/app/(main)/ai-website-builder/lib/.server/llm';
 
 export async function POST(request: NextRequest) {
   const { message, provider = 'google' } = (await request.json()) as {

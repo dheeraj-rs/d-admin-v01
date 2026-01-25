@@ -1,12 +1,12 @@
 'use client';
-import { Header } from './ai-chat-view/Header';
-import { WorkbenchPanel } from './ai-chat-view/WorkbenchPanel';
+import { Header } from './components/AiBuilderHeaderWrapper';
+import { WorkbenchPanel } from './components/WorkbenchPanel';
 import { Panel, PanelGroup, PanelResizeHandle } from 'react-resizable-panels';
 import { useAiBuilderStore } from './store/ai-builder-store';
 import { useIsMobile } from '@/core/hooks/use-mobile';
-import { ChatInterfacePanel } from './ai-chat-view/components/chat/ChatInterfacePanel.client';
-import { HistorySidebar } from './ai-chat-view/components/sidebar/HistorySidebar';
-import { useChatStore } from './ai-chat-view/lib/stores/zustand';
+import { ChatInterfacePanel } from './components/ChatInterfacePanel.client';
+import { HistorySidebar } from './components/HistorySidebar';
+import { useChatStore } from './stores/zustand';
 import { useEffect } from 'react';
 
 export default function AiWebsiteBuilderPage() {
