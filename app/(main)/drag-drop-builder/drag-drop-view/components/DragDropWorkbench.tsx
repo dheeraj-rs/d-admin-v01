@@ -555,14 +555,10 @@ export function DragDropWorkbench() {
             isOpen={showPublishDialog}
             onClose={() => setShowPublishDialog(false)}
             onPublishHTML={() => {
-              localStorage.setItem('drag-drop-builder-format', 'html');
-              window.location.href =
-                '/drag-drop-builder/drag-drop-view/publish';
+              // Handled by PublishDialog inline modal
             }}
             onPublishReact={() => {
-              localStorage.setItem('drag-drop-builder-format', 'react');
-              window.location.href =
-                '/drag-drop-builder/drag-drop-view/publish';
+              // Handled by PublishDialog inline modal
             }}
           />
           <SaveProjectModal
