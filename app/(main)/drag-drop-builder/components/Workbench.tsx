@@ -3,7 +3,6 @@ import TrashIcon from '@heroicons/react/24/outline/TrashIcon';
 import ArrowDownIcon from '@heroicons/react/24/outline/ArrowDownIcon';
 import ArrowUpIcon from '@heroicons/react/24/outline/ArrowUpIcon';
 import CursorArrowRaysIcon from '@heroicons/react/24/outline/CursorArrowRaysIcon';
-import ArrowSmallUpIcon from '@heroicons/react/24/outline/ArrowSmallUpIcon'; // Check if needed
 
 import { ImageDialog } from '../dialogs/ImageDialog';
 import { ButtonDialog } from '../dialogs/ButtonDialog';
@@ -25,7 +24,6 @@ import {
 } from '../lib/utils';
 import {
   Component,
-  ComponentWithCategories,
 } from '../types';
 import {
   exportAsHTML,
@@ -52,12 +50,9 @@ export function Workbench() {
     showSvgDialog,
     showExportDialog,
     showPublishDialog,
-
-    setIsPreview,
     setShowReorderModal,
     setPendingAddComponent,
     setSelectedElement,
-
     setShowImageDialog,
     setShowButtonDialog,
     setShowLinkDialog,

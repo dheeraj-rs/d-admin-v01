@@ -1,14 +1,8 @@
-/**
- * Image Dialog Component
- * Allows users to upload or set image URLs
- */
-
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import * as DialogPrimitive from '@radix-ui/react-dialog';
 import XMarkIcon from '@heroicons/react/24/outline/XMarkIcon';
 import Cropper from 'react-easy-crop';
 import { classMixin } from '../lib/class-utils';
-import { getBaseUrl } from '../lib/utils';
 import getCroppedImg from '../lib/crop-utils';
 
 interface ImageDialogProps {

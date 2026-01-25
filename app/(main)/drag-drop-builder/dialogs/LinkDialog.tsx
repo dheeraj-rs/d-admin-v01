@@ -1,9 +1,4 @@
-/**
- * Link Dialog Component
- * Allows users to update link URLs and target
- */
-
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import * as DialogPrimitive from '@radix-ui/react-dialog';
 import XMarkIcon from '@heroicons/react/24/outline/XMarkIcon';
 import { classMixin } from '../lib/class-utils';

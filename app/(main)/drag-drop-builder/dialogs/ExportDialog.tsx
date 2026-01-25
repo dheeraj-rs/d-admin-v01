@@ -1,9 +1,3 @@
-/**
- * Export Dialog Component
- * Allows users to choose export format: HTML or React
- */
-
-import React from 'react';
 import * as DialogPrimitive from '@radix-ui/react-dialog';
 import XMarkIcon from '@heroicons/react/24/outline/XMarkIcon';
 import DocumentIcon from '@heroicons/react/24/outline/DocumentIcon';

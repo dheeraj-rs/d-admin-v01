@@ -1,9 +1,6 @@
 import JSZip from 'jszip';
 import { saveAs } from 'file-saver';
 
-/**
- * Extract all image URLs from HTML content that reference the /uploaded/ folder
- */
 const extractUploadedImageUrls = (htmlContent: string): string[] => {
   const imgRegex = /<img[^>]+src=["']([^"']+)["']/gi;
   const urls: string[] = [];

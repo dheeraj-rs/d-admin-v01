@@ -1,7 +1,3 @@
-/**
- * Custom hook for managing builder state
- */
-
 import { useState } from 'react';
 
 export function useBuilderState() {

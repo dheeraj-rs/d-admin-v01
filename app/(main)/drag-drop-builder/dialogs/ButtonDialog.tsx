@@ -1,8 +1,3 @@
-/**
- * Button Dialog Component
- * Allows users to configure button actions (URL, email, submit)
- */
-
 import React, { useState } from 'react';
 import * as DialogPrimitive from '@radix-ui/react-dialog';
 import XMarkIcon from '@heroicons/react/24/outline/XMarkIcon';

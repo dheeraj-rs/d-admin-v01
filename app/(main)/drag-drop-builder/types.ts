@@ -1,7 +1,3 @@
-/**
- * Type definitions for the drag-drop-builder feature
- */
-
 export interface DataType {
   content: string;
   name?: string;

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import Squares2X2Icon from '@heroicons/react/24/outline/Squares2X2Icon';
 import ArrowSmallUpIcon from '@heroicons/react/24/outline/ArrowSmallUpIcon';
 import { getImageUrl } from '../lib/utils';

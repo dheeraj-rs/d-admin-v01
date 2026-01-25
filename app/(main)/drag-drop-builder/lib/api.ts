@@ -1,13 +1,6 @@
-/**
- * API functions for the drag-drop-builder
- */
-
 import { Component } from '../types';
 import { getBaseUrl } from './utils';
 
-/**
- * Load theme components from the server
- */
 export async function loadTheme(
   themeFolder: string,
   standaloneServer: boolean,

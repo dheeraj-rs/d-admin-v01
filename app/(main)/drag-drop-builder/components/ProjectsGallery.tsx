@@ -3,7 +3,6 @@
 import React, { useState } from 'react';
 import { Icon } from '@iconify/react';
 import { useProjectsStore } from '../store/projects-store';
-import { useAiBuilderStore } from '../store/ai-builder-store';
 import { useBuilderStore } from '../store/builder-store';
 import { savePage } from '../lib/api';
 import * as Tabs from '@radix-ui/react-tabs';

@@ -1,10 +1,3 @@
-/**
- * Utility functions for the drag-drop-builder
- */
-
-/**
- * Debounce function to limit how often a function is called
- */
 export function debounce(callback: Function, timeout = 1000) {
   let timer: NodeJS.Timeout;
   return function (this: any, ...args: any[]) {

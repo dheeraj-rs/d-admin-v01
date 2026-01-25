@@ -1,8 +1,3 @@
-/**
- * Publish Dialog Component
- * Allows users to choose deployment format: HTML or React
- */
-
 import React, { useState } from 'react';
 import * as DialogPrimitive from '@radix-ui/react-dialog';
 import XMarkIcon from '@heroicons/react/24/outline/XMarkIcon';

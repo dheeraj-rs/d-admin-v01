@@ -1,8 +1,3 @@
-/**
- * SVG Dialog Component
- * Allows users to update SVG path data
- */
-
 import React, { useEffect, useState } from 'react';
 import * as DialogPrimitive from '@radix-ui/react-dialog';
 import XMarkIcon from '@heroicons/react/24/outline/XMarkIcon';

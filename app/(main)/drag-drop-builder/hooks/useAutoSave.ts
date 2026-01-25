@@ -1,7 +1,3 @@
-/**
- * Custom hook for auto-saving builder changes
- */
-
 import { useRef } from 'react';
 import { debounce } from '../lib/utils';
 import { savePage } from '../lib/api';

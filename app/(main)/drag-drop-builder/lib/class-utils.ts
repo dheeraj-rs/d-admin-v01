@@ -1,7 +1,3 @@
-/**
- * Utility function for combining CSS class names
- */
-
 type ClassValue =
   | string
   | number

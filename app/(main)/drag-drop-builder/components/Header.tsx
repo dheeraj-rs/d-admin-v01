@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Icon } from '@iconify/react';
 import { useIsMobile } from '@/core/hooks/use-mobile';
