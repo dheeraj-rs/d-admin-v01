@@ -1,0 +1,49 @@
+'use client';
+
+import { type ReactNode } from 'react';
+import { classNames } from '../../utils/classNames';
+
+export interface AnimatedPanelProps {
+  children: ReactNode;
+  isVisible: boolean;
+  side: 'left' | 'right';
+  fullWidth?: boolean;
+  className?: string;
+}
+
+export function AnimatedPanel({
+  children,
+  isVisible,
+  side,
+  fullWidth = false,
+  className,
+}: AnimatedPanelProps) {
+  return (
+    <div
+      className={classNames(
+        'animated-panel',
+        'h-full overflow-hidden',
+        'transition-all duration-300 ease-in-out',
+        {
+          // Width transitions - responsive
+          'w-0': !isVisible,
+          'w-full': isVisible && fullWidth,
+          'w-full md:w-1/2': isVisible && !fullWidth, // Full width on mobile, 50% on desktop
+
+          // Opacity transitions
+          'pointer-events-none opacity-0': !isVisible,
+          'opacity-100': isVisible,
+
+          // Side-specific styles
+          'border-surface border-r': side === 'left' && isVisible,
+          'border-surface border-l': side === 'right' && isVisible,
+        },
+        className,
+      )}
+      data-side={side}
+      data-visible={isVisible}
+    >
+      <div className="h-full w-full overflow-hidden">{children}</div>
+    </div>
+  );
+}
