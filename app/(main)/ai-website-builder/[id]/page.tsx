@@ -4,34 +4,13 @@ import { useIsMobile } from '@/core/hooks/use-mobile';
 import { HistorySidebar } from '../ai-chat-view/components/sidebar/HistorySidebar';
 import { ChatInterfacePanel } from '../ai-chat-view/components/chat/ChatInterfacePanel.client';
 import { useAiBuilderStore } from '../store/ai-builder-store';
-import { TemplatesWorkbench } from '../components/templates-view/TemplatesWorkbench';
-import { DragDropWorkbench } from '../components/drag-drop-view/DragDropWorkbench';
 import { WorkbenchPanel } from '../ai-chat-view/WorkbenchPanel';
-import { DragDropInterface } from '../components/drag-drop-view/DragDropInterface';
-import { TemplatesInterface } from '../components/templates-view/TemplatesInterface';
 import { Header } from '../ai-chat-view/Header';
 import LightCircleRayBackground from '@/core/components/not-found/LightCircleRayBackground';
 
 export default function AiWebsiteBuilderPage() {
-  const { activeMobilePanel, builderView } = useAiBuilderStore();
+  const { activeMobilePanel } = useAiBuilderStore();
   const isMobile = useIsMobile();
-
-  const InterfaceComponents = {
-    chat: ChatInterfacePanel,
-    'drag-drop': DragDropInterface,
-    templates: TemplatesInterface,
-  };
-
-  const WorkbenchComponents = {
-    chat: WorkbenchPanel,
-    'drag-drop': DragDropWorkbench,
-    templates: TemplatesWorkbench,
-  };
-
-  const ActiveInterface =
-    InterfaceComponents[builderView as keyof typeof InterfaceComponents];
-  const ActiveWorkbench =
-    WorkbenchComponents[builderView as keyof typeof WorkbenchComponents];
 
   const showInterface = isMobile ? activeMobilePanel === 'chat' : true;
   const showWorkbench = isMobile ? activeMobilePanel === 'workbench' : true;
@@ -56,7 +35,7 @@ export default function AiWebsiteBuilderPage() {
                     maxSize={isMobile ? 100 : 50}
                     className={`${isMobile && activeMobilePanel !== 'chat' ? 'hidden' : ''}`}
                   >
-                    {ActiveInterface && <ActiveInterface />}
+                    <ChatInterfacePanel />
                   </Panel>
                 )}
 
@@ -70,7 +49,7 @@ export default function AiWebsiteBuilderPage() {
                     minSize={isMobile ? 100 : 50}
                     className={`${isMobile && activeMobilePanel !== 'workbench' ? 'hidden' : ''}`}
                   >
-                    {ActiveWorkbench && <ActiveWorkbench />}
+                    <WorkbenchPanel />
                   </Panel>
                 )}
               </PanelGroup>
