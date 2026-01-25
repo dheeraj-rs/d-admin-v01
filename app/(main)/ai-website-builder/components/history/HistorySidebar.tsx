@@ -1,6 +1,6 @@
 import React from 'react';
 import { Icon } from '@iconify/react';
-import { useAiBuilderStore } from '../../store/ai-builder-store';
+import { useAiBuilderStore } from '../../stores/ai-builder-store';
 import { workbenchStore } from '../../stores/workbench';
 
 import { useCallback, useEffect, useState } from 'react';

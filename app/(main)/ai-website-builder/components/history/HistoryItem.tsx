@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import { formatDistanceToNow } from 'date-fns';
 import { type ChatHistoryItem } from '../../lib/persistence';
 import Link from 'next/link';
-import { useAiBuilderStore } from '../../store/ai-builder-store';
+import { useAiBuilderStore } from '../../stores/ai-builder-store';
 import { useChatStore } from '../../stores/zustand';
 
 interface HistoryItemProps {

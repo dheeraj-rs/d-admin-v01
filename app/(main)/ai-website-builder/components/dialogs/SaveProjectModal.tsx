@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import * as DialogPrimitive from '@radix-ui/react-dialog';
 import XMarkIcon from '@heroicons/react/24/outline/XMarkIcon';
-import { useProjectsStore } from '../../store/projects-store';
+import { useProjectsStore } from '../../stores/projects-store';
 import { toast } from 'react-toastify';
 
 // Simple utility to combine class names

@@ -2,7 +2,7 @@
 import { Header } from './components/header/AiBuilderHeaderWrapper';
 import { WorkbenchPanel } from './components/workbench/WorkbenchPanel';
 import { Panel, PanelGroup, PanelResizeHandle } from 'react-resizable-panels';
-import { useAiBuilderStore } from './store/ai-builder-store';
+import { useAiBuilderStore } from './stores/ai-builder-store';
 import { useIsMobile } from '@/core/hooks/use-mobile';
 import { ChatInterfacePanel } from './components/chat/ChatInterfacePanel.client';
 import { HistorySidebar } from './components/history/HistorySidebar';

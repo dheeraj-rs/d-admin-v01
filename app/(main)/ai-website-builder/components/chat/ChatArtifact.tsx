@@ -9,7 +9,7 @@ import {
 } from 'shiki';
 import type { ActionState } from '../../lib/runtime/action-runner';
 import { useWorkbenchStore } from '../../stores/zustand';
-import { useAiBuilderStore } from '../../store/ai-builder-store';
+import { useAiBuilderStore } from '../../stores/ai-builder-store';
 import { classNames } from '../../utils/classNames';
 import { cubicEasingFn } from '../../utils/easings';
 

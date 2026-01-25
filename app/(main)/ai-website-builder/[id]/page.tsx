@@ -3,7 +3,7 @@ import { Panel, PanelGroup, PanelResizeHandle } from 'react-resizable-panels';
 import { useIsMobile } from '@/core/hooks/use-mobile';
 import { HistorySidebar } from '../components/history/HistorySidebar';
 import { ChatInterfacePanel } from '../components/chat/ChatInterfacePanel.client';
-import { useAiBuilderStore } from '../store/ai-builder-store';
+import { useAiBuilderStore } from '../stores/ai-builder-store';
 import { WorkbenchPanel } from '../components/workbench/WorkbenchPanel';
 import { Header } from '../components/header/AiBuilderHeaderWrapper';
 import LightCircleRayBackground from '@/core/components/not-found/LightCircleRayBackground';

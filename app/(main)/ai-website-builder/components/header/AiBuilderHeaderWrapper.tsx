@@ -4,7 +4,7 @@ import { Icon } from '@iconify/react';
 import { useIsMobile } from '@/core/hooks/use-mobile';
 import { toast } from 'react-toastify';
 import Link from 'next/link';
-import { useAiBuilderStore } from '../../store/ai-builder-store';
+import { useAiBuilderStore } from '../../stores/ai-builder-store';
 // ==================================
 import { PortDropdown } from '../workbench/WorkbenchPortDropdown';
 import { exportProjectAsZip } from '../../utils/zip';
@@ -16,7 +16,7 @@ import {
 } from '../../stores/zustand';
 import { workbenchStore } from '../../stores/workbench';
 import { useParams } from 'next/navigation';
-import DeploymentModal from '../../publish/DeploymentModal';
+import DeploymentModal from '../dialogs/DeploymentModal';
 
 export function Header() {
     const router = useRouter();

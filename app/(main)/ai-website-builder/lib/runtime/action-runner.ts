@@ -4,7 +4,7 @@ import type { BuilderAction } from '../../types/actions';
 import { createScopedLogger } from '../../utils/logger';
 import { unreachable } from '../../utils/unreachable';
 import { useWorkbenchStore, useFilesStore } from '../../stores/zustand';
-import { useAiBuilderStore } from '../../store/ai-builder-store';
+import { useAiBuilderStore } from '../../stores/ai-builder-store';
 import type { ActionCallbackData } from './message-parser';
 
 const logger = createScopedLogger('ActionRunner');
