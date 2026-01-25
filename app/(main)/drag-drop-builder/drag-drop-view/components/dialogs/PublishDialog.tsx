@@ -1,14 +1,15 @@
 /**
  * Publish Dialog Component
- * Allows users to choose publish format: HTML or React
+ * Allows users to choose deployment format: HTML or React
  */
 
-import React from 'react';
+import React, { useState } from 'react';
 import * as DialogPrimitive from '@radix-ui/react-dialog';
 import XMarkIcon from '@heroicons/react/24/outline/XMarkIcon';
 import DocumentIcon from '@heroicons/react/24/outline/DocumentIcon';
 import CodeBracketIcon from '@heroicons/react/24/outline/CodeBracketIcon';
 import { classMixin } from '../../lib/classMixin';
+import { DeploymentModal } from './DeploymentModal';
 
 interface PublishDialogProps {
   isOpen: boolean;
@@ -23,80 +24,131 @@ export function PublishDialog({
   onPublishHTML,
   onPublishReact,
 }: PublishDialogProps) {
+  const [showDeploymentModal, setShowDeploymentModal] = useState(false);
+  const [htmlContent, setHtmlContent] = useState('');
+  const [deploymentFormat, setDeploymentFormat] = useState<'html' | 'react'>('html');
+
+  const handleStaticHTMLClick = () => {
+    // Get HTML content from localStorage
+    const savedHtml = localStorage.getItem('drag-drop-builder-html') || '';
+    setHtmlContent(savedHtml);
+    setDeploymentFormat('html');
+    
+    // Close the format selection dialog
+    onClose();
+    
+    // Open the deployment modal
+    setShowDeploymentModal(true);
+  };
+
+  const handleReactClick = () => {
+    // Get HTML content from localStorage
+    const savedHtml = localStorage.getItem('drag-drop-builder-html') || '';
+    setHtmlContent(savedHtml);
+    setDeploymentFormat('react');
+    
+    // Close the format selection dialog
+    onClose();
+    
+    // Open the deployment modal
+    setShowDeploymentModal(true);
+  };
+
   return (
-    <DialogPrimitive.Root open={isOpen} onOpenChange={onClose}>
-      <DialogPrimitive.Portal>
-        <DialogPrimitive.Overlay className="fixed inset-0 bg-black/50" />
-        <DialogPrimitive.Content
-          className={classMixin(
-            'fixed rounded-lg bg-(--d-admin-surface-card) p-6 shadow-lg',
-            'w-[95vw] max-w-md md:w-full',
-            'top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 transform',
-          )}
-        >
-          <DialogPrimitive.Title className="mb-4 text-lg font-semibold text-(--d-admin-text-color)">
-            Choose Deployment Format
-          </DialogPrimitive.Title>
-
-          <div className="space-y-3">
-            {/* HTML Option */}
-            <button
-              onClick={() => {
-                onPublishHTML();
-                onClose();
-              }}
-              className={classMixin(
-                'flex w-full items-center rounded-lg border-2 border-(--d-admin-surface-border) p-4',
-                'transition-all hover:border-(--d-admin-blue-600) hover:bg-(--d-admin-blue-50)',
-                'group text-left',
-              )}
-            >
-              <DocumentIcon className="mr-4 h-8 w-8 text-(--d-admin-text-color-secondary) group-hover:text-(--d-admin-blue-600)" />
-              <div>
-                <div className="font-semibold text-(--d-admin-text-color) group-hover:text-(--d-admin-blue-600)">
-                  Static HTML
-                </div>
-                <div className="text-sm text-(--d-admin-text-color-secondary)">
-                  Deploy as a standalone HTML file with Tailwind CSS
-                </div>
-              </div>
-            </button>
-
-            {/* React Option */}
-            <button
-              onClick={() => {
-                onPublishReact();
-                onClose();
-              }}
-              className={classMixin(
-                'flex w-full items-center rounded-lg border-2 border-(--d-admin-surface-border) p-4',
-                'transition-all hover:border-(--d-admin-primary-600) hover:bg-(--d-admin-surface-d)',
-                'group text-left',
-              )}
-            >
-              <CodeBracketIcon className="mr-4 h-8 w-8 text-(--d-admin-text-color-secondary) group-hover:text-(--d-admin-primary-600)" />
-              <div>
-                <div className="font-semibold text-(--d-admin-text-color) group-hover:text-(--d-admin-primary-600)">
-                  React Project (Vite)
-                </div>
-                <div className="text-sm text-(--d-admin-text-color-secondary)">
-                  Deploy as a complete React + Vite + Tailwind CSS project
-                </div>
-              </div>
-            </button>
-          </div>
-
-          <DialogPrimitive.Close
-            onClick={() => onClose()}
+    <>
+      <DialogPrimitive.Root open={isOpen} onOpenChange={onClose}>
+        <DialogPrimitive.Portal>
+          <DialogPrimitive.Overlay className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm" />
+          <DialogPrimitive.Content
             className={classMixin(
-              'absolute top-4 right-4 inline-flex items-center justify-center rounded-full p-1',
-              'hover:bg-(--d-admin-surface-hover)',
+              'fixed z-50 rounded-xl bg-[var(--d-admin-surface-card)] shadow-2xl',
+              'w-[90vw] max-w-lg',
+              'top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 transform',
+              'border border-[var(--d-admin-surface-border)]',
             )}
           >
-            <XMarkIcon className="h-5 w-5 text-(--d-admin-text-color-secondary) hover:text-(--d-admin-text-color)" />
-          </DialogPrimitive.Close>
-        </DialogPrimitive.Content>
-      </DialogPrimitive.Portal>
-    </DialogPrimitive.Root>
+            {/* Header */}
+            <div className="border-b border-[var(--d-admin-surface-border)] px-6 py-4">
+              <DialogPrimitive.Title className="text-lg font-semibold text-[var(--d-admin-text-color)]">
+                Choose Deployment Format
+              </DialogPrimitive.Title>
+            </div>
+
+            {/* Content */}
+            <div className="p-6 space-y-3">
+              {/* HTML Option */}
+              <button
+                onClick={handleStaticHTMLClick}
+                className={classMixin(
+                  'flex w-full items-start gap-4 rounded-lg border-2 p-4',
+                  'border-[var(--d-admin-surface-border)] bg-[var(--d-admin-surface-ground)]',
+                  'transition-all duration-200',
+                  'hover:border-[var(--d-admin-blue-600)] hover:bg-[var(--d-admin-surface-section)]',
+                  'focus:outline-none focus:ring-2 focus:ring-[var(--d-admin-blue-600)] focus:ring-offset-2',
+                  'group text-left',
+                )}
+              >
+                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-[var(--d-admin-surface-section)] transition-colors group-hover:bg-[var(--d-admin-blue-100)]">
+                  <DocumentIcon className="h-6 w-6 text-[var(--d-admin-text-color-secondary)] transition-colors group-hover:text-[var(--d-admin-blue-600)]" />
+                </div>
+                <div className="flex-1 pt-1">
+                  <div className="mb-1 font-semibold text-[var(--d-admin-text-color)] transition-colors group-hover:text-[var(--d-admin-blue-600)]">
+                    Static HTML
+                  </div>
+                  <div className="text-sm leading-relaxed text-[var(--d-admin-text-color-secondary)]">
+                    Deploy as a standalone HTML file with Tailwind CSS
+                  </div>
+                </div>
+              </button>
+
+              {/* React Option */}
+              <button
+                onClick={handleReactClick}
+                className={classMixin(
+                  'flex w-full items-start gap-4 rounded-lg border-2 p-4',
+                  'border-[var(--d-admin-surface-border)] bg-[var(--d-admin-surface-ground)]',
+                  'transition-all duration-200',
+                  'hover:border-[var(--d-admin-primary-600)] hover:bg-[var(--d-admin-surface-section)]',
+                  'focus:outline-none focus:ring-2 focus:ring-[var(--d-admin-primary-600)] focus:ring-offset-2',
+                  'group text-left',
+                )}
+              >
+                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-[var(--d-admin-surface-section)] transition-colors group-hover:bg-[var(--d-admin-primary-100)]">
+                  <CodeBracketIcon className="h-6 w-6 text-[var(--d-admin-text-color-secondary)] transition-colors group-hover:text-[var(--d-admin-primary-600)]" />
+                </div>
+                <div className="flex-1 pt-1">
+                  <div className="mb-1 font-semibold text-[var(--d-admin-text-color)] transition-colors group-hover:text-[var(--d-admin-primary-600)]">
+                    React Project (Vite)
+                  </div>
+                  <div className="text-sm leading-relaxed text-[var(--d-admin-text-color-secondary)]">
+                    Deploy as a complete React + Vite + Tailwind CSS project
+                  </div>
+                </div>
+              </button>
+            </div>
+
+            {/* Close Button */}
+            <DialogPrimitive.Close
+              onClick={() => onClose()}
+              className={classMixin(
+                'absolute top-4 right-4 inline-flex items-center justify-center rounded-full p-1.5',
+                'text-[var(--d-admin-text-color-secondary)]',
+                'transition-colors hover:bg-[var(--d-admin-surface-hover)] hover:text-[var(--d-admin-text-color)]',
+              )}
+            >
+              <XMarkIcon className="h-5 w-5" />
+            </DialogPrimitive.Close>
+          </DialogPrimitive.Content>
+        </DialogPrimitive.Portal>
+      </DialogPrimitive.Root>
+
+      {/* Deployment Modal */}
+      <DeploymentModal
+        isOpen={showDeploymentModal}
+        onClose={() => setShowDeploymentModal(false)}
+        htmlContent={htmlContent}
+        deploymentFormat={deploymentFormat}
+      />
+    </>
   );
 }
