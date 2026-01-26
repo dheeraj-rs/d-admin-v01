@@ -1,12 +1,14 @@
 import { useState, useEffect } from 'react';
 import ChevronDownIcon from '@heroicons/react/24/outline/ChevronDownIcon';
 import Bars3BottomLeftIcon from '@heroicons/react/24/outline/Bars3BottomLeftIcon';
+import Squares2X2Icon from '@heroicons/react/24/outline/Squares2X2Icon';
 import {
   useBuilderStore,
   THEMES,
 } from '../store/builder-store';
 import { Category } from './Category';
 import { Select } from './Select';
+import { LayersPanel } from './LayersPanel';
 
 export function Sidebar() {
   const {
@@ -15,7 +17,8 @@ export function Sidebar() {
     setThemeIndex,
     loadThemeComponents,
     setPendingAddComponent,
-    setShowReorderModal,
+    sidebarView,
+    setSidebarView,
   } = useBuilderStore();
 
   const [selectOpen, setSelectOpen] = useState(false);
@@ -29,8 +32,8 @@ export function Sidebar() {
   return (
     <div className="flex h-full w-full flex-col overflow-hidden bg-[var(--d-admin-surface-ground)] text-[var(--d-admin-text-color)]">
       {/* Header / Theme Selector */}
-      <div className="shrink-0 border-b border-[var(--d-admin-surface-border)] pb-2 lg:p-4 mb-2">
-        <div className="flex items-center gap-2">
+      <div className="shrink-0 border-b border-[var(--d-admin-surface-border)] pb-2 mb-2">
+        <div className="flex items-center gap-2 p-4 pb-0">
           <Select
             trigger={
               <div className="flex w-full cursor-pointer items-center justify-between rounded-md border border-[var(--d-admin-surface-border)] bg-[var(--d-admin-surface-section)] px-3 py-2 text-sm shadow-sm transition-colors hover:bg-[var(--d-admin-surface-hover)] md:w-full">
@@ -48,32 +51,45 @@ export function Sidebar() {
             }}
           />
           <button
-            onClick={() => setShowReorderModal(true)}
-            className="flex h-[38px] w-[38px] shrink-0 items-center justify-center rounded-md border border-[var(--d-admin-surface-border)] bg-[var(--d-admin-surface-section)] text-[var(--d-admin-text-color-secondary)] hover:bg-[var(--d-admin-surface-hover)] hover:text-[var(--d-admin-text-color)]"
-            title="Reorder Components"
+            onClick={() => setSidebarView(sidebarView === 'components' ? 'layers' : 'components')}
+            className={`flex h-[38px] w-[38px] shrink-0 items-center justify-center rounded-md border transition-colors ${
+              sidebarView === 'layers'
+                ? 'border-[var(--d-admin-primary-color)] bg-[var(--d-admin-primary-color)] text-white'
+                : 'border-[var(--d-admin-surface-border)] bg-[var(--d-admin-surface-section)] text-[var(--d-admin-text-color-secondary)] hover:bg-[var(--d-admin-surface-hover)] hover:text-[var(--d-admin-text-color)]'
+            }`}
+             title={sidebarView === 'components' ? "Reorder Components" : "Back to Components"}
           >
-            <Bars3BottomLeftIcon className="h-5 w-5" />
+           {sidebarView === 'components' ? (
+              <Bars3BottomLeftIcon className="h-5 w-5" />
+            ) : (
+              <Squares2X2Icon className="h-5 w-5" />
+            )}
           </button>
         </div>
       </div>
 
-      {/* Component List */}
+      {/* Component List or Layers Panel */}
       <div className="custom-scrollbar flex-1 overflow-y-auto px-4 pb-4">
-        {Object.keys(components).map((c, i) => (
-          <Category
-            key={i}
-            category={c}
-            themeIndex={themeIndex}
-            components={components[c]}
-            standaloneServer={false}
-            onComponentClick={(component, index) =>
-              setPendingAddComponent({ component, category: c, index })
-            }
-            onDragStart={() => setIsDragging(true)}
-            onDragEnd={() => setIsDragging(false)}
-          />
-        ))}
+        {sidebarView === 'components' ? (
+          Object.keys(components).map((c, i) => (
+            <Category
+              key={i}
+              category={c}
+              themeIndex={themeIndex}
+              components={components[c]}
+              standaloneServer={false}
+              onComponentClick={(component, index) =>
+                setPendingAddComponent({ component, category: c, index })
+              }
+              onDragStart={() => setIsDragging(true)}
+              onDragEnd={() => setIsDragging(false)}
+            />
+          ))
+        ) : (
+          <LayersPanel />
+        )}
       </div>
     </div>
   );
 }
+

@@ -27,53 +27,16 @@ interface DragDropState {
   setMobileSidebar: (v: boolean) => void;
 
   // Canvas State for Sidebar Indicators
-  canvasComponents: Record<string, number[]>; // Maps "category-index" -> [position1, position2]
-  setCanvasComponents: (map: Record<string, number[]>) => void;
+  // Sidebar View State
+  sidebarView: 'components' | 'layers';
+  toggleSidebarView: () => void;
+  setSidebarView: (view: 'components' | 'layers') => void;
 
-  pendingAddComponent: { component: Component; category: string; index: number } | null;
-  headerAction: 'preparePublish' | 'save' | 'addNewPath' | 'refreshPreview' | null;
-  clearCanvasTrigger: number;
-
-  // Selection & Dialogs
-  selectedElement: HTMLElement | null;
-  showImageDialog: boolean;
-  showButtonDialog: boolean;
-  showLinkDialog: boolean;
-  showSvgDialog: boolean;
-  showExportDialog: boolean;
-  showPublishDialog: boolean;
-  showSaveDialog: boolean;
-  showProjectsGallery: boolean;
-
-  // Actions
-  setThemeIndex: (index: number) => void;
-  setComponents: (components: ComponentWithCategories) => void;
-  setError: (error: string | null) => void;
-  setIsPreview: (v: boolean) => void;
-  setShowReorderModal: (v: boolean) => void;
-
-  setPendingAddComponent: (c: { component: Component; category: string; index: number } | null) => void;
-  setHeaderAction: (action: 'preparePublish' | 'save' | 'addNewPath' | 'refreshPreview' | null) => void;
-  triggerClearCanvas: () => void;
-
-  setSelectedElement: (el: HTMLElement | null) => void;
-
-  setShowImageDialog: (v: boolean) => void;
-  setShowButtonDialog: (v: boolean) => void;
-  setShowLinkDialog: (v: boolean) => void;
-  setShowSvgDialog: (v: boolean) => void;
-  setShowExportDialog: (v: boolean) => void;
-  setShowPublishDialog: (v: boolean) => void;
-  setShowSaveDialog: (v: boolean) => void;
-  setShowProjectsGallery: (v: boolean) => void;
-
-  closeAllDialogs: () => void;
-
-  // Async Actions
-  loadThemeComponents: (
-    index: number,
-    standaloneServer?: boolean,
-  ) => Promise<void>;
+  // Layers / Reorder State
+  activeLayers: HTMLElement[];
+  setActiveLayers: (layers: HTMLElement[]) => void;
+  reorderTrigger: number;
+  triggerReorder: () => void;
 }
 
 export const useBuilderStore = create<DragDropState>((set, get) => ({
@@ -83,6 +46,15 @@ export const useBuilderStore = create<DragDropState>((set, get) => ({
   
   canvasComponents: {},
   setCanvasComponents: (map) => set({ canvasComponents: map }),
+
+  sidebarView: 'components',
+  toggleSidebarView: () => set((state) => ({ sidebarView: state.sidebarView === 'components' ? 'layers' : 'components' })),
+  setSidebarView: (view) => set({ sidebarView: view }),
+
+  activeLayers: [],
+  setActiveLayers: (layers) => set({ activeLayers: layers }),
+  reorderTrigger: 0,
+  triggerReorder: () => set((state) => ({ reorderTrigger: state.reorderTrigger + 1 })),
 
   isPreview: false,
   showReorderModal: false,

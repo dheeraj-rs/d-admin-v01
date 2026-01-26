@@ -11,7 +11,6 @@ import { SvgDialog } from '../dialogs/SvgDialog';
 import { ExportDialog } from '../dialogs/ExportDialog';
 import { PublishDialog } from '../dialogs/PublishDialog';
 import { SaveProjectModal } from '../dialogs/SaveProjectModal';
-import { ReorderModal } from './ReorderModal';
 
 import {
   savePage,
@@ -40,7 +39,6 @@ export function Workbench() {
   const {
     components,
     isPreview,
-    showReorderModal,
     error,
     pendingAddComponent,
     selectedElement,
@@ -50,7 +48,6 @@ export function Workbench() {
     showSvgDialog,
     showExportDialog,
     showPublishDialog,
-    setShowReorderModal,
     setPendingAddComponent,
     setSelectedElement,
     setShowImageDialog,
@@ -63,6 +60,10 @@ export function Workbench() {
     setShowSaveDialog,
     clearCanvasTrigger,
     setCanvasComponents,
+    sidebarView,
+    setActiveLayers,
+    activeLayers,
+    reorderTrigger,
   } = useBuilderStore();
   const { currentProjectId, getProject } = useProjectsStore();
   const isMobile = useIsMobile();
@@ -144,6 +145,29 @@ export function Workbench() {
       savePage('', standaloneServer);
     }
   }, [clearCanvasTrigger]);
+
+  // Handle Sidebar View Mode Change -> push components to store for layers view
+  useEffect(() => {
+    if (sidebarView === 'layers' && canvasRef.current) {
+      const components = Array.from(canvasRef.current.children ?? []).filter(
+        (c) => c.tagName !== 'SCRIPT',
+      ) as HTMLDivElement[];
+      setActiveLayers(components);
+    }
+  }, [sidebarView, setActiveLayers]);
+
+  // Handle Reorder Trigger from Sidebar
+  useEffect(() => {
+    if (reorderTrigger > 0 && canvasRef.current && activeLayers.length > 0) {
+       // Clear canvas
+      canvasRef.current.innerHTML = '';
+      // Append elements in new order
+      activeLayers.forEach((element) => {
+        canvasRef.current!.appendChild(element);
+      });
+      // Trigger save via mutation observer automatically
+    }
+  }, [reorderTrigger]); // activeLayers is updated before this trigger increments
 
   // Load Content (Project or Draft)
   useEffect(() => {
@@ -668,15 +692,6 @@ export function Workbench() {
               outline: 'none',
             }}
             contentEditable={!isPreview && hasContent}
-          />
-
-
-          {/* Reorder Modal */}
-          <ReorderModal
-            isOpen={showReorderModal}
-            onClose={() => setShowReorderModal(false)}
-            onApply={handleApplyReorder}
-            components={getComponents()}
           />
         </div>
       </div>
