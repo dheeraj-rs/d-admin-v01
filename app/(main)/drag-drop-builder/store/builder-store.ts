@@ -26,7 +26,11 @@ interface DragDropState {
   toggleMobileSidebar: () => void;
   setMobileSidebar: (v: boolean) => void;
 
-  pendingAddComponent: Component | null;
+  // Canvas State for Sidebar Indicators
+  canvasComponents: Record<string, number[]>; // Maps "category-index" -> [position1, position2]
+  setCanvasComponents: (map: Record<string, number[]>) => void;
+
+  pendingAddComponent: { component: Component; category: string; index: number } | null;
   headerAction: 'preparePublish' | 'save' | 'addNewPath' | 'refreshPreview' | null;
   clearCanvasTrigger: number;
 
@@ -48,7 +52,7 @@ interface DragDropState {
   setIsPreview: (v: boolean) => void;
   setShowReorderModal: (v: boolean) => void;
 
-  setPendingAddComponent: (c: Component | null) => void;
+  setPendingAddComponent: (c: { component: Component; category: string; index: number } | null) => void;
   setHeaderAction: (action: 'preparePublish' | 'save' | 'addNewPath' | 'refreshPreview' | null) => void;
   triggerClearCanvas: () => void;
 
@@ -76,6 +80,9 @@ export const useBuilderStore = create<DragDropState>((set, get) => ({
   themeIndex: 0,
   components: {},
   error: null,
+  
+  canvasComponents: {},
+  setCanvasComponents: (map) => set({ canvasComponents: map }),
 
   isPreview: false,
   showReorderModal: false,

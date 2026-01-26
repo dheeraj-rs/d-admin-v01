@@ -27,7 +27,7 @@ export function Sidebar() {
   return (
     <div className="flex h-full w-full flex-col overflow-hidden bg-[var(--d-admin-surface-ground)] text-[var(--d-admin-text-color)]">
       {/* Header / Theme Selector */}
-      <div className="shrink-0 border-b border-[var(--d-admin-surface-border)] pb-2 mb-2">
+      <div className="shrink-0 border-b border-[var(--d-admin-surface-border)] pb-2 lg:p-4 mb-2">
         <div className="flex items-center gap-2">
           <Select
             trigger={
@@ -57,7 +57,9 @@ export function Sidebar() {
             themeIndex={themeIndex}
             components={components[c]}
             standaloneServer={false}
-            onComponentClick={(component) => setPendingAddComponent(component)}
+            onComponentClick={(component, index) =>
+              setPendingAddComponent({ component, category: c, index })
+            }
             onDragStart={() => setIsDragging(true)}
             onDragEnd={() => setIsDragging(false)}
           />

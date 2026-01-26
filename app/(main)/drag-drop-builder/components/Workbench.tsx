@@ -62,6 +62,7 @@ export function Workbench() {
     showSaveDialog,
     setShowSaveDialog,
     clearCanvasTrigger,
+    setCanvasComponents,
   } = useBuilderStore();
   const { currentProjectId, getProject } = useProjectsStore();
   const isMobile = useIsMobile();
@@ -102,6 +103,22 @@ export function Workbench() {
         if (html) savePage(html, standaloneServer);
         setHasContent(!!html && html.trim().length > 0);
         setIsEmptyCanvas(!html || html.trim().length === 0);
+
+        // Update Canvas Components Map
+        if (canvasRef.current) {
+          const newMap: Record<string, number[]> = {};
+          const children = Array.from(canvasRef.current.children);
+          children.forEach((child, index) => {
+            const sidebarId = (child as HTMLElement).getAttribute(
+              'data-sidebar-id',
+            );
+            if (sidebarId) {
+              if (!newMap[sidebarId]) newMap[sidebarId] = [];
+              newMap[sidebarId].push(index + 1);
+            }
+          });
+          setCanvasComponents(newMap);
+        }
       }),
     );
     observer.observe(canvasRef.current!, config);
@@ -252,12 +269,12 @@ export function Workbench() {
       .split('-');
     if (
       !components[categoryId] ||
-      !components[categoryId][componentId as unknown as number]
+      !components[categoryId][Number(componentId)]
     )
       return;
 
     const component: Component =
-      components[categoryId][componentId as unknown as number];
+      components[categoryId][Number(componentId)];
     const html = component.source;
 
     // Create a temporary container to parse and modify the HTML
@@ -270,6 +287,8 @@ export function Workbench() {
       // Format as "BANNER 1", "CTA 2", etc.
       const componentName = `${categoryId.toUpperCase()} ${parseInt(componentId) + 1}`;
       firstChild.setAttribute('data-component-name', componentName);
+      // Set Sidebar ID for tracking
+      firstChild.setAttribute('data-sidebar-id', `${categoryId}-${componentId}`);
     }
 
     const modifiedHtml = tempDiv.innerHTML;
@@ -454,7 +473,12 @@ export function Workbench() {
   };
 
   // Add Component to Canvas (Tap to Add)
-  const addComponentToCanvas = (component: Component) => {
+  const addComponentToCanvas = (data: {
+    component: Component;
+    category: string;
+    index: number;
+  }) => {
+    const { component, category, index } = data;
     const html = component.source;
 
     // Create a temporary container to parse and modify the HTML
@@ -463,12 +487,14 @@ export function Workbench() {
 
     // Add data attribute to the first child element for identification
     const firstChild = tempDiv.firstElementChild as HTMLElement;
-    if (firstChild && component.folder) {
-      // Extract category and number from folder (e.g., "banner1" -> "BANNER 1")
-      const folderName = component.folder.replace(/[0-9]/g, ''); // Remove numbers
-      const folderNumber = component.folder.match(/\d+/)?.[0] || ''; // Extract number
-      const componentName = `${folderName.toUpperCase()} ${folderNumber}`;
+    if (firstChild) {
+      const folderName = category || component.folder.replace(/[0-9]/g, '');
+      const folderNumber = component.folder.match(/\d+/)?.[0] || '';
+      const componentName = `${folderName.toUpperCase()} ${index + 1}`;
+      
       firstChild.setAttribute('data-component-name', componentName.trim());
+      // Set Sidebar ID for tracking
+      firstChild.setAttribute('data-sidebar-id', `${category}-${index}`);
     }
 
     const modifiedHtml = tempDiv.innerHTML;
