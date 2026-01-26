@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import ChevronDownIcon from '@heroicons/react/24/outline/ChevronDownIcon';
-import Bars3BottomLeftIcon from '@heroicons/react/24/outline/Bars3BottomLeftIcon';
+
 import Squares2X2Icon from '@heroicons/react/24/outline/Squares2X2Icon';
 import {
   useBuilderStore,
@@ -60,7 +60,16 @@ export function Sidebar() {
              title={sidebarView === 'components' ? "Reorder Components" : "Back to Components"}
           >
            {sidebarView === 'components' ? (
-              <Bars3BottomLeftIcon className="h-5 w-5" />
+              <svg 
+                xmlns="http://www.w3.org/2000/svg" 
+                viewBox="0 0 24 24" 
+                fill="none" 
+                stroke="currentColor" 
+                strokeWidth={1.5} 
+                className="h-5 w-5"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" d="M8 6l4-4 4 4M8 18l4 4 4-4M4 12h16M4 9h16M4 15h16" />
+              </svg>
             ) : (
               <Squares2X2Icon className="h-5 w-5" />
             )}

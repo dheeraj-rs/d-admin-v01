@@ -1,5 +1,5 @@
 import React from 'react';
-import { XMarkIcon, Bars3BottomLeftIcon } from '@heroicons/react/24/outline';
+import { XMarkIcon } from '@heroicons/react/24/outline';
 import { useBuilderStore } from '../store/builder-store';
 import { Sidebar } from './Sidebar';
 
@@ -7,8 +7,6 @@ export function SidebarMobile() {
   const {
     showMobileSidebar,
     setMobileSidebar,
-    showReorderModal,
-    setShowReorderModal,
   } = useBuilderStore();
   const [height, setHeight] = React.useState('45vh');
   const [isResizing, setIsResizing] = React.useState(false);
@@ -63,20 +61,6 @@ export function SidebarMobile() {
           Add Element
         </span>
         <div className="flex items-center gap-2">
-          <button
-            onClick={() => {
-              setShowReorderModal(true);
-              setMobileSidebar(false);
-            }}
-            className={`rounded-full p-2 transition-colors ${
-              showReorderModal
-                ? 'bg-[var(--d-admin-primary-color)] text-white'
-                : 'text-[var(--d-admin-text-color-secondary)] hover:bg-[var(--d-admin-surface-hover)] hover:text-[var(--d-admin-text-color)]'
-            }`}
-            title="Reorder Components"
-          >
-            <Bars3BottomLeftIcon className="h-6 w-6" />
-          </button>
           <button
             onClick={() => setMobileSidebar(false)}
             className="rounded-full p-2 text-[var(--d-admin-text-color-secondary)] transition-colors hover:bg-[var(--d-admin-surface-hover)] hover:text-[var(--d-admin-text-color)]"

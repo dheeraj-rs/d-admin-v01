@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import {
   ChevronUpIcon,
   ChevronDownIcon,
-  Bars3Icon,
 } from '@heroicons/react/24/outline';
 import {
   DndContext,
@@ -66,7 +65,7 @@ function SortableItem({
     <div
       ref={setNodeRef}
       style={style}
-      className={`group flex items-center gap-3 rounded-lg border p-2 transition-all ${
+      className={`group flex items-center gap-2 rounded-lg border p-2 transition-all ${
         isDragging
           ? 'z-10 border-[var(--d-admin-primary-color)] bg-[var(--d-admin-surface-hover)] shadow-lg'
           : 'border-[var(--d-admin-surface-border)] bg-[var(--d-admin-surface-section)] hover:bg-[var(--d-admin-surface-hover)]'
@@ -76,28 +75,44 @@ function SortableItem({
       <div
         {...attributes}
         {...listeners}
-        className="cursor-grab touch-none text-[var(--d-admin-text-color-secondary)] active:cursor-grabbing"
+        className="cursor-grab touch-none p-2 text-[var(--d-admin-text-color-secondary)] active:cursor-grabbing hover:text-[var(--d-admin-text-color)]"
       >
-        <Bars3Icon className="h-5 w-5" />
-      </div>
-
-      {/* Thumbnail Preview */}
-      <div className="h-10 w-10 flex-shrink-0 overflow-hidden rounded bg-[var(--d-admin-surface-ground)]">
-        <img
-          src={item.thumbnail}
-          alt={item.preview}
-          className="h-full w-full object-cover object-top"
-        />
+        <svg
+          width="16"
+          height="16"
+          viewBox="0 0 16 16"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+          className="h-4 w-4"
+        >
+          <path
+            d="M2.66669 5.33333H13.3334M2.66669 8H13.3334M2.66669 10.6667H9.33335"
+            stroke="currentColor"
+            strokeWidth="1.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        </svg>
       </div>
 
       {/* Position Number */}
-      <div className="flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full bg-[var(--d-admin-primary-color)] text-xs font-semibold text-white">
+      <div className="flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full bg-[var(--d-admin-primary-color)] text-[10px] font-bold text-white">
         {index + 1}
       </div>
 
+      {/* Thumbnail Preview - significantly wider for desktop components */}
+      <div className="flex h-16 w-32 flex-shrink-0 items-center justify-center overflow-hidden rounded border border-[var(--d-admin-surface-border)] bg-transparent">
+        <img
+          src={item.thumbnail}
+          alt={item.preview}
+          className="h-full w-full object-contain"
+          style={{ maxWidth: '100%', maxHeight: '100%' }}
+        />
+      </div>
+
       {/* Preview Text */}
-      <div className="min-w-0 flex-1">
-        <p className="truncate text-xs text-[var(--d-admin-text-color)]">
+      <div className="min-w-0 flex-1 pl-1">
+        <p className="truncate text-xs font-medium text-[var(--d-admin-text-color)]">
           {item.preview}
         </p>
       </div>
@@ -130,6 +145,7 @@ function SortableItem({
     </div>
   );
 }
+
 
 export function LayersPanel() {
   const { activeLayers, setActiveLayers, triggerReorder } = useBuilderStore();
@@ -187,7 +203,7 @@ export function LayersPanel() {
         cacheBust: true,
         backgroundColor: '#1f2937',
         width: element.offsetWidth,
-        height: Math.min(element.offsetHeight, 200),
+        height: Math.min(element.offsetHeight, 800),
         style: {
             transform: 'scale(1)',
             margin: '0',
@@ -268,7 +284,7 @@ export function LayersPanel() {
 
   return (
     <div className="flex h-full flex-col">
-       <div className="flex-1 space-y-2 overflow-y-auto p-4 custom-scrollbar">
+       <div className="flex-1 space-y-2 overflow-y-auto p-2 custom-scrollbar">
           {items.length === 0 ? (
             <div className="py-8 text-center text-sm text-[var(--d-admin-text-color-secondary)]">
               No components added yet.
