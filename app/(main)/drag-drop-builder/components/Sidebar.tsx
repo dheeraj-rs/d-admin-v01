@@ -27,7 +27,7 @@ export function Sidebar() {
   return (
     <div className="flex h-full w-full flex-col overflow-hidden bg-[var(--d-admin-surface-ground)] text-[var(--d-admin-text-color)]">
       {/* Header / Theme Selector */}
-      <div className="shrink-0 border-b border-[var(--d-admin-surface-border)] p-4">
+      <div className="shrink-0 border-b border-[var(--d-admin-surface-border)] pb-2 mb-2">
         <div className="flex items-center gap-2">
           <Select
             trigger={
@@ -49,7 +49,7 @@ export function Sidebar() {
       </div>
 
       {/* Component List */}
-      <div className="custom-scrollbar flex-1 overflow-y-auto p-4">
+      <div className="custom-scrollbar flex-1 overflow-y-auto px-4 pb-4">
         {Object.keys(components).map((c, i) => (
           <Category
             key={i}

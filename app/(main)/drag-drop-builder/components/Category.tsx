@@ -33,7 +33,7 @@ export function Category({
     <div id={category.toLowerCase()}>
       <div
         onClick={() => setShow((i) => !i)}
-        className={`flex h-12 cursor-pointer items-center border-b border-(--d-admin-border) bg-(--d-admin-surface-section) px-2 text-(--d-admin-text-color) last:border-b-0 ${
+        className={`sticky top-0 z-10 flex h-12 cursor-pointer items-center border-b border-[var(--d-admin-surface-border)] bg-[var(--d-admin-surface-section)] px-2 text-[var(--d-admin-text-color)] transition-colors hover:bg-[var(--d-admin-surface-hover)] last:border-b-0 ${
           show ? 'shadow-sm' : ''
         }`}
       >
@@ -41,12 +41,12 @@ export function Category({
           <Squares2X2Icon className="mr-4 ml-2 h-4 w-4" />{' '}
           <h2 className="text-xs uppercase">{category}</h2>
         </div>
-        <a
+        <div
           className="rotate-animation"
           style={{ transform: `rotate(${show ? 180 : 0}deg)` }}
         >
           <ArrowSmallUpIcon className="h-4 w-4" />
-        </a>
+        </div>
       </div>
       {show && (
         <div>
