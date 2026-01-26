@@ -53,10 +53,10 @@ export function PublishDialog({
     <>
       <DialogPrimitive.Root open={isOpen} onOpenChange={onClose}>
         <DialogPrimitive.Portal>
-          <DialogPrimitive.Overlay className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm" />
+          <DialogPrimitive.Overlay className="fixed inset-0 z-[9998] bg-black/60 backdrop-blur-sm" />
           <DialogPrimitive.Content
             className={classMixin(
-              'fixed z-50 rounded-xl bg-[var(--d-admin-surface-card)] shadow-2xl',
+              'fixed z-[9999] rounded-xl bg-[var(--d-admin-surface-card)] shadow-2xl',
               'w-[90vw] max-w-lg',
               'top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 transform',
               'border border-[var(--d-admin-surface-border)]',

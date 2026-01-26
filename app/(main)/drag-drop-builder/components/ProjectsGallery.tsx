@@ -158,7 +158,10 @@ export function ProjectsGallery() {
                   </div>
                 </div>
 
-                {projects.map((project) => (
+                {projects
+                  .filter(p => p.html && p.html.trim().length > 0)
+                  .sort((a, b) => b.updatedAt - a.updatedAt)
+                  .map((project) => (
                   <div
                     key={project.id}
                     onClick={() => handleOpenProject(project.id)}

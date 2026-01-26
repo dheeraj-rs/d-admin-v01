@@ -22,9 +22,9 @@ export function TemplatesList() {
   const [activeCategory, setActiveCategory] = useState('All');
 
   // Filter templates based on active category
-  const filteredTemplates = activeCategory === 'All' 
+  const filteredTemplates = (activeCategory === 'All' 
     ? templates 
-    : templates.filter(t => t.category === activeCategory);
+    : templates.filter(t => t.category === activeCategory)).slice().reverse();
   const [showCreateDialog, setShowCreateDialog] = useState(false);
   const [showLeftArrow, setShowLeftArrow] = useState(false);
   const [showRightArrow, setShowRightArrow] = useState(true);

@@ -94,7 +94,7 @@ export function Header() {
                         setCurrentProject(newProjectId);
                         triggerClearCanvas();
                     }}
-                    className="hidden md:flex items-center justify-center gap-2 font-medium min-w-0 max-w-full rounded-md focus-visible:outline-2 disabled:op-50 relative disabled:cursor-not-allowed focus-visible:outline-[var(--d-admin-blue-600)] bg-[var(--d-admin-surface-section)] border border-[var(--d-admin-surface-border)] text-[var(--d-admin-text-color)] hover:bg-[var(--d-admin-surface-hover)] transition-colors gap-1.7 shrink-0 h-8 text-sm px-3 ml-auto"
+                    className="hidden md:flex items-center justify-center gap-2 font-medium min-w-0 max-w-full rounded-md focus-visible:outline-2 disabled:op-50 relative disabled:cursor-not-allowed focus-visible:outline-[var(--d-admin-blue-600)] bg-[var(--d-admin-surface-section)] border border-[var(--d-admin-surface-border)] text-[var(--d-admin-text-color)] hover:bg-[var(--d-admin-surface-hover)] transition-colors gap-1.7 shrink-0 h-8 text-sm px-3 ml-auto mr-2"
                     type="button"
                     title="Create New Project"
                 >
