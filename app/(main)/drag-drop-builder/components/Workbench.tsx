@@ -176,8 +176,8 @@ export function Workbench() {
     if (currentProjectId) {
       const project = getProject(currentProjectId);
       if (project) {
-        console.log('Loading project:', project.name);
-        canvasRef.current.innerHTML = project.html;
+
+
         // Update local draft to match project
         savePage(project.html, standaloneServer);
         setHasContent(!!project.html && project.html.trim().length > 0);

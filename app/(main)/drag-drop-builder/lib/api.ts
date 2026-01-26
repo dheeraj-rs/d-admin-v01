@@ -47,26 +47,4 @@ export async function loadPage(standaloneServer: boolean): Promise<string> {
   return html;
 }
 
-/**
- * Upload image files to the server
- */
-export async function uploadImage(
-  file: File,
-  standaloneServer: boolean,
-): Promise<string[]> {
-  const baseUrl = getBaseUrl(standaloneServer);
-  const url = standaloneServer
-    ? `${baseUrl}/data?path=${location.pathname}`
-    : `${baseUrl}?type=data&path=${location.pathname}`;
 
-  const formData = new FormData();
-  formData.append('file-0', file);
-
-  const response = await fetch(url, {
-    method: 'POST',
-    body: formData,
-  });
-
-  const urls = await response.json();
-  return urls;
-}

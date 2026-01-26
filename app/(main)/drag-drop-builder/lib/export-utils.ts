@@ -244,6 +244,3 @@ npm run build
   const content = await zip.generateAsync({ type: 'blob' });
   saveAs(content, 'react-tailwind-project.zip');
 };
-
-// Legacy export - keeping for backward compatibility
-export const exportDragDropProject = exportAsReactProject;

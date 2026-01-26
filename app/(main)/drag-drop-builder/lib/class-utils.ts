@@ -11,26 +11,6 @@ interface ClassDictionary {
   [key: string]: boolean | undefined | null;
 }
 
-export function cn(...args: ClassValue[]) {
-  const classes: string[] = [];
-  args.forEach((arg) => {
-    if (!arg) return;
-    const argType = typeof arg;
-    if (argType === 'string' || argType === 'number') {
-      classes.push(String(arg));
-    } else if (Array.isArray(arg)) {
-      classes.push(cn(...arg));
-    } else if (argType === 'object' && !Array.isArray(arg)) {
-      const argObj = arg as ClassDictionary;
-      Object.keys(argObj).forEach((key) => {
-        if (argObj[key]) {
-          classes.push(key);
-        }
-      });
-    }
-  });
-  return classes.filter(Boolean).join(' ');
-}
 
 export const classMixin = (...classes: ClassValue[]): string => {
   const result = new Set<string>();

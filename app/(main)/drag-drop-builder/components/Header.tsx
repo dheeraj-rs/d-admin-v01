@@ -5,7 +5,7 @@ import { useIsMobile } from '@/core/hooks/use-mobile';
 import { useAiBuilderStore } from '../store/ai-builder-store';
 import { useProjectsStore } from '../store/projects-store';
 import { useBuilderStore } from '../store/builder-store';
-import { savePage } from '../lib/api';
+
 
 export function Header() {
     const router = useRouter();
