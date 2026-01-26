@@ -1,7 +1,7 @@
 import React, { useState, useRef, useMemo, useEffect } from 'react';
 import { createPortal } from 'react-dom';
+import { useRouter, usePathname } from 'next/navigation';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
 import { MENU_ITEMS } from '@/core/layouts/constants/menu-data';
 import { useTranslatedMenuItems } from '@/core/hooks/useTranslatedMenuItems';
 import { AppMenuItem } from '@/core/types/admin-layout';
@@ -11,10 +11,16 @@ import { useLanguage } from '@/core/providers/LanguageProvider';
 import { classMixin } from '@/core/utils/class-mixin';
 
 const BottombarContent = () => {
+  const router = useRouter();
   const pathname = usePathname();
   const [activeIndex, setActiveIndex] = useState(0);
-  const scrollContainerRef = useRef(null);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
   const { t } = useLanguage();
+  const isScrollingRef = useRef(false);
+  const isAutoScrollingRef = useRef(false); // Flag to mute listener during auto-scroll
+  const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const autoScrollTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const lastScrollIndexRef = useRef(-1);
 
   const layoutConfig = useLayoutStore((state) => state.layoutConfig);
   const layoutState = useLayoutStore((state) => state.layoutState);
@@ -68,6 +74,9 @@ const BottombarContent = () => {
   // Sync activeIndex with pathname
   useEffect(() => {
     if (!translatedMenuItems) return;
+    
+    // Prevent sync if currently scrolling to avoid fighting with user scroll
+    if (isScrollingRef.current) return;
 
     const index = translatedMenuItems.findIndex((item) => {
       if (item.to && (pathname === item.to || pathname.startsWith(`${item.to}/`))) {
@@ -80,31 +89,113 @@ const BottombarContent = () => {
 
     if (index !== -1) {
       setActiveIndex(index);
+      lastScrollIndexRef.current = index; // Sync ref with state
     }
   }, [pathname, translatedMenuItems]);
 
-  // Auto-scroll active item into view
+  // Handle scroll events to detect centered item and navigate
   useEffect(() => {
-    if (!scrollContainerRef.current) return;
+    const container = scrollContainerRef.current;
+    if (!container) return;
+
+    const handleTouchStart = () => {
+       // User Interruption: Immediately stop auto-scroll logic
+       isAutoScrollingRef.current = false;
+       if (autoScrollTimerRef.current) clearTimeout(autoScrollTimerRef.current);
+    };
+
+    const handleScroll = () => {
+      isScrollingRef.current = true;
+
+      // COMPLETELY IGNORE events if we typically are auto-scrolling
+      if (isAutoScrollingRef.current) return;
+      
+      // Calculate closest item immediately for visual feedback
+      const containerCenter = container.clientWidth / 2;
+      let closestIndex = -1;
+      let minDistance = Infinity;
+
+      // Skip the first child (layout toggle)
+      const items = Array.from(container.children).slice(1) as HTMLElement[];
+
+      items.forEach((item, index) => {
+        const itemCenter = item.offsetLeft - container.scrollLeft + item.clientWidth / 2;
+        const distance = Math.abs(containerCenter - itemCenter);
+
+        if (distance < minDistance) {
+          minDistance = distance;
+          closestIndex = index;
+        }
+      });
+
+      // Update visual state immediately (step-by-step feel)
+      if (closestIndex !== -1) {
+         if (closestIndex !== lastScrollIndexRef.current) {
+            // REMOVED: setActiveIndex(closestIndex); // Keep active color fixed on current page
+            lastScrollIndexRef.current = closestIndex;
+            
+            // Haptic feedback
+            if (typeof navigator !== 'undefined' && 'vibrate' in navigator) {
+               navigator.vibrate(10); // Short tick
+            }
+         }
+      }
+
+      // Debounce navigation (removed auto-nav, only tracking scroll state)
+      if (debounceTimerRef.current) {
+        clearTimeout(debounceTimerRef.current);
+      }
+
+      debounceTimerRef.current = setTimeout(() => {
+        isScrollingRef.current = false;
+        // No router push here anymore as per request
+      }, 150); 
+    };
+
+    container.addEventListener('scroll', handleScroll);
+    container.addEventListener('touchstart', handleTouchStart);
+
+    return () => {
+       container.removeEventListener('scroll', handleScroll);
+       container.removeEventListener('touchstart', handleTouchStart);
+       if (debounceTimerRef.current) clearTimeout(debounceTimerRef.current);
+    };
+  }, [router, translatedMenuItems]); // Removed activeIndex to prevent listener re-attachment during scroll
+
+  // Auto-scroll active item into view (only if NOT manually scrolling)
+  // Restored: Logic to center item on click/path change
+  useEffect(() => {
+    if (!scrollContainerRef.current || isScrollingRef.current) return;
 
     const container = scrollContainerRef.current as HTMLElement;
     // The first child is the "Layout" toggle button, so we offset by 1
-    // However, if activeIndex is dynamic, we need to be careful.
-    // The "Layout" button is always first.
-    // The mapped items start after it.
-    // So activeIndex 0 (Home) corresponds to child index 1.
     const activeItemElement = container.children[activeIndex + 1] as HTMLElement;
 
     if (activeItemElement) {
+      // Calculate centers to check if we are "close enough" (tolerance check)
+      // We still do this math just to prevent re-triggering if already centered
       const scrollLeft =
         activeItemElement.offsetLeft -
         container.clientWidth / 2 +
         activeItemElement.clientWidth / 2;
 
-      container.scrollTo({
-        left: scrollLeft,
-        behavior: 'smooth',
-      });
+      // Only scroll if strictly needed (more than a small tolerance) to avoid jitter
+      if (Math.abs(container.scrollLeft - scrollLeft) > 10) {
+          isAutoScrollingRef.current = true; // Engage Mute
+          
+          // Use Native "Step-Based" Centering
+          activeItemElement.scrollIntoView({
+             behavior: 'smooth',
+             inline: 'center',
+             block: 'nearest'
+          });
+
+          // Disengage Mute after animation (approx 600ms)
+          if (autoScrollTimerRef.current) clearTimeout(autoScrollTimerRef.current);
+          autoScrollTimerRef.current = setTimeout(() => {
+              isAutoScrollingRef.current = false;
+          }, 600);
+      }
     }
   }, [activeIndex]);
 
