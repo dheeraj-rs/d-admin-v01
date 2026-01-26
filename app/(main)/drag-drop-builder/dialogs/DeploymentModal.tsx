@@ -152,14 +152,31 @@ export function DeploymentModal({
     }, 3000);
   };
 
-  const saveProjectWithDeploymentUrl = (url: string) => {
+  const saveProjectWithDeploymentUrl = async (url: string) => {
     const projectId = currentProjectId || `project-${Date.now()}`;
+    
+    // Generate thumbnail from editor
+    let thumbnail = '';
+    try {
+      const editor = document.getElementById('editor');
+      if (editor) {
+        const { toJpeg } = await import('html-to-image');
+        thumbnail = await toJpeg(editor, {
+          quality: 0.95,
+          pixelRatio: 0.6,
+          backgroundColor: '#1a1a1a',
+        });
+      }
+    } catch (error) {
+      console.error('Failed to generate thumbnail during deployment:', error);
+    }
     
     saveProject({
       id: projectId,
       name: projectName,
       html: htmlContent,
       deploymentUrl: url,
+      thumbnail,
       category: 'custom',
     });
   };

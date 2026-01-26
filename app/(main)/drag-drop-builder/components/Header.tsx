@@ -23,6 +23,7 @@ export function Header() {
         showProjectsGallery,
         setShowProjectsGallery,
         triggerClearCanvas,
+        projectsGalleryTab,
         setProjectsGalleryTab,
     } = useBuilderStore();
 
@@ -34,33 +35,22 @@ export function Header() {
     return (
         <header className="flex h-[var(--header-height)] w-full shrink-0 items-center pr-3 pl-2 select-none">
             <div className="flex w-full max-w-[70%] min-w-0 flex-1 items-center gap-2 md:max-w-[40.5%]">
+                {/* Back Button */}
                 <button
                     onClick={() => router.back()}
-                    className="flex items-center justify-center font-medium shrink-0 min-w-0 max-w-full rounded-md focus-visible:outline-2 disabled:op-50 relative disabled:cursor-not-allowed gap-1 h-9 focus-visible:outline-[var(--d-admin-blue-600)] bg-transparent enabled:hover:bg-[var(--d-admin-surface-hover)] text-[var(--d-admin-text-color)] text-sm px-2 -mr-px"
+                    className="items-center justify-center gap-2 font-medium min-w-0 max-w-full rounded-md focus-visible:outline-2 disabled:op-50 relative disabled:cursor-not-allowed focus-visible:outline-[var(--d-admin-blue-600)] bg-[var(--d-admin-surface-section)] border border-[var(--d-admin-surface-border)] text-[var(--d-admin-text-color)] hover:bg-[var(--d-admin-surface-hover)] transition-colors flex gap-1.7 shrink-0 h-8 text-sm px-2"
                     type="button"
+                    title="Go Back"
                 >
-                    <Icon icon="ph:caret-left" className="size-5" />
-                </button>
-               
-                <button
-                    className={`flex items-center justify-center font-medium shrink-0 min-w-0 max-w-full rounded-md focus-visible:outline-2 disabled:op-50 relative disabled:cursor-not-allowed gap-1 h-9 focus-visible:outline-[var(--d-admin-blue-600)] bg-transparent enabled:hover:bg-[var(--d-admin-surface-hover)] text-[var(--d-admin-text-color)] text-sm px-2 -mr-px ${showProjectsGallery ? 'bg-[var(--d-admin-surface-hover)]' : ''}`}
-                    type="button"
-                    onClick={() => {
-                        setShowProjectsGallery(!showProjectsGallery);
-                    }}
-                    title="Projects"
-                >
-                    <Icon icon="ph:clock-counter-clockwise" className="size-5" />
+                    <Icon icon="ph:caret-left" className="text-lg" />
                 </button>
             
-                <span className="mx-1 text-xl text-[var(--d-admin-text-color)] antialiased opacity-[.12]">
-                    /
-                </span>
+                {/* Project Name */}
                 <button
-                    className={`flex-1 md:flex-none flex items-center justify-center font-medium min-w-0 rounded-md focus-visible:outline-2 disabled:op-50 relative disabled:cursor-not-allowed gap-1 h-9 focus-visible:outline-[var(--d-admin-blue-600)] bg-transparent enabled:hover:bg-[var(--d-admin-surface-hover)] text-[var(--d-admin-text-color)] text-sm px-2 -mr-px ${isMobile && activeMobilePanel === 'workbench' ? 'hidden' : 'flex'}`}
+                    className={`flex-1 md:flex-none flex items-center justify-center font-semibold min-w-0 rounded-md focus-visible:outline-2 disabled:op-50 relative disabled:cursor-not-allowed gap-1 h-9 focus-visible:outline-[var(--d-admin-blue-600)] bg-transparent enabled:hover:bg-[var(--d-admin-surface-hover)] text-[var(--d-admin-text-color)] text-base px-3 -mr-px ${isMobile && activeMobilePanel === 'workbench' ? 'hidden' : 'flex'}`}
                     type="button"
                 >
-                    <span className="max-w-full truncate md:max-w-md lg:max-w-lg">
+                    <span className="max-w-full truncate md:max-w-md lg:max-w-lg uppercase">
                        {currentProjectName ? (
                             <span className="text-primary flex-1 truncate text-center">
                                 {currentProjectName}
@@ -71,24 +61,30 @@ export function Header() {
                     </span>
                 </button>
                 
-               
+                {/* New Project Button */}
+                <button
+                    onClick={() => {
+                        // Create a new blank project
+                        const newProjectId = `project-${Date.now()}`;
+                        const { saveProject, setCurrentProject } = useProjectsStore.getState();
+                        saveProject({
+                            id: newProjectId,
+                            name: 'New Project',
+                            html: '',
+                        });
+                        setCurrentProject(newProjectId);
+                        triggerClearCanvas();
+                    }}
+                    className="items-center justify-center gap-2 font-medium min-w-0 max-w-full rounded-md focus-visible:outline-2 disabled:op-50 relative disabled:cursor-not-allowed focus-visible:outline-[var(--d-admin-blue-600)] bg-[var(--d-admin-surface-section)] border border-[var(--d-admin-surface-border)] text-[var(--d-admin-text-color)] hover:bg-[var(--d-admin-surface-hover)] transition-colors flex gap-1.7 shrink-0 h-8 text-sm px-3 ml-auto"
+                    type="button"
+                    title="Create New Project"
+                >
+                    <Icon icon="lucide:plus" className="text-lg" />
+                    <span>New Project</span>
+                </button>
                 
                 <div className="relative ml-2 shrink-0 items-center gap-2">
-                    <button
-                        onClick={() => {
-                            savePage('', false); // Clear the draft
-                            setCurrentProject(null);
-                            triggerClearCanvas();
-                        }}
-                        className="flex items-center justify-center font-medium shrink-0 min-w-0 rounded-md focus-visible:outline-2 gap-1.5 h-8 bg-[var(--d-admin-surface-section)] hover:bg-[var(--d-admin-surface-hover)] border border-[var(--d-admin-surface-border)] text-[var(--d-admin-text-color)] text-xs px-3 transition-colors"
-                        title="Start New Project"
-                    >
-                        <Icon
-                            icon="lucide:plus"
-                            className="size-3.5 text-[var(--d-admin-text-color-secondary)]"
-                        />
-                        <span>New Project</span>
-                    </button>
+
                 </div>
             </div>
 
@@ -142,10 +138,14 @@ export function Header() {
                     <div className="ml-auto hidden gap-3 md:flex">
                         {/* Templates Button */}
                         <button
-                            className="items-center justify-center gap-2 font-medium min-w-0 max-w-full rounded-md focus-visible:outline-2 disabled:op-50 relative disabled:cursor-not-allowed focus-visible:outline-[var(--d-admin-blue-600)] bg-[var(--d-admin-surface-section)] border border-[var(--d-admin-surface-border)] text-[var(--d-admin-text-color)] hover:bg-[var(--d-admin-surface-hover)] transition-colors flex gap-1.7 shrink-0 h-8 text-sm px-3"
+                            className={`items-center justify-center gap-2 font-medium min-w-0 max-w-full rounded-md focus-visible:outline-2 disabled:op-50 relative disabled:cursor-not-allowed focus-visible:outline-[var(--d-admin-blue-600)] bg-[var(--d-admin-surface-section)] border border-[var(--d-admin-surface-border)] text-[var(--d-admin-text-color)] hover:bg-[var(--d-admin-surface-hover)] transition-colors flex gap-1.7 shrink-0 h-8 text-sm px-3 ${showProjectsGallery && projectsGalleryTab === 'templates' ? 'bg-[var(--d-admin-surface-hover)]' : ''}`}
                             onClick={() => {
-                                setProjectsGalleryTab('templates');
-                                setShowProjectsGallery(true);
+                                if (showProjectsGallery && projectsGalleryTab === 'templates') {
+                                    setShowProjectsGallery(false);
+                                } else {
+                                    setProjectsGalleryTab('templates');
+                                    setShowProjectsGallery(true);
+                                }
                             }}
                             title="Browse Templates"
                         >
