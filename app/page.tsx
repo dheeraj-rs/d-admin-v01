@@ -5,7 +5,7 @@ function Home() {
   return (
     <Layout>
       <LayoutIsolated>
-        <h1>Home</h1>
+        <h1>Dashboards</h1>
       </LayoutIsolated>
     </Layout>
   );

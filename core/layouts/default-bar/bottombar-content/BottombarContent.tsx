@@ -1,6 +1,7 @@
 import React, { useState, useRef, useMemo, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { MENU_ITEMS } from '@/core/layouts/constants/menu-data';
 import { useTranslatedMenuItems } from '@/core/hooks/useTranslatedMenuItems';
 import { AppMenuItem } from '@/core/types/admin-layout';
@@ -10,7 +11,8 @@ import { useLanguage } from '@/core/providers/LanguageProvider';
 import { classMixin } from '@/core/utils/class-mixin';
 
 const BottombarContent = () => {
-  const [activeIndex, setActiveIndex] = useState(2);
+  const pathname = usePathname();
+  const [activeIndex, setActiveIndex] = useState(0);
   const scrollContainerRef = useRef(null);
   const { t } = useLanguage();
 
@@ -62,6 +64,24 @@ const BottombarContent = () => {
   const [activeParentLabel, setActiveParentLabel] = useState<string>('');
 
   const [showLayoutMenu, setShowLayoutMenu] = useState(false);
+
+  // Sync activeIndex with pathname
+  useEffect(() => {
+    if (!translatedMenuItems) return;
+
+    const index = translatedMenuItems.findIndex((item) => {
+      if (item.to && (pathname === item.to || pathname.startsWith(`${item.to}/`))) {
+         // handle exact match or sub-route match for dashboard (/) specially if needed
+         if (item.to === '/' && pathname !== '/') return false;
+         return true;
+      }
+      return false;
+    });
+
+    if (index !== -1) {
+      setActiveIndex(index);
+    }
+  }, [pathname, translatedMenuItems]);
 
   const vibrate = () => {
     if (typeof navigator !== 'undefined' && 'vibrate' in navigator) {
