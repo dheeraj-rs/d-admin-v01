@@ -136,6 +136,27 @@ export function Header() {
                     
                     {/* Desktop Actions */}
                     <div className="ml-auto hidden gap-3 md:flex">
+                         {/* Undo/Redo Group */}
+                        <div className="flex items-center gap-1 bg-[var(--d-admin-surface-section)] border border-[var(--d-admin-surface-border)] rounded-md p-0.5 h-8">
+                             <button
+                                onClick={useBuilderStore.getState().undo}
+                                disabled={useBuilderStore(state => state.historyIndex <= 0)}
+                                className="flex items-center justify-center p-1.5 rounded hover:bg-[var(--d-admin-surface-hover)] disabled:opacity-30 disabled:cursor-not-allowed transition-colors text-[var(--d-admin-text-color)]"
+                                title="Undo"
+                             >
+                                <Icon icon="lucide:undo-2" className="size-4" />
+                             </button>
+                             <div className="w-px h-4 bg-[var(--d-admin-surface-border)]" />
+                             <button
+                                onClick={useBuilderStore.getState().redo}
+                                disabled={useBuilderStore(state => state.historyIndex >= state.history.length - 1)}
+                                className="flex items-center justify-center p-1.5 rounded hover:bg-[var(--d-admin-surface-hover)] disabled:opacity-30 disabled:cursor-not-allowed transition-colors text-[var(--d-admin-text-color)]"
+                                title="Redo"
+                             >
+                                <Icon icon="lucide:redo-2" className="size-4" />
+                             </button>
+                        </div>
+
                         {/* Templates Button */}
                         <button
                             className={`items-center justify-center gap-2 font-medium min-w-0 max-w-full rounded-md focus-visible:outline-2 disabled:op-50 relative disabled:cursor-not-allowed focus-visible:outline-[var(--d-admin-blue-600)] bg-[var(--d-admin-surface-section)] border border-[var(--d-admin-surface-border)] text-[var(--d-admin-text-color)] hover:bg-[var(--d-admin-surface-hover)] transition-colors flex gap-1.7 shrink-0 h-8 text-sm px-3 ${showProjectsGallery && projectsGalleryTab === 'templates' ? 'bg-[var(--d-admin-surface-hover)]' : ''}`}

@@ -78,6 +78,13 @@ interface DragDropState {
   setActiveLayers: (layers: HTMLElement[]) => void;
   reorderTrigger: number;
   triggerReorder: () => void;
+
+  // History State
+  history: string[];
+  historyIndex: number;
+  addToHistory: (html: string) => void;
+  undo: () => void;
+  redo: () => void;
 }
 
 export const useBuilderStore = create<DragDropState>((set, get) => ({
@@ -174,6 +181,46 @@ export const useBuilderStore = create<DragDropState>((set, get) => ({
       set({ components });
     } catch (e: any) {
       set({ error: e.message });
+    }
+  },
+
+  // History State
+  history: [''],
+  historyIndex: 0,
+
+  addToHistory: (html: string) => {
+    const { history, historyIndex } = get();
+    // Don't add if no change
+    if (history[historyIndex] === html) return;
+
+    // Slice history to current point (remove future redo stack)
+    const newHistory = history.slice(0, historyIndex + 1);
+    
+    // Add new state
+    newHistory.push(html);
+
+    // Limit history size if needed (e.g. 50 steps)
+    if (newHistory.length > 50) {
+      newHistory.shift();
+    }
+
+    set({
+      history: newHistory,
+      historyIndex: newHistory.length - 1
+    });
+  },
+
+  undo: () => {
+    const { historyIndex } = get();
+    if (historyIndex > 0) {
+      set({ historyIndex: historyIndex - 1 });
+    }
+  },
+
+  redo: () => {
+    const { history, historyIndex } = get();
+    if (historyIndex < history.length - 1) {
+      set({ historyIndex: historyIndex + 1 });
     }
   },
 

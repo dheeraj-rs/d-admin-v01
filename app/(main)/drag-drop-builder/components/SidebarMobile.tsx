@@ -44,7 +44,7 @@ export function SidebarMobile() {
     >
       {/* Drag Handle Indicator */}
       <div
-        className="flex w-full cursor-grab touch-none justify-center pt-3 pb-1 active:cursor-grabbing"
+        className="flex w-full cursor-grab touch-none justify-center pt-2 pb-1 active:cursor-grabbing"
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}

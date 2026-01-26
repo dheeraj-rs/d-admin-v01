@@ -64,6 +64,9 @@ export function Workbench() {
     setActiveLayers,
     activeLayers,
     reorderTrigger,
+    addToHistory,
+    history,
+    historyIndex,
   } = useBuilderStore();
   const { currentProjectId, getProject } = useProjectsStore();
   const isMobile = useIsMobile();
@@ -101,7 +104,10 @@ export function Workbench() {
     const observer = new MutationObserver(
       debounce(() => {
         const html = canvasRef.current?.innerHTML;
-        if (html) savePage(html, standaloneServer);
+        if (html !== undefined) {
+          savePage(html, standaloneServer);
+          addToHistory(html);
+        }
         setHasContent(!!html && html.trim().length > 0);
         setIsEmptyCanvas(!html || html.trim().length === 0);
 
@@ -168,6 +174,21 @@ export function Workbench() {
       // Trigger save via mutation observer automatically
     }
   }, [reorderTrigger]); // activeLayers is updated before this trigger increments
+
+  // Sync with History (Undo/Redo)
+  useEffect(() => {
+    if (!canvasRef.current || history.length === 0) return;
+    
+    const currentHistoryHtml = history[historyIndex];
+    if (currentHistoryHtml !== undefined && canvasRef.current.innerHTML !== currentHistoryHtml) {
+       canvasRef.current.innerHTML = currentHistoryHtml;
+       
+       // Update local state to match history
+       setHasContent(!!currentHistoryHtml && currentHistoryHtml.trim().length > 0);
+       setIsEmptyCanvas(!currentHistoryHtml || currentHistoryHtml.trim().length === 0);
+       savePage(currentHistoryHtml, standaloneServer);
+    }
+  }, [historyIndex, history]); // Sync when index or history changes
 
   // Load Content (Project or Draft)
   useEffect(() => {

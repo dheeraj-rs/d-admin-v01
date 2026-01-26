@@ -32,8 +32,8 @@ export function Sidebar() {
   return (
     <div className="flex h-full w-full flex-col overflow-hidden bg-[var(--d-admin-surface-ground)] text-[var(--d-admin-text-color)]">
       {/* Header / Theme Selector */}
-      <div className="shrink-0 border-b border-[var(--d-admin-surface-border)] pb-2 mb-2">
-        <div className="flex items-center gap-2 p-4 pb-0">
+      <div className="shrink-0 border-b border-[var(--d-admin-surface-border)] pb-2 md:pb-0 mb-2">
+        <div className="flex items-center gap-2 pb-0 md:p-2">
           <Select
             trigger={
               <div className="flex w-full cursor-pointer items-center justify-between rounded-md border border-[var(--d-admin-surface-border)] bg-[var(--d-admin-surface-section)] px-3 py-2 text-sm shadow-sm transition-colors hover:bg-[var(--d-admin-surface-hover)] md:w-full">
