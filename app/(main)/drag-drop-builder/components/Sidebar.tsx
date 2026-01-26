@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import ChevronDownIcon from '@heroicons/react/24/outline/ChevronDownIcon';
+import Bars3BottomLeftIcon from '@heroicons/react/24/outline/Bars3BottomLeftIcon';
 import {
   useBuilderStore,
   THEMES,
@@ -14,6 +15,7 @@ export function Sidebar() {
     setThemeIndex,
     loadThemeComponents,
     setPendingAddComponent,
+    setShowReorderModal,
   } = useBuilderStore();
 
   const [selectOpen, setSelectOpen] = useState(false);
@@ -45,6 +47,13 @@ export function Sidebar() {
               loadThemeComponents(index).then(() => setThemeIndex(index));
             }}
           />
+          <button
+            onClick={() => setShowReorderModal(true)}
+            className="flex h-[38px] w-[38px] shrink-0 items-center justify-center rounded-md border border-[var(--d-admin-surface-border)] bg-[var(--d-admin-surface-section)] text-[var(--d-admin-text-color-secondary)] hover:bg-[var(--d-admin-surface-hover)] hover:text-[var(--d-admin-text-color)]"
+            title="Reorder Components"
+          >
+            <Bars3BottomLeftIcon className="h-5 w-5" />
+          </button>
         </div>
       </div>
 
