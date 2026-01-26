@@ -83,6 +83,31 @@ const BottombarContent = () => {
     }
   }, [pathname, translatedMenuItems]);
 
+  // Auto-scroll active item into view
+  useEffect(() => {
+    if (!scrollContainerRef.current) return;
+
+    const container = scrollContainerRef.current as HTMLElement;
+    // The first child is the "Layout" toggle button, so we offset by 1
+    // However, if activeIndex is dynamic, we need to be careful.
+    // The "Layout" button is always first.
+    // The mapped items start after it.
+    // So activeIndex 0 (Home) corresponds to child index 1.
+    const activeItemElement = container.children[activeIndex + 1] as HTMLElement;
+
+    if (activeItemElement) {
+      const scrollLeft =
+        activeItemElement.offsetLeft -
+        container.clientWidth / 2 +
+        activeItemElement.clientWidth / 2;
+
+      container.scrollTo({
+        left: scrollLeft,
+        behavior: 'smooth',
+      });
+    }
+  }, [activeIndex]);
+
   const vibrate = () => {
     if (typeof navigator !== 'undefined' && 'vibrate' in navigator) {
       navigator.vibrate(30);
