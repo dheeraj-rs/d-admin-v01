@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React from 'react';
 import { Icon } from '@iconify/react';
 import { useProjectsStore } from '../store/projects-store';
 import { useBuilderStore } from '../store/builder-store';
@@ -9,10 +9,7 @@ import * as Tabs from '@radix-ui/react-tabs';
 
 export function ProjectsGallery() {
   const { projects, setCurrentProject, deleteProject } = useProjectsStore();
-  const { setShowProjectsGallery, triggerClearCanvas } = useBuilderStore();
-
-  // Manage active tab state locally to control animations/styles
-  const [activeTab, setActiveTab] = useState('projects');
+  const { setShowProjectsGallery, triggerClearCanvas, projectsGalleryTab, setProjectsGalleryTab } = useBuilderStore();
 
   const handleOpenProject = (id: string) => {
     setCurrentProject(id);
@@ -38,8 +35,8 @@ export function ProjectsGallery() {
       <div className="mx-auto flex h-full w-full max-w-[1400px] flex-col px-4 py-4">
 
         <Tabs.Root
-          value={activeTab}
-          onValueChange={setActiveTab}
+          value={projectsGalleryTab}
+          onValueChange={(val) => setProjectsGalleryTab(val as 'projects' | 'templates')}
           className="flex h-full flex-col min-h-0"
         >
           <div className="mb-4 flex flex-col shrink-0 border-b border-[var(--d-admin-surface-border)] pb-1 sm:mb-6 sm:flex-row sm:items-center sm:justify-between">

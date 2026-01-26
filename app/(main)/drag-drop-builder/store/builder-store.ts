@@ -58,6 +58,8 @@ interface DragDropState {
   setShowSaveDialog: (v: boolean) => void;
   showProjectsGallery: boolean;
   setShowProjectsGallery: (v: boolean) => void;
+  projectsGalleryTab: 'projects' | 'templates';
+  setProjectsGalleryTab: (tab: 'projects' | 'templates') => void;
   closeAllDialogs: () => void;
 
   // Actions
@@ -131,6 +133,8 @@ export const useBuilderStore = create<DragDropState>((set, get) => ({
   setShowPublishDialog: (v) => set({ showPublishDialog: v }),
   setShowSaveDialog: (v) => set({ showSaveDialog: v }),
   setShowProjectsGallery: (v: boolean) => set({ showProjectsGallery: v }),
+  projectsGalleryTab: 'projects',
+  setProjectsGalleryTab: (tab) => set({ projectsGalleryTab: tab }),
 
   closeAllDialogs: () =>
     set({
