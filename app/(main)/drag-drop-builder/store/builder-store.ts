@@ -17,16 +17,55 @@ interface DragDropState {
   components: ComponentWithCategories;
   error: string | null;
 
+  // Canvas State
+  canvasComponents: Record<string, number[]>;
+  setCanvasComponents: (map: Record<string, number[]>) => void;
+
+  pendingAddComponent: { component: any; category: string; index: number } | null;
+  setPendingAddComponent: (c: { component: any; category: string; index: number } | null) => void;
+
+  headerAction: string | null;
+  setHeaderAction: (action: string | null) => void;
+  
+  clearCanvasTrigger: number;
+  triggerClearCanvas: () => void;
+
+  // Selection
+  selectedElement: HTMLElement | null;
+  setSelectedElement: (el: HTMLElement | null) => void;
+
   // View state
   isPreview: boolean;
+  setIsPreview: (v: boolean) => void;
   showMobileSidebar: boolean;
-  showReorderModal: boolean;
-
-  // Actions
   toggleMobileSidebar: () => void;
   setMobileSidebar: (v: boolean) => void;
 
-  // Canvas State for Sidebar Indicators
+  // Dialogs
+  showImageDialog: boolean;
+  setShowImageDialog: (v: boolean) => void;
+  showButtonDialog: boolean;
+  setShowButtonDialog: (v: boolean) => void;
+  showLinkDialog: boolean;
+  setShowLinkDialog: (v: boolean) => void;
+  showSvgDialog: boolean;
+  setShowSvgDialog: (v: boolean) => void;
+  showExportDialog: boolean;
+  setShowExportDialog: (v: boolean) => void;
+  showPublishDialog: boolean;
+  setShowPublishDialog: (v: boolean) => void;
+  showSaveDialog: boolean;
+  setShowSaveDialog: (v: boolean) => void;
+  showProjectsGallery: boolean;
+  setShowProjectsGallery: (v: boolean) => void;
+  closeAllDialogs: () => void;
+
+  // Actions
+  setThemeIndex: (index: number) => void;
+  setComponents: (components: ComponentWithCategories) => void;
+  setError: (error: string | null) => void;
+  loadThemeComponents: (index: number, standaloneServer?: boolean) => Promise<void>;
+
   // Sidebar View State
   sidebarView: 'components' | 'layers';
   toggleSidebarView: () => void;
@@ -57,7 +96,6 @@ export const useBuilderStore = create<DragDropState>((set, get) => ({
   triggerReorder: () => set((state) => ({ reorderTrigger: state.reorderTrigger + 1 })),
 
   isPreview: false,
-  showReorderModal: false,
 
   pendingAddComponent: null,
   headerAction: null,
@@ -77,7 +115,6 @@ export const useBuilderStore = create<DragDropState>((set, get) => ({
   setComponents: (components) => set({ components }),
   setError: (error) => set({ error }),
   setIsPreview: (v) => set({ isPreview: v }),
-  setShowReorderModal: (v) => set({ showReorderModal: v }),
 
   setPendingAddComponent: (c) => set({ pendingAddComponent: c }),
   setHeaderAction: (action) => set({ headerAction: action }),
@@ -105,7 +142,6 @@ export const useBuilderStore = create<DragDropState>((set, get) => ({
       showPublishDialog: false,
       showSaveDialog: false,
       showProjectsGallery: false,
-      showReorderModal: false,
     }),
 
   loadThemeComponents: async (index: number, standaloneServer?: boolean) => {
