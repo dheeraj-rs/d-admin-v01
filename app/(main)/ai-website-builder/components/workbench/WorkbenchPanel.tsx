@@ -7,7 +7,7 @@ export function WorkbenchPanel() {
   return (
     <div className="z-workbench h-full w-full">
       <div
-        className={`relative h-full flex-1 overflow-hidden ${isMobile ? 'border-none' : 'rounded-none border-l border-[var(--d-admin-surface-border)]'}`}
+        className={`relative h-full flex-1 overflow-hidden ${isMobile ? 'border-none' : 'rounded-none border-l border-[var(--d-admin-surface-border)] rounded-tl-lg'}`}
       >
         <Workbench isStreaming={false} />
       </div>
