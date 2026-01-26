@@ -186,20 +186,23 @@ export function ReorderModal({
     element: HTMLDivElement,
   ): Promise<string> => {
     try {
-      // Use html2canvas to capture the element
-      const html2canvas = (await import('html2canvas')).default;
+      // Use html-to-image to capture the element (more robust than html2canvas)
+      const { toPng } = await import('html-to-image');
 
-      const canvas = await html2canvas(element, {
-        scale: 0.2, // Lower scale for smaller thumbnail
-        logging: false,
-        useCORS: true,
-        allowTaint: true,
-        backgroundColor: null,
+      const dataUrl = await toPng(element, {
+        quality: 0.9,
+        pixelRatio: 0.5, // Reduced quality for thumbnail to improve performance
+        cacheBust: true,
+        backgroundColor: '#1f2937', // Dark background (gray-800) to match theme, avoiding transparency issues
         width: element.offsetWidth,
         height: Math.min(element.offsetHeight, 300), // Max height 300px
+        style: {
+          transform: 'scale(1)', // Ensure no weird transforms are applied during capture
+          margin: '0',
+        },
       });
 
-      return canvas.toDataURL('image/png');
+      return dataUrl;
     } catch (error) {
       console.error('Failed to generate thumbnail:', error);
       // Return a placeholder SVG
