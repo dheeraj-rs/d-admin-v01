@@ -198,9 +198,10 @@ export function Workbench() {
       const project = getProject(currentProjectId);
       if (project) {
 
-
+        canvasRef.current.innerHTML = project.html;
         // Update local draft to match project
         savePage(project.html, standaloneServer);
+        addToHistory(project.html);
         setHasContent(!!project.html && project.html.trim().length > 0);
         setIsEmptyCanvas(!project.html || project.html.trim().length === 0);
       }
